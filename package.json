@@ -1,0 +1,32 @@
+{
+  "name": "moj-agent",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@ai-sdk/google": "^4.0.6",
+    "@ai-sdk/react": "^4.0.12",
+    "@google/genai": "^2.10.0",
+    "@supabase/supabase-js": "^2.110.5",
+    "@vitalets/google-translate-api": "^9.2.1",
+    "ai": "^7.0.11",
+    "next": "^16.2.10",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^6.0.3"
+  }
+}
