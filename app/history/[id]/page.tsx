@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DashboardSidebar } from "../../components/DashboardSidebar";
+import { useAuth } from "../../components/AuthGate";
 import { supabase } from "../../../lib/supabase";
 
 type Conversation = {
@@ -27,6 +28,7 @@ function formatDate(value: string) {
 }
 
 export default function HistoryConversationPage() {
+  const { user } = useAuth();
   const params = useParams<{ id: string }>();
   const conversationId = params.id;
   const [conversation, setConversation] = useState<Conversation | null>(null);
@@ -36,20 +38,33 @@ export default function HistoryConversationPage() {
 
   useEffect(() => {
     async function loadConversation() {
-      if (!supabase || !conversationId) {
+      if (!supabase || !conversationId || !user) {
         setError("Nie znaleziono rozmowy.");
         setIsLoading(false);
         return;
       }
 
-      const [{ data: conversationData, error: conversationError }, { data: messagesData, error: messagesError }] =
-        await Promise.all([
-          supabase.from("conversations").select("id, title, created_at, updated_at").eq("id", conversationId).maybeSingle(),
-          supabase.from("messages").select("id, role, content, created_at").eq("conversation_id", conversationId).order("created_at", { ascending: true }),
-        ]);
+      const { data: conversationData, error: conversationError } = await supabase
+        .from("conversations")
+        .select("id, title, created_at, updated_at")
+        .eq("id", conversationId)
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-      if (conversationError || messagesError || !conversationData) {
-        setError(conversationError?.message || messagesError?.message || "Nie znaleziono rozmowy.");
+      if (conversationError || !conversationData) {
+        setError(conversationError?.message || "Nie znaleziono rozmowy.");
+        setIsLoading(false);
+        return;
+      }
+
+      const { data: messagesData, error: messagesError } = await supabase
+        .from("messages")
+        .select("id, role, content, created_at")
+        .eq("conversation_id", conversationId)
+        .order("created_at", { ascending: true });
+
+      if (messagesError) {
+        setError(messagesError.message);
       } else {
         setConversation(conversationData);
         setMessages(
@@ -65,15 +80,15 @@ export default function HistoryConversationPage() {
     }
 
     void loadConversation();
-  }, [conversationId]);
+  }, [conversationId, user]);
 
   return (
     <main className="dashboard-shell">
       <DashboardSidebar />
-      <section className="dashboard-main history-main" aria-label="Podgląd rozmowy">
+      <section className="dashboard-main history-main" aria-label="Podglad rozmowy">
         <div className="history-detail-actions">
-          <a className="nav-link primary" href="/history">← Wróć do listy</a>
-          <a className="dashboard-card-link" href={`/chat?conversation=${conversationId}`}>🔄 Kontynuuj rozmowę</a>
+          <a className="nav-link primary" href="/history">Wroc do listy</a>
+          <a className="dashboard-card-link" href={`/chat?conversation=${conversationId}`}>Kontynuuj rozmowe</a>
         </div>
 
         {isLoading ? <div className="history-empty">Wczytywanie rozmowy...</div> : null}
@@ -81,13 +96,13 @@ export default function HistoryConversationPage() {
         {conversation ? (
           <>
             <header className="history-detail-header">
-              <span className="dashboard-kicker">Podgląd read-only</span>
+              <span className="dashboard-kicker">Podglad read-only</span>
               <h1>{conversation.title || "Nowa rozmowa"}</h1>
-              <p>Ostatnia aktywność: {formatDate(conversation.updated_at)}</p>
+              <p>Ostatnia aktywnosc: {formatDate(conversation.updated_at)}</p>
             </header>
             <div className="history-messages">
               {messages.length === 0 ? (
-                <div className="history-empty">Ta rozmowa nie zawiera jeszcze wiadomości.</div>
+                <div className="history-empty">Ta rozmowa nie zawiera jeszcze wiadomosci.</div>
               ) : (
                 messages.map((message) => (
                   <article className={`history-message ${message.role}`} key={message.id}>

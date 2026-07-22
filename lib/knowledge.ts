@@ -81,7 +81,7 @@ function hasLexicalSupport(query: string, documentText: string) {
   );
 }
 
-export async function searchKnowledge(query: string) {
+export async function searchKnowledge(query: string, userId?: string | null) {
   const database = supabaseAdmin ?? supabase;
   const cleanedQuery = query.trim();
 
@@ -98,6 +98,15 @@ export async function searchKnowledge(query: string) {
       results: [],
       total_found: 0,
       message: "Podaj pytanie do wyszukania w bazie wiedzy.",
+    };
+  }
+
+  if (!userId) {
+    return {
+      results: [],
+      total_found: 0,
+      source_documents: [],
+      message: "Zaloguj sie, zeby przeszukac swoja baze wiedzy.",
     };
   }
 
@@ -118,22 +127,26 @@ export async function searchKnowledge(query: string) {
 
   const matches = (data ?? []) as MatchDocument[];
   const createdAtById = new Map<string, string | null>();
+  const allowedDocumentIds = new Set<string>();
 
   if (matches.length > 0) {
     const { data: documents } = await database
       .from("documents")
       .select("id, created_at")
+      .eq("user_id", userId)
       .in(
         "id",
         matches.map((item) => item.id),
       );
 
     for (const document of (documents ?? []) as DocumentRow[]) {
+      allowedDocumentIds.add(document.id);
       createdAtById.set(document.id, document.created_at);
     }
   }
 
   const results = matches
+    .filter((item) => allowedDocumentIds.has(item.id))
     .filter((item) =>
       hasLexicalSupport(
         cleanedQuery,

@@ -2,6 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { useAuth } from "../components/AuthGate";
+import { supabase } from "../../lib/supabase";
 
 type KnowledgeDocument = {
   title: string;
@@ -74,6 +76,7 @@ function formatDate(value: string) {
 }
 
 export default function UploadPage() {
+  const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([]);
@@ -96,11 +99,25 @@ export default function UploadPage() {
     return Math.min(100, Math.round((progressCurrent / progressTotal) * 100));
   }, [isUploading, progressCurrent, progressTotal]);
 
+  async function getAuthHeaders(): Promise<Record<string, string>> {
+    if (!supabase) {
+      return {};
+    }
+
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  }
+
   async function loadDocuments() {
     setIsLoadingList(true);
 
     try {
-      const response = await fetch("/api/upload-knowledge", { cache: "no-store" });
+      const response = await fetch("/api/upload-knowledge", {
+        cache: "no-store",
+        headers: await getAuthHeaders(),
+      });
       const data = (await response.json()) as {
         documents?: KnowledgeDocument[];
         error?: string;
@@ -120,7 +137,7 @@ export default function UploadPage() {
 
   useEffect(() => {
     void loadDocuments();
-  }, []);
+  }, [user]);
 
   function useExample(index: number) {
     const example = examples[index];
@@ -148,6 +165,7 @@ export default function UploadPage() {
       const response = await fetch("/api/upload-knowledge?stream=1", {
         method: "POST",
         headers: {
+          ...(await getAuthHeaders()),
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ title, content }),
@@ -230,6 +248,7 @@ export default function UploadPage() {
     try {
       const response = await fetch(`/api/upload-knowledge?title=${encodeURIComponent(documentTitle)}`, {
         method: "DELETE",
+        headers: await getAuthHeaders(),
       });
       const data = (await response.json()) as { error?: string };
 
@@ -260,6 +279,7 @@ export default function UploadPage() {
       const response = await fetch("/api/search-knowledge", {
         method: "POST",
         headers: {
+          ...(await getAuthHeaders()),
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ query }),

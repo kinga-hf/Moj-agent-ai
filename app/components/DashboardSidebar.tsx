@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { AuthStatus } from "./AuthStatus";
 
 const navigation = [
   { href: "/upload", icon: "KB", label: "Baza wiedzy" },
@@ -56,6 +57,7 @@ export function DashboardSidebar() {
             </a>
           ))}
         </nav>
+        <AuthStatus />
       </aside>
     </>
   );

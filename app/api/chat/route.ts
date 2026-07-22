@@ -13,6 +13,7 @@ import {
 } from "ai";
 import { supabase } from "../../../lib/supabase";
 import { searchKnowledge } from "../../../lib/knowledge";
+import { getAuthenticatedRequest } from "../../../lib/supabase-request";
 
 const professionalPersona = `# FOTOBOT — ekspert fotografii reportażowej i storytellingu wizualnego
 
@@ -361,6 +362,17 @@ const knowledgeTools = {
     execute: async ({ query }) => searchKnowledge(query),
   }),
 };
+
+function createKnowledgeTools(userId: string | null) {
+  return {
+    searchKnowledge: tool({
+      description:
+        "Wyszukuje informacje w prywatnej bazie wiedzy zalogowanego uzytkownika: cenniki, pakiety, oferty, FAQ, regulaminy, procedury i warunki.",
+      inputSchema: searchKnowledgeInputSchema,
+      execute: async ({ query }) => searchKnowledge(query, userId),
+    }),
+  };
+}
 
 const googleSearchTools = {
   google_search: google.tools.googleSearch({}),
@@ -1368,6 +1380,7 @@ WAŻNE:
 
   let usedModel: string = models.flash;
   const profileTools = createProfileTools(userId);
+  const privateKnowledgeTools = createKnowledgeTools(userId);
   const runAgentGeneration = (modelId: string) =>
       shouldSearch && !shouldForceCalculator
         ? generateText({
@@ -1376,7 +1389,7 @@ WAŻNE:
             messages: modelMessages,
             tools: enableSearchGrounding
               ? { ...googleSearchTools, ...profileTools }
-              : { ...localTools, ...profileTools },
+              : { ...localTools, ...privateKnowledgeTools, ...profileTools },
             toolChoice: "auto",
             maxRetries: 0,
             timeout: agentTextTimeout,
@@ -1386,7 +1399,7 @@ WAŻNE:
             model: google(modelId),
             system: agentSystem,
             messages: modelMessages,
-            tools: { ...localTools, ...profileTools },
+            tools: { ...localTools, ...privateKnowledgeTools, ...profileTools },
             toolChoice: shouldForceCalculator
               ? { type: "tool", toolName: "calculator" }
               : "auto",
@@ -1575,9 +1588,10 @@ async function generateAnswer({
 }) {
   const selectedModel = models[model];
   const profileTools = createProfileTools(userId);
+  const privateKnowledgeTools = createKnowledgeTools(userId);
   const availableTools = enableWebTools
-    ? { ...webTools, ...profileTools }
-    : { ...knowledgeTools, ...profileTools };
+    ? { ...webTools, ...privateKnowledgeTools, ...profileTools }
+    : { ...knowledgeTools, ...privateKnowledgeTools, ...profileTools };
   const toolOptions = {
     tools: availableTools,
           stopWhen: stepCountIs(maxSteps),
@@ -1681,6 +1695,7 @@ export async function POST(req: Request) {
       purpose,
       image,
       userId,
+      authToken,
     }: {
       messages?: unknown;
       mode?: unknown;
@@ -1688,6 +1703,7 @@ export async function POST(req: Request) {
       purpose?: unknown;
       image?: unknown;
       userId?: unknown;
+      authToken?: unknown;
     } =
       await req.json();
     const chatMessages = Array.isArray(messages) ? (messages as UIMessage[]) : [];
@@ -1695,7 +1711,18 @@ export async function POST(req: Request) {
     const selectedModel = getAiModel(model);
     const lastMessage = getLastUserText(chatMessages);
     const attachedImage = parseAttachedImage(image);
-    const activeUserId = typeof userId === "string" ? userId : null;
+    let activeUserId = typeof userId === "string" ? userId : null;
+
+    if (typeof authToken === "string" && authToken) {
+      const auth = await getAuthenticatedRequest(
+        new Request(req.url, {
+          headers: {
+            authorization: `Bearer ${authToken}`,
+          },
+        }),
+      );
+      activeUserId = auth.user.id;
+    }
     const userProfile = await getUserProfile(activeUserId);
     const profilePrompt = buildProfilePrompt(userProfile);
     const isOferta = typeof lastMessage === "string" && isOfferCommand(lastMessage);

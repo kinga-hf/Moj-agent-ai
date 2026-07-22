@@ -4,12 +4,10 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { BackNavLink } from "./BackNavLink";
+import { AuthStatus } from "./AuthStatus";
+import { useAuth } from "./AuthGate";
 import { supabase } from "../../lib/supabase";
-import {
-  ensureUserProfile,
-  getOrCreateUserId,
-  type UserProfile,
-} from "../../lib/user-profile";
+import { ensureUserProfile, type UserProfile } from "../../lib/user-profile";
 import {
   AttachedImagePreview,
   DropOverlay,
@@ -112,6 +110,7 @@ function getSupabaseErrorMessage(error: unknown) {
 }
 
 export default function Home() {
+  const { user } = useAuth();
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<ChatMode>("casual");
   const [model, setModel] = useState<AiModel>("flash");
@@ -120,7 +119,7 @@ export default function Home() {
   const [isHistoryLoading, setIsHistoryLoading] = useState(true);
   const [historyError, setHistoryError] = useState("");
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const userId = user?.id ?? null;
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [assistantModes, setAssistantModes] = useState<Record<string, ChatMode>>(
@@ -172,9 +171,6 @@ export default function Home() {
   async function refreshUserProfile(id: string) {
     try {
       const profile = await ensureUserProfile(id);
-      if (profile?.id && profile.id !== id) {
-        setUserId(profile.id);
-      }
       setUserProfile(profile);
     } catch (caughtError) {
       console.error("Supabase profile load error:", caughtError);
@@ -184,16 +180,14 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const id = getOrCreateUserId();
-    setUserId(id);
-
-    if (!id) {
+    if (!userId) {
       setIsProfileLoading(false);
       return;
     }
 
-    void refreshUserProfile(id);
-  }, []);
+    setIsProfileLoading(true);
+    void refreshUserProfile(userId);
+  }, [userId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -205,11 +199,20 @@ export default function Home() {
         return;
       }
 
+      if (!userId) {
+        hydratedRef.current = true;
+        setIsHistoryLoading(false);
+        return;
+      }
+
       try {
         const requestedConversationId = new URLSearchParams(window.location.search).get(
           "conversation",
         );
-        let conversationQuery = supabase.from("conversations").select("id");
+        let conversationQuery = supabase
+          .from("conversations")
+          .select("id")
+          .eq("user_id", userId);
         conversationQuery = requestedConversationId
           ? conversationQuery.eq("id", requestedConversationId)
           : conversationQuery.order("updated_at", { ascending: false });
@@ -279,10 +282,10 @@ export default function Home() {
     return () => {
       cancelled = true;
     };
-  }, [setMessages]);
+  }, [setMessages, userId]);
 
   useEffect(() => {
-    if (!supabase || !hydratedRef.current) {
+    if (!supabase || !hydratedRef.current || !userId) {
       return;
     }
 
@@ -322,7 +325,7 @@ export default function Home() {
             const { data: newConversation, error: conversationError } =
               await client
                 .from("conversations")
-                .insert({ title: getConversationTitle(content) })
+                .insert({ title: getConversationTitle(content), user_id: userId })
                 .select("id")
                 .single();
 
@@ -348,7 +351,8 @@ export default function Home() {
           const { error: updateError } = await client
             .from("conversations")
             .update({ updated_at: new Date().toISOString() })
-            .eq("id", activeConversationId);
+            .eq("id", activeConversationId)
+            .eq("user_id", userId);
 
           if (updateError) {
             throw updateError;
@@ -368,7 +372,7 @@ export default function Home() {
           `Nie udało się zapisać historii: ${errorMessage}`,
         );
       });
-  }, [messages]);
+  }, [messages, userId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -435,10 +439,21 @@ export default function Home() {
       ? "oferta"
       : "chat";
     const imageToSend = attachedImage?.dataUrl;
+    const { data: sessionData } = supabase
+      ? await supabase.auth.getSession()
+      : { data: { session: null } };
     removeImage();
     await sendMessage(
       { text: trimmedText || "Przeanalizuj załączony obraz." },
-      { body: { mode, model, image: imageToSend, userId } },
+      {
+        body: {
+          mode,
+          model,
+          image: imageToSend,
+          userId,
+          authToken: sessionData.session?.access_token,
+        },
+      },
     );
 
     await refreshUserProfile(userId);
@@ -467,13 +482,13 @@ export default function Home() {
     pendingModelRef.current = model;
     pendingCommandRef.current = "chat";
 
-    if (!supabase) {
+    if (!supabase || !userId) {
       return;
     }
 
     const { data: newConversation, error: conversationError } = await supabase
       .from("conversations")
-      .insert({ title: "Nowa rozmowa" })
+      .insert({ title: "Nowa rozmowa", user_id: userId })
       .select("id")
       .single();
 
@@ -529,6 +544,7 @@ export default function Home() {
           <a className="nav-link" href="/extract">
             📊 Analizator
           </a>
+          <AuthStatus compact />
         </nav>
 
         <header className="chat-header pro-header">

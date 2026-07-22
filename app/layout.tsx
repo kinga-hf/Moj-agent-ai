@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { AuthGate } from "./components/AuthGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,7 +15,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <body>
+        <Suspense
+          fallback={
+            <main className="auth-shell">
+              <section className="auth-card">
+                <h1>Wczytuje aplikacje...</h1>
+              </section>
+            </main>
+          }
+        >
+          <AuthGate>{children}</AuthGate>
+        </Suspense>
+      </body>
     </html>
   );
 }

@@ -1,10 +1,10 @@
 import { splitIntoChunks } from "../../../lib/chunking";
 import { generateEmbedding } from "../../../lib/embeddings";
-import { supabase } from "../../../lib/supabase";
 import {
   getSupabaseAdminMissingMessage,
   supabaseAdmin,
 } from "../../../lib/supabase-admin";
+import { getAuthenticatedRequest } from "../../../lib/supabase-request";
 
 type UploadKnowledgeRequest = {
   title?: unknown;
@@ -37,16 +37,12 @@ function validateBody(body: UploadKnowledgeRequest) {
 }
 
 async function saveKnowledge(
+  database: NonNullable<typeof supabaseAdmin>,
+  userId: string,
   title: string,
   content: string,
   onProgress?: (event: Record<string, unknown>) => void,
 ) {
-  const database = supabaseAdmin ?? supabase;
-
-  if (!database) {
-    throw new Error("Brakuje konfiguracji Supabase w .env.local.");
-  }
-
   const chunks = splitIntoChunks(content);
 
   if (chunks.length === 0) {
@@ -65,6 +61,7 @@ async function saveKnowledge(
 
     const embedding = await generateEmbedding(chunk);
     const { error } = await database.from("documents").insert({
+      user_id: userId,
       title,
       content: chunk,
       embedding,
@@ -89,16 +86,21 @@ async function saveKnowledge(
   return { success: true, chunks_saved: chunks.length };
 }
 
-export async function GET() {
-  const database = supabaseAdmin ?? supabase;
+export async function GET(req: Request) {
+  let auth;
 
-  if (!database) {
-    return Response.json({ documents: [], error: "Brakuje konfiguracji Supabase." }, { status: 500 });
+  try {
+    auth = await getAuthenticatedRequest(req);
+  } catch (error) {
+    return Response.json({ documents: [], error: getErrorMessage(error) }, { status: 401 });
   }
+
+  const database = supabaseAdmin ?? auth.database;
 
   const { data, error } = await database
     .from("documents")
     .select("title, created_at, metadata")
+    .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -142,10 +144,12 @@ export async function POST(req: Request) {
   const streamMode = new URL(req.url).searchParams.get("stream") === "1";
 
   try {
+    const auth = await getAuthenticatedRequest(req);
+    const database = supabaseAdmin ?? auth.database;
     const { title, content } = validateBody((await req.json()) as UploadKnowledgeRequest);
 
     if (!streamMode) {
-      return Response.json(await saveKnowledge(title, content));
+      return Response.json(await saveKnowledge(database, auth.user.id, title, content));
     }
 
     const encoder = new TextEncoder();
@@ -156,7 +160,7 @@ export async function POST(req: Request) {
         };
 
         try {
-          const result = await saveKnowledge(title, content, send);
+          const result = await saveKnowledge(database, auth.user.id, title, content, send);
           send({ type: "done", ...result });
         } catch (error) {
           send({ type: "error", error: getErrorMessage(error) });
@@ -187,18 +191,18 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const database = supabaseAdmin ?? supabase;
-
-  if (!database) {
-    return Response.json({ error: "Brakuje konfiguracji Supabase." }, { status: 500 });
-  }
-
   try {
+    const auth = await getAuthenticatedRequest(req);
+    const database = supabaseAdmin ?? auth.database;
     const { title } = validateBody({
       title: new URL(req.url).searchParams.get("title"),
       content: "delete",
     });
-    const { error } = await database.from("documents").delete().eq("title", title);
+    const { error } = await database
+      .from("documents")
+      .delete()
+      .eq("title", title)
+      .eq("user_id", auth.user.id);
 
     if (error) {
       if (error.message.toLowerCase().includes("row-level security")) {

@@ -10,7 +10,10 @@ import {
 } from "../components/ImageAttachment";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
 import { BackNavLink } from "../components/BackNavLink";
-import { ensureUserProfile, getOrCreateUserId } from "../../lib/user-profile";
+import { AuthStatus } from "../components/AuthStatus";
+import { useAuth } from "../components/AuthGate";
+import { supabase } from "../../lib/supabase";
+import { ensureUserProfile } from "../../lib/user-profile";
 
 type ToolTimelineItem = {
   id: string;
@@ -83,11 +86,12 @@ function downloadImage(image: string) {
 }
 
 export default function AgentPage() {
+  const { user } = useAuth();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [userId, setUserId] = useState<string | null>(null);
+  const userId = user?.id ?? null;
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const {
     attachedImage,
@@ -104,15 +108,12 @@ export default function AgentPage() {
   } = useImageAttachment();
 
   useEffect(() => {
-    const id = getOrCreateUserId();
-    setUserId(id);
-
-    if (id) {
-      void ensureUserProfile(id).catch((caughtError) => {
+    if (userId) {
+      void ensureUserProfile(userId).catch((caughtError) => {
         console.error("Supabase profile load error:", caughtError);
       });
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -143,6 +144,9 @@ export default function AgentPage() {
     const timeout = window.setTimeout(() => controller.abort(), 55000);
 
     try {
+      const { data: sessionData } = supabase
+        ? await supabase.auth.getSession()
+        : { data: { session: null } };
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -153,6 +157,7 @@ export default function AgentPage() {
           purpose: "agent",
           image: imageToSend,
           userId,
+          authToken: sessionData.session?.access_token,
           messages: nextMessages.map((message) => ({
             id: message.id,
             role: message.role,
@@ -238,6 +243,7 @@ export default function AgentPage() {
           <a className="nav-link" href="/format">
             📐 Formater
           </a>
+          <AuthStatus compact />
         </nav>
 
         <header className="chat-header pro-header">
