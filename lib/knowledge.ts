@@ -1,6 +1,7 @@
 import { generateEmbedding } from "./embeddings";
 import { supabase } from "./supabase";
 import { supabaseAdmin } from "./supabase-admin";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 type MatchDocument = {
   id: string;
@@ -81,8 +82,12 @@ function hasLexicalSupport(query: string, documentText: string) {
   );
 }
 
-export async function searchKnowledge(query: string, userId?: string | null) {
-  const database = supabaseAdmin ?? supabase;
+export async function searchKnowledge(
+  query: string,
+  userId?: string | null,
+  authenticatedDatabase?: SupabaseClient | null,
+) {
+  const database = authenticatedDatabase ?? supabaseAdmin ?? supabase;
   const cleanedQuery = query.trim();
 
   if (!database) {

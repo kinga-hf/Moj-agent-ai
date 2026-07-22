@@ -15,7 +15,9 @@ export async function POST(req: Request) {
       return Response.json({ error: "Podaj pytanie do bazy wiedzy." }, { status: 400 });
     }
 
-    return Response.json(await searchKnowledge(query, auth.user.id));
+    return Response.json(
+      await searchKnowledge(query, auth.user.id, auth.database),
+    );
   } catch (error) {
     return Response.json(
       { error: `Nie udalo sie przeszukac bazy wiedzy. ${getErrorMessage(error)}` },

@@ -364,13 +364,17 @@ const knowledgeTools = {
   }),
 };
 
-function createKnowledgeTools(userId: string | null) {
+function createKnowledgeTools(
+  userId: string | null,
+  database?: SupabaseClient | null,
+) {
   return {
     searchKnowledge: tool({
       description:
         "Wyszukuje informacje w prywatnej bazie wiedzy zalogowanego uzytkownika: cenniki, pakiety, oferty, FAQ, regulaminy, procedury i warunki.",
       inputSchema: searchKnowledgeInputSchema,
-      execute: async ({ query }) => searchKnowledge(query, userId),
+      execute: async ({ query }) =>
+        searchKnowledge(query, userId, database),
     }),
   };
 }
@@ -566,7 +570,8 @@ Zasady oferty:
 - Pisz po polsku, ciepło i profesjonalnie.
 - Dopasuj tytuł, zakres, efekt i inwestycję do opisu użytkownika.
 - Jeśli użytkownik poda czas, miejsce lub okazję, wykorzystaj je w ofercie.
-- Jeśli brakuje danych, przyjmij rozsądne założenia i zadaj jedno konkretne pytanie na końcu.
+- Jeśli brakuje danych opisowych, zadaj jedno konkretne pytanie na końcu. Nigdy nie wymyślaj ceny, pakietu ani warunków.
+- Kwotę inwestycji przepisuj wyłącznie z dostarczonych danych z bazy wiedzy. Nie używaj kwot z przykładów jako ceny dla klienta.
 - Format odpowiedzi ma być podobny do przykładów: emoji, pogrubiony tytuł, krótki wstęp, trzy punkty i pytanie.
 - Nie dodawaj sekcji analizy, trybów, rozważań ani standardowej persony.
 
@@ -579,7 +584,7 @@ oferta Sesja wizerunkowa dla trenera biznesowego w studio
 Cześć! Chętnie pomogę Ci stworzyć silny wizerunek w sieci. Oto propozycja:
 * **Zakres:** 2h sesji w profesjonalnym studiu, 3 różne stylizacje.
 * **Efekt:** 15 w pełni wyretuszowanych ujęć dostarczonych w 7 dni.
-* **Inwestycja:** 800 zł brutto (wynajem studia w cenie).
+* **Inwestycja:** zgodnie z aktualnym cennikiem w bazie wiedzy.
 
 Pytanie do Ciebie: Na kiedy planujesz premierę nowych materiałów, abyśmy zdążyli z terminem? 📷
 
@@ -592,7 +597,7 @@ Oferta Reportaż z 50. urodzin w restauracji, 4 godziny
 Cześć! Z wielką radością uwiecznię te wyjątkowe chwile. Oto szczegóły:
 * **Zakres:** 4h fotografowania w restauracji, reportaż z gośćmi i zdjęcia pozowane.
 * **Efekt:** Min. 80 zdjęć po selekcji i korekcji barwnej na pendrive.
-* **Inwestycja:** 1200 zł brutto.
+* **Inwestycja:** zgodnie z aktualnym cennikiem w bazie wiedzy.
 
 Pytanie do Ciebie: O której godzinie planujecie podanie tortu, żeby idealnie zaplanować moją obecność? 🎂`;
 
@@ -1372,7 +1377,7 @@ WAŻNE:
 
   let usedModel: string = models.flash;
   const profileTools = createProfileTools(userId, database);
-  const privateKnowledgeTools = createKnowledgeTools(userId);
+  const privateKnowledgeTools = createKnowledgeTools(userId, database);
   const runAgentGeneration = (modelId: string) =>
       shouldSearch && !shouldForceCalculator
         ? generateText({
@@ -1582,7 +1587,7 @@ async function generateAnswer({
 }) {
   const selectedModel = models[model];
   const profileTools = createProfileTools(userId, database);
-  const privateKnowledgeTools = createKnowledgeTools(userId);
+  const privateKnowledgeTools = createKnowledgeTools(userId, database);
   const availableTools = enableWebTools
     ? { ...webTools, ...privateKnowledgeTools, ...profileTools }
     : { ...knowledgeTools, ...privateKnowledgeTools, ...profileTools };
@@ -1725,9 +1730,52 @@ export async function POST(req: Request) {
 
     if (isOferta) {
       const offerDetails = getOfferDetails(lastMessage);
+      const offerQuery = [offerDetails, "cennik cena pakiet oferta"]
+        .filter(Boolean)
+        .join(" ");
+      const offerKnowledge = await searchKnowledge(
+        offerQuery,
+        activeUserId,
+        authenticatedDatabase,
+      );
+
+      if (offerKnowledge.total_found === 0) {
+        return createChatResponse(
+          "Nie mam tej informacji w bazie wiedzy, więc nie podam zmyślonej ceny. Dodaj właściwy cennik lub dokument z ofertą.",
+          chatMessages,
+        );
+      }
+
+      const knowledgeContext = offerKnowledge.results
+        .map(
+          (result) =>
+            `Dokument: ${result.title}\nTreść:\n${result.content}`,
+        )
+        .join("\n\n---\n\n");
+      const hasExplicitPrice = offerKnowledge.results.some((result) =>
+        /\b\d[\d\s.,]*\s*(?:zł|pln|brutto|netto|€|eur|usd)\b/i.test(
+          result.content,
+        ),
+      );
+
+      if (!hasExplicitPrice) {
+        return createChatResponse(
+          "Znalazłem dokumenty dotyczące tej usługi, ale nie ma w nich jednoznacznej ceny. Nie podam kwoty z pamięci ani z przykładu.",
+          chatMessages,
+        );
+      }
+
       const text = await generateAnswer({
         model: selectedModel,
-        system: `${offerPrompt}${safetyPrompt}${profilePrompt}`,
+        system: `${offerPrompt}${safetyPrompt}${profilePrompt}
+
+BEZWZGLĘDNE ZASADY DLA TEJ OFERTY:
+- Korzystaj wyłącznie z poniższych fragmentów dokumentów.
+- Cenę, zakres i warunki przepisuj tylko wtedy, gdy wynikają wprost z dokumentów.
+- Jeśli czegoś nie ma w dokumentach, napisz, że nie masz tej informacji. Nie uzupełniaj jej własnym przykładem.
+
+FRAGMENTY DOKUMENTÓW:
+${knowledgeContext}`,
         enableWebTools: false,
         userId: activeUserId,
         database: authenticatedDatabase,
@@ -1737,7 +1785,14 @@ export async function POST(req: Request) {
           "Przygotuj ofertę fotograficzną i zapytaj o najważniejsze brakujące szczegóły.",
       });
 
-      return createChatResponse(text, chatMessages);
+      const sourceDocuments = offerKnowledge.source_documents ?? [];
+      const hasSourceLabel = /(?:Zrodlo|Zrodla|Źródło|Źródła)\s*:/i.test(text);
+      const finalText =
+        sourceDocuments.length > 0 && !hasSourceLabel
+          ? `${text}\n\nŹródło: ${sourceDocuments.join(", ")}`
+          : text;
+
+      return createChatResponse(finalText, chatMessages);
     }
 
     if (purpose === "agent") {
