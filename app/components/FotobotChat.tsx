@@ -659,8 +659,8 @@ export default function Home() {
         >
           {messages.length === 0 ? (
             <p className="empty-state">
-              {userProfile?.name
-                ? `Cześć, ${userProfile.name}! Miło Cię znowu widzieć. `
+              {userProfile?.display_name
+                ? `Cześć, ${userProfile.display_name}! Miło Cię znowu widzieć. `
                 : "Cześć! Nie znamy się jeszcze. Jak masz na imię? "}
               Wybierz przykładowe pytanie albo opisz, z czym chcesz popracować
               fotograficznie.

@@ -1,5 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { GoogleGenAI, Modality } from "@google/genai";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -437,18 +438,23 @@ const localTools = {
 
 type StoredUserProfile = {
   id: string;
-  name: string | null;
+  display_name: string | null;
   preferences: Record<string, string> | null;
 };
 
-async function getUserProfile(userId: unknown) {
-  if (!supabase || typeof userId !== "string" || !userId.trim()) {
-    return getRememberedUserProfile();
+async function getUserProfile(
+  userId: unknown,
+  database?: SupabaseClient | null,
+) {
+  const profileDatabase = database ?? supabase;
+
+  if (!profileDatabase || typeof userId !== "string" || !userId.trim()) {
+    return null;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await profileDatabase
     .from("user_profiles")
-    .select("id, name, preferences")
+    .select("id, display_name, preferences")
     .eq("id", userId)
     .maybeSingle();
 
@@ -458,54 +464,35 @@ async function getUserProfile(userId: unknown) {
 
   const profile = data as StoredUserProfile | null;
 
-  if (profile?.name) {
-    return profile;
-  }
-
-  return getRememberedUserProfile();
-}
-
-async function getRememberedUserProfile() {
-  if (!supabase) {
-    return null;
-  }
-
-  const { data, error } = await supabase
-    .from("user_profiles")
-    .select("id, name, preferences")
-    .not("name", "is", null)
-    .order("name", { ascending: true })
-    .limit(1)
-    .maybeSingle();
-
-  if (error) {
-    throw error;
-  }
-
-  return data as StoredUserProfile | null;
+  return profile as StoredUserProfile | null;
 }
 
 function buildProfilePrompt(profile: StoredUserProfile | null) {
-  if (profile?.name) {
+  if (profile?.display_name) {
     const preferences = profile.preferences ?? {};
     const preferenceText = Object.keys(preferences).length
       ? ` Zapamiętane preferencje: ${JSON.stringify(preferences)}.`
       : "";
 
-    return `\n\nUżytkownik ma na imię ${profile.name}. Zwracaj się do niego po imieniu. Bądź ciepły i personalny — to Twój stały użytkownik.${preferenceText}`;
+    return `\n\nUżytkownik ma na imię ${profile.display_name}. Zwracaj się do niego po imieniu. Bądź ciepły i personalny — to Twój stały użytkownik.${preferenceText}`;
   }
 
-  return "\n\nTo nowy użytkownik. Przywitaj się krótko i zapytaj, jak ma na imię. Gdy poda imię, użyj narzędzia saveUserName, żeby je zapamiętać.";
+  return "\n\nNie znasz jeszcze imienia użytkownika. Na początku rozmowy zapytaj o nie grzecznie. Gdy użytkownik poda imię, użyj narzędzia updateUserName, aby je zapamiętać.";
 }
 
-function createProfileTools(userId: string | null) {
+function createProfileTools(
+  userId: string | null,
+  database?: SupabaseClient | null,
+) {
+  const profileDatabase = database ?? supabase;
+
   return {
-    saveUserName: tool({
+    updateUserName: tool({
       description:
         "Zapisuje imię użytkownika w jego profilu. Użyj, gdy użytkownik poda swoje imię.",
       inputSchema: saveUserNameInputSchema,
       execute: async ({ name }: SaveUserNameInput) => {
-        if (!supabase || !userId) {
+        if (!profileDatabase || !userId) {
           return { saved: false, error: "Brak identyfikatora użytkownika." };
         }
 
@@ -514,9 +501,12 @@ function createProfileTools(userId: string | null) {
           return { saved: false, error: "Imię nie może być puste." };
         }
 
-        const { error } = await supabase
+        const { error } = await profileDatabase
           .from("user_profiles")
-          .upsert({ id: userId, name: cleanedName }, { onConflict: "id" });
+          .upsert(
+            { id: userId, display_name: cleanedName },
+            { onConflict: "id" },
+          );
 
         if (error) {
           return { saved: false, error: error.message };
@@ -530,17 +520,17 @@ function createProfileTools(userId: string | null) {
         "Zapisuje preferencję użytkownika bez nadpisywania pozostałych preferencji.",
       inputSchema: saveUserPreferenceInputSchema,
       execute: async ({ key, value }: SaveUserPreferenceInput) => {
-        if (!supabase || !userId) {
-          return { saved: false, error: "Brak identyfikatora użytkownika." };
-        }
-
         const cleanKey = key.trim().slice(0, 80);
         const cleanValue = value.trim().slice(0, 200);
         if (!cleanKey || !cleanValue) {
           return { saved: false, error: "Klucz i wartość nie mogą być puste." };
         }
 
-        const { data: profile, error: profileError } = await supabase
+        if (!profileDatabase || !userId) {
+          return { saved: false, error: "Brak identyfikatora użytkownika." };
+        }
+
+        const { data: profile, error: profileError } = await profileDatabase
           .from("user_profiles")
           .select("preferences")
           .eq("id", userId)
@@ -554,7 +544,7 @@ function createProfileTools(userId: string | null) {
           ...((profile?.preferences as Record<string, string> | null) ?? {}),
           [cleanKey]: cleanValue,
         };
-        const { error } = await supabase
+        const { error } = await profileDatabase
           .from("user_profiles")
           .upsert({ id: userId, preferences }, { onConflict: "id" });
 
@@ -1276,12 +1266,14 @@ async function generateAgentResponse({
   image,
   text,
   userId,
+  database,
   profilePrompt,
 }: {
   messages: ModelMessage[];
   image: AttachedImage | null;
   text: string;
   userId: string | null;
+  database?: SupabaseClient | null;
   profilePrompt: string;
 }) {
   const startedAt = Date.now();
@@ -1379,7 +1371,7 @@ WAŻNE:
   };
 
   let usedModel: string = models.flash;
-  const profileTools = createProfileTools(userId);
+  const profileTools = createProfileTools(userId, database);
   const privateKnowledgeTools = createKnowledgeTools(userId);
   const runAgentGeneration = (modelId: string) =>
       shouldSearch && !shouldForceCalculator
@@ -1576,6 +1568,7 @@ async function generateAnswer({
   system,
   enableWebTools = true,
   userId = null,
+  database,
   profilePrompt = "",
 }: {
   messages?: Awaited<ReturnType<typeof convertToModelMessages>>;
@@ -1584,10 +1577,11 @@ async function generateAnswer({
   system: string;
   enableWebTools?: boolean;
   userId?: string | null;
+  database?: SupabaseClient | null;
   profilePrompt?: string;
 }) {
   const selectedModel = models[model];
-  const profileTools = createProfileTools(userId);
+  const profileTools = createProfileTools(userId, database);
   const privateKnowledgeTools = createKnowledgeTools(userId);
   const availableTools = enableWebTools
     ? { ...webTools, ...privateKnowledgeTools, ...profileTools }
@@ -1712,6 +1706,7 @@ export async function POST(req: Request) {
     const lastMessage = getLastUserText(chatMessages);
     const attachedImage = parseAttachedImage(image);
     let activeUserId = typeof userId === "string" ? userId : null;
+    let authenticatedDatabase: SupabaseClient | null = null;
 
     if (typeof authToken === "string" && authToken) {
       const auth = await getAuthenticatedRequest(
@@ -1722,8 +1717,9 @@ export async function POST(req: Request) {
         }),
       );
       activeUserId = auth.user.id;
+      authenticatedDatabase = auth.database;
     }
-    const userProfile = await getUserProfile(activeUserId);
+    const userProfile = await getUserProfile(activeUserId, authenticatedDatabase);
     const profilePrompt = buildProfilePrompt(userProfile);
     const isOferta = typeof lastMessage === "string" && isOfferCommand(lastMessage);
 
@@ -1734,6 +1730,7 @@ export async function POST(req: Request) {
         system: `${offerPrompt}${safetyPrompt}${profilePrompt}`,
         enableWebTools: false,
         userId: activeUserId,
+        database: authenticatedDatabase,
         profilePrompt: "",
         prompt:
           offerDetails ||
@@ -1749,6 +1746,7 @@ export async function POST(req: Request) {
         image: attachedImage,
         text: lastMessage,
         userId: activeUserId,
+        database: authenticatedDatabase,
         profilePrompt,
       });
 
@@ -1764,6 +1762,7 @@ export async function POST(req: Request) {
             ? visionPrompt
             : systemPrompts[selectedMode],
       userId: activeUserId,
+      database: authenticatedDatabase,
       profilePrompt,
       messages: addImageToLastUserMessage({
         messages: await convertToModelMessages(chatMessages),

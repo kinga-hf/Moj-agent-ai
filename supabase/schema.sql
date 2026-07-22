@@ -22,6 +22,7 @@ create table if not exists public.user_profiles (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   name text,
+  display_name text,
   preferences jsonb not null default '{}'::jsonb
 );
 

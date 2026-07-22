@@ -2,7 +2,7 @@ import { supabase } from "./supabase";
 
 export type UserProfile = {
   id: string;
-  name: string | null;
+  display_name: string | null;
   preferences: Record<string, string>;
 };
 
@@ -13,7 +13,7 @@ export async function ensureUserProfile(userId: string) {
 
   const { data: existingProfile, error: selectError } = await supabase
     .from("user_profiles")
-    .select("id, name, preferences")
+    .select("id, display_name, preferences")
     .eq("id", userId)
     .maybeSingle();
 
@@ -21,19 +21,10 @@ export async function ensureUserProfile(userId: string) {
     throw selectError;
   }
 
-  if (existingProfile?.name) {
-    return {
-      id: existingProfile.id,
-      name: existingProfile.name,
-      preferences:
-        (existingProfile.preferences as Record<string, string> | null) ?? {},
-    } satisfies UserProfile;
-  }
-
   if (existingProfile) {
     return {
       id: existingProfile.id,
-      name: existingProfile.name,
+      display_name: existingProfile.display_name,
       preferences:
         (existingProfile.preferences as Record<string, string> | null) ?? {},
     } satisfies UserProfile;
@@ -41,8 +32,8 @@ export async function ensureUserProfile(userId: string) {
 
   const { data: newProfile, error: insertError } = await supabase
     .from("user_profiles")
-    .insert({ id: userId, preferences: {} })
-    .select("id, name, preferences")
+    .insert({ id: userId, display_name: null, preferences: {} })
+    .select("id, display_name, preferences")
     .single();
 
   if (insertError) {
@@ -51,7 +42,7 @@ export async function ensureUserProfile(userId: string) {
 
   return {
     id: newProfile.id,
-    name: newProfile.name,
+    display_name: newProfile.display_name,
     preferences: (newProfile.preferences as Record<string, string> | null) ?? {},
   } satisfies UserProfile;
 }
