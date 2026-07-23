@@ -2453,6 +2453,20 @@ button {
   gap: 16px;
 }
 
+.legal-standalone-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 16% 10%, rgba(255, 224, 138, 0.24), transparent 30%),
+    radial-gradient(circle at 88% 16%, rgba(191, 231, 243, 0.16), transparent 28%),
+    linear-gradient(135deg, #151004 0%, #2c2108 52%, #3a2a0a 100%);
+}
+
+.legal-standalone-page {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 32px 26px 48px;
+}
+
 .legal-hero {
   background:
     linear-gradient(135deg, rgba(255, 224, 138, 0.2), transparent 42%),
@@ -3808,6 +3822,10 @@ button {
 
   .dashboard-main {
     padding: 70px 14px 18px;
+  }
+
+  .legal-standalone-page {
+    padding: 18px 14px 28px;
   }
 
   .dashboard-hero {

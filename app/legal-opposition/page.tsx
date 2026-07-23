@@ -178,7 +178,7 @@ function MarkdownLegal({ text }: { text: string }) {
   return <article className="legal-document">{blocks}</article>;
 }
 
-export default function LegalOppositionPage() {
+export function LegalOppositionPage({ standalone = false }: { standalone?: boolean } = {}) {
   const [pleadingType, setPleadingType] = useState("");
   const [caseContext, setCaseContext] = useState("");
   const [pleadingText, setPleadingText] = useState("");
@@ -289,10 +289,13 @@ export default function LegalOppositionPage() {
   }
 
   return (
-    <main className="dashboard-shell">
-      <DashboardSidebar />
+    <main className={standalone ? "legal-standalone-shell" : "dashboard-shell"}>
+      {standalone ? null : <DashboardSidebar />}
 
-      <section className="dashboard-main legal-page" aria-label="Legal Opposition Summarizer & Briefing Tool">
+      <section
+        className={`dashboard-main legal-page${standalone ? " legal-standalone-page" : ""}`}
+        aria-label="Legal Opposition Summarizer & Briefing Tool"
+      >
         <header className="dashboard-hero legal-hero">
           <div>
             <span className="dashboard-kicker">Litigation briefing</span>
@@ -401,3 +404,5 @@ export default function LegalOppositionPage() {
     </main>
   );
 }
+
+export default LegalOppositionPage;
