@@ -54,7 +54,7 @@ const tools = [
 const agentModes = [
   { href: "/travel", icon: "✈️", label: "Podróże", description: "planowanie wyjazdów" },
   { href: "/react", icon: "🔄", label: "ReAct", description: "autonomiczne zadania" },
-  { href: "/chat", icon: "💬", label: "Chat", description: "rozmowa z FOTOBOTEM" },
+  { href: "/chat", icon: "💬", label: "Chat prawniczy", description: "rozmowa z Legal AI" },
   { href: "/think", icon: "🧠", label: "Myślenie", description: "głębsza analiza" },
   { href: "/search", icon: "🌐", label: "Szukaj", description: "internet i źródła" },
   { href: "/translator", icon: "🌐", label: "Tłumacz", description: "tłumaczenie tekstu" },

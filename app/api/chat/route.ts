@@ -16,12 +16,12 @@ import { supabase } from "../../../lib/supabase";
 import { searchKnowledge } from "../../../lib/knowledge";
 import { getAuthenticatedRequest } from "../../../lib/supabase-request";
 
-const professionalPersona = `# FOTOBOT — ekspert fotografii reportażowej i storytellingu wizualnego
+const professionalPersona = `# LEGAL AI — praktyczny asystent prawniczy
 
 ## KIM JESTEM
-Jestem FOTOBOTEM, ekspertem fotografii z 5-letnim doświadczeniem w fotografii reportażowej, portretowej i dokumentalnej.
-Specjalizuję się w reportażu ślubnym, pracy ze światłem zastanym oraz budowaniu spójnej historii zdjęciowej.
-Pomagałem parom, rodzinom, małym markom osobistym i osobom, które chcą wyglądać naturalnie przed obiektywem.
+Jestem asystentem do pracy z informacją prawną, dokumentami i pismami procesowymi.
+Pomagam porządkować stan faktyczny, wykrywać argumenty, przygotowywać pytania i tworzyć robocze projekty pism.
+Nie zastępuję adwokata ani radcy prawnego i nie podejmuję decyzji za użytkownika.
 
 ## JAK ODPOWIADAM
 
@@ -32,7 +32,7 @@ Pomagałem parom, rodzinom, małym markom osobistym i osobom, które chcą wygl�
 4. ❓ **Pytanie** — jedno pytanie pogłębiające do użytkownika
 
 ### Zasady:
-- ZANIM odpowiem na złożone pytanie — pytam o kontekst
+- ZANIM odpowiem na złożone pytanie — ustalam najważniejszy kontekst sprawy
 - Gdy podaję fakty — oznaczam pewność: ✓ pewne, ~ przybliżone, ? do weryfikacji
 - **Pogrubiam** kluczowe terminy przy pierwszym użyciu
 - Używam list numerowanych dla kroków, punktowanych dla opcji
@@ -43,12 +43,12 @@ Pomagałem parom, rodzinom, małym markom osobistym i osobom, które chcą wygl�
 - Język: polski
 - Ton: profesjonalny, ciepły i przystępny
 - Gdy używam terminu branżowego — wyjaśniam go w nawiasie
-- Używam emoji związanych z fotografią, gdy pasują naturalnie: 📸, 📷, 🎞️
+- W razie potrzeby wskazuję, które fakty, dokumenty lub przepisy wymagają weryfikacji
 
 ## CZEGO NIE ROBIĘ
-- Nie odpowiadam na pytania spoza mojej dziedziny — mówię wprost: "To nie moja specjalizacja, ale mogę pomóc z fotografii"
+- Nie udaję pewności w kwestiach zależnych od aktualnego prawa lub akt sprawy
 - Nie udaję, że wiem coś, czego nie wiem
-- Nie udzielam porad prawnych, medycznych ani finansowych; odsyłam do właściwego specjalisty`;
+- Nie przedstawiam roboczej analizy jako indywidualnej porady prawnej — zalecam weryfikację przez profesjonalnego pełnomocnika`;
 
 const safetyPrompt = `
 
@@ -62,16 +62,16 @@ const safetyPrompt = `
 const systemPrompts = {
   casual: `${professionalPersona}
 
-Tryb CASUAL:
-Zachowaj strukturę profesjonalnej odpowiedzi, ale pisz luźniej i bardziej bezpośrednio. Krócej, bez nadęcia, jak do osoby znajomej.${safetyPrompt}`,
+Tryb PRAKTYCZNY:
+Pisz jasno, krótko i konkretnie. Najpierw podaj wniosek, potem uzasadnienie i kolejne kroki.${safetyPrompt}`,
   expert: `${professionalPersona}
 
 Tryb EKSPERT:
 Zachowaj strukturę profesjonalnej odpowiedzi. Pisz bardziej szczegółowo, precyzyjnie i technicznie, ale nadal zrozumiale.${safetyPrompt}`,
   creative: `${professionalPersona}
 
-Tryb KREATYWNY:
-Zachowaj strukturę profesjonalnej odpowiedzi. Dodawaj metafory wizualne, analogie i nieszablonowe spojrzenie na fotografię.${safetyPrompt}`,
+Tryb REDAKCJA:
+Pomagaj tworzyć robocze projekty pism, tez, pytań i checklist. Oznaczaj miejsca wymagające uzupełnienia danymi ze sprawy.${safetyPrompt}`,
 } as const;
 
 const searchPrompt = `Jesteś pomocnym agentem internetowym. Odpowiadasz po polsku, jasno i konkretnie.
@@ -562,44 +562,19 @@ function createProfileTools(
   };
 }
 
-const offerPrompt = `Jesteś FOTOBOTEM, ekspertem fotografii i tworzysz profesjonalne oferty fotograficzne.
+const draftPrompt = `Jesteś asystentem prawniczym i tworzysz robocze projekty pism procesowych.
 
-Jeśli użytkownik zaczyna wiadomość od słowa "oferta", ignorujesz standardową rozmowę i generujesz wyłącznie ofertę według wzorca z przykładów.
+Jeśli użytkownik zaczyna wiadomość od słowa "projekt", przygotuj wyłącznie uporządkowany projekt wskazanego pisma.
 
-Zasady oferty:
-- Pisz po polsku, ciepło i profesjonalnie.
-- Dopasuj tytuł, zakres, efekt i inwestycję do opisu użytkownika.
-- Jeśli użytkownik poda czas, miejsce lub okazję, wykorzystaj je w ofercie.
-- Jeśli brakuje danych opisowych, zadaj jedno konkretne pytanie na końcu. Nigdy nie wymyślaj ceny, pakietu ani warunków.
-- Kwotę inwestycji przepisuj wyłącznie z dostarczonych danych z bazy wiedzy. Nie używaj kwot z przykładów jako ceny dla klienta.
-- Format odpowiedzi ma być podobny do przykładów: emoji, pogrubiony tytuł, krótki wstęp, trzy punkty i pytanie.
-- Nie dodawaj sekcji analizy, trybów, rozważań ani standardowej persony.
+Zasady redakcji:
+- Pisz po polsku, jasno i profesjonalnie.
+- Nie wymyślaj faktów, sygnatur, dat ani przepisów. Oznacz brakujące dane nawiasami kwadratowymi.
+- Rozdziel stan faktyczny, podstawę argumentacji, wnioski i uzasadnienie.
+- Zachowaj neutralny język i dodaj krótką checklistę elementów do weryfikacji przez prawnika.
+- Nie przedstawiaj projektu jako gotowej porady prawnej ani gwarancji wyniku.
+- Jeśli użytkownik poda typ pisma, dopasuj strukturę do tego pisma.
 
-### Przykład 1 (Input)
-oferta Sesja wizerunkowa dla trenera biznesowego w studio
-
-### Przykład 1 (Output)
-📸 **OFERTA: Sesja wizerunkowa (Trener Biznesowy)**
-
-Cześć! Chętnie pomogę Ci stworzyć silny wizerunek w sieci. Oto propozycja:
-* **Zakres:** 2h sesji w profesjonalnym studiu, 3 różne stylizacje.
-* **Efekt:** 15 w pełni wyretuszowanych ujęć dostarczonych w 7 dni.
-* **Inwestycja:** zgodnie z aktualnym cennikiem w bazie wiedzy.
-
-Pytanie do Ciebie: Na kiedy planujesz premierę nowych materiałów, abyśmy zdążyli z terminem? 📷
-
-### Przykład 2 (Input)
-Oferta Reportaż z 50. urodzin w restauracji, 4 godziny
-
-### Przykład 2 (Output)
-🎞️ **OFERTA: Reportaż Urodzinowy (50 lat)**
-
-Cześć! Z wielką radością uwiecznię te wyjątkowe chwile. Oto szczegóły:
-* **Zakres:** 4h fotografowania w restauracji, reportaż z gośćmi i zdjęcia pozowane.
-* **Efekt:** Min. 80 zdjęć po selekcji i korekcji barwnej na pendrive.
-* **Inwestycja:** zgodnie z aktualnym cennikiem w bazie wiedzy.
-
-Pytanie do Ciebie: O której godzinie planujecie podanie tortu, żeby idealnie zaplanować moją obecność? 🎂`;
+Przygotuj zwięzły, edytowalny dokument z nagłówkami i miejscami do uzupełnienia.`;
 
 type ChatMode = keyof typeof systemPrompts;
 type AiModel = keyof typeof models;
@@ -650,14 +625,14 @@ function getLastUserText(messages: unknown) {
   return "";
 }
 
-function isOfferCommand(text: string) {
+function isDraftCommand(text: string) {
   const normalizedText = text.trim().toLowerCase();
 
-  return normalizedText.startsWith("oferta");
+  return normalizedText.startsWith("projekt");
 }
 
-function getOfferDetails(text: string) {
-  return text.trim().slice("oferta".length).trim();
+function getDraftDetails(text: string) {
+  return text.trim().slice("projekt".length).trim();
 }
 
 function parseAttachedImage(image: unknown): AttachedImage | null {
@@ -959,7 +934,7 @@ async function readWebPage(url: string) {
   try {
     const response = await fetch(parsedUrl.toString(), {
       headers: {
-        "User-Agent": "FOTOBOT/1.0 (+https://local.fotobot)",
+        "User-Agent": "LegalAI/1.0 (+https://moj-agent.vercel.app)",
       },
       signal: controller.signal,
     });
@@ -1726,53 +1701,40 @@ export async function POST(req: Request) {
     }
     const userProfile = await getUserProfile(activeUserId, authenticatedDatabase);
     const profilePrompt = buildProfilePrompt(userProfile);
-    const isOferta = typeof lastMessage === "string" && isOfferCommand(lastMessage);
+    const isDraft = typeof lastMessage === "string" && isDraftCommand(lastMessage);
 
-    if (isOferta) {
-      const offerDetails = getOfferDetails(lastMessage);
-      const offerQuery = [offerDetails, "cennik cena pakiet oferta"]
+    if (isDraft) {
+      const draftDetails = getDraftDetails(lastMessage);
+      const draftQuery = [draftDetails, "wzór pisma procedura argumentacja"]
         .filter(Boolean)
         .join(" ");
-      const offerKnowledge = await searchKnowledge(
-        offerQuery,
+      const draftKnowledge = await searchKnowledge(
+        draftQuery,
         activeUserId,
         authenticatedDatabase,
       );
 
-      if (offerKnowledge.total_found === 0) {
+      if (draftKnowledge.total_found === 0) {
         return createChatResponse(
           "Nie mam tej informacji w bazie wiedzy, więc nie podam zmyślonej ceny. Dodaj właściwy cennik lub dokument z ofertą.",
           chatMessages,
         );
       }
 
-      const knowledgeContext = offerKnowledge.results
+      const knowledgeContext = draftKnowledge.results
         .map(
           (result) =>
             `Dokument: ${result.title}\nTreść:\n${result.content}`,
         )
         .join("\n\n---\n\n");
-      const hasExplicitPrice = offerKnowledge.results.some((result) =>
-        /\b\d[\d\s.,]*\s*(?:zł|pln|brutto|netto|€|eur|usd)\b/i.test(
-          result.content,
-        ),
-      );
-
-      if (!hasExplicitPrice) {
-        return createChatResponse(
-          "Znalazłem dokumenty dotyczące tej usługi, ale nie ma w nich jednoznacznej ceny. Nie podam kwoty z pamięci ani z przykładu.",
-          chatMessages,
-        );
-      }
-
       const text = await generateAnswer({
         model: selectedModel,
-        system: `${offerPrompt}${safetyPrompt}${profilePrompt}
+        system: `${draftPrompt}${safetyPrompt}${profilePrompt}
 
-BEZWZGLĘDNE ZASADY DLA TEJ OFERTY:
-- Korzystaj wyłącznie z poniższych fragmentów dokumentów.
-- Cenę, zakres i warunki przepisuj tylko wtedy, gdy wynikają wprost z dokumentów.
-- Jeśli czegoś nie ma w dokumentach, napisz, że nie masz tej informacji. Nie uzupełniaj jej własnym przykładem.
+BEZWZGLĘDNE ZASADY DLA TEGO PROJEKTU:
+- Korzystaj wyłącznie z poniższych fragmentów dokumentów jako materiału pomocniczego.
+- Nie dopisuj faktów, sygnatur ani podstaw prawnych, których nie ma w danych.
+- Jeśli czegoś brakuje, oznacz to jako [DO UZUPEŁNIENIA].
 
 FRAGMENTY DOKUMENTÓW:
 ${knowledgeContext}`,
@@ -1781,11 +1743,11 @@ ${knowledgeContext}`,
         database: authenticatedDatabase,
         profilePrompt: "",
         prompt:
-          offerDetails ||
-          "Przygotuj ofertę fotograficzną i zapytaj o najważniejsze brakujące szczegóły.",
+          draftDetails ||
+          "Przygotuj projekt pisma i oznacz brakujące dane.",
       });
 
-      const sourceDocuments = offerKnowledge.source_documents ?? [];
+      const sourceDocuments = draftKnowledge.source_documents ?? [];
       const hasSourceLabel = /(?:Zrodlo|Zrodla|Źródło|Źródła)\s*:/i.test(text);
       const finalText =
         sourceDocuments.length > 0 && !hasSourceLabel

@@ -58,7 +58,7 @@ const quickActions = [
   { href: "/travel", icon: "✈️", label: "Podróż" },
   { href: "/react?prompt=Por%C3%B3wnaj%20kursy%20EUR%2C%20USD%2C%20GBP%2C%20CHF", icon: "💶", label: "Waluty" },
   { href: "/react", icon: "🔄", label: "ReAct" },
-  { href: "/chat", icon: "💬", label: "Chat" },
+  { href: "/chat", icon: "💬", label: "Chat prawniczy" },
   { href: "/think", icon: "🧠", label: "Myślenie" },
   { href: "/fewshot", icon: "📖", label: "Słownik AI" },
 ];

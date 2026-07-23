@@ -18,16 +18,16 @@ import {
 
 type ChatMode = "casual" | "expert" | "creative";
 type AiModel = "flash" | "pro";
-type CommandType = "chat" | "oferta";
+type CommandType = "chat" | "projekt";
 
 const modes: Array<{
   id: ChatMode;
   label: string;
   badge: string;
 }> = [
-  { id: "casual", label: "💬 Casual", badge: "💬 casual" },
+  { id: "casual", label: "💬 Praktyczny", badge: "💬 praktyczny" },
   { id: "expert", label: "🎓 Ekspert", badge: "🎓 ekspert" },
-  { id: "creative", label: "🎨 Kreatywny", badge: "🎨 kreatywny" },
+  { id: "creative", label: "✍️ Redakcja", badge: "✍️ redakcja" },
 ];
 
 const models: Array<{
@@ -39,16 +39,16 @@ const models: Array<{
   { id: "pro", label: "🧠 Pro", badge: "🧠 pro" },
 ];
 
-const exampleQuestions = [
-  "Jak zrobić naturalny reportaż ślubny bez pozowania?",
-  "Jak ustawić aparat do zdjęć w ciemnym kościele?",
-  "Jak wybrać najlepsze zdjęcia do portfolio?",
-  "Jak opowiedzieć historię jednym kadrem?",
+const legalExampleQuestions = [
+  "Przeanalizuj ten problem prawny i wskaż, jakich faktów brakuje.",
+  "Wyjaśnij różnicę między sprzeciwem, zarzutem i wnioskiem procesowym.",
+  "Przygotuj listę pytań do świadka w sprawie o niewykonanie umowy.",
+  "Sprawdź aktualne orzecznictwo dotyczące przedawnienia roszczenia.",
 ];
 
-const offerExamples = [
-  "oferta Sesja wizerunkowa dla trenera biznesowego w studio",
-  "Oferta Reportaż z 50. urodzin w restauracji, 4 godziny",
+const legalDraftExamples = [
+  "projekt odpowiedzi na pozew o zapłatę",
+  "projekt wniosku o przesłuchanie świadka",
 ];
 
 const modeBadges = modes.reduce<Record<ChatMode, string>>((acc, item) => {
@@ -70,10 +70,11 @@ function getMessageText(parts: { type: string; text?: string }[]) {
 
 function getConversationTitle(text: string) {
   const normalizedText = text.trim();
-
-  return normalizedText.length <= 50
+  const shortTitle = normalizedText.length <= 50
     ? normalizedText
     : `${normalizedText.slice(0, 47).trimEnd()}...`;
+
+  return `Legal AI: ${shortTitle}`;
 }
 
 function splitMessageSources(text: string) {
@@ -212,7 +213,8 @@ export default function Home() {
         let conversationQuery = supabase
           .from("conversations")
           .select("id")
-          .eq("user_id", userId);
+          .eq("user_id", userId)
+          .like("title", "Legal AI:%");
         conversationQuery = requestedConversationId
           ? conversationQuery.eq("id", requestedConversationId)
           : conversationQuery.order("updated_at", { ascending: false });
@@ -435,8 +437,8 @@ export default function Home() {
     setInput("");
     pendingModeRef.current = mode;
     pendingModelRef.current = model;
-    pendingCommandRef.current = /^oferta(\s|$)/i.test(trimmedText)
-      ? "oferta"
+    pendingCommandRef.current = /^projekt(\s|$)/i.test(trimmedText)
+      ? "projekt"
       : "chat";
     const imageToSend = attachedImage?.dataUrl;
     const { data: sessionData } = supabase
@@ -488,7 +490,7 @@ export default function Home() {
 
     const { data: newConversation, error: conversationError } = await supabase
       .from("conversations")
-      .insert({ title: "Nowa rozmowa", user_id: userId })
+      .insert({ title: "Legal AI: Nowa rozmowa", user_id: userId })
       .select("id")
       .single();
 
@@ -513,7 +515,7 @@ export default function Home() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app" aria-label="FOTOBOT — ekspert fotografii">
+      <section className="chat-app" aria-label="Legal AI — czat prawniczy">
         <DropOverlay visible={isDraggingImage} />
         <nav className="top-nav" aria-label="Nawigacja">
           <BackNavLink />
@@ -552,14 +554,13 @@ export default function Home() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">FOTOBOT — ekspert fotografii 📸</h1>
+            <h1 className="chat-title">Legal AI — czat prawniczy ⚖️</h1>
             <p className="agent-description">
-              Ekspert od fotografii reportażowej. Zapytaj mnie o kadry,
-              światło, storytelling, portfolio albo pracę z ludźmi przed
-              obiektywem.
+              Pomagam porządkować problemy prawne, analizować argumenty,
+              szukać źródeł i przygotowywać robocze projekty pism.
             </p>
             <div className="example-questions" aria-label="Przykładowe pytania">
-              {exampleQuestions.map((question) => (
+              {legalExampleQuestions.map((question) => (
                 <button
                   className="example-button"
                   disabled={isLoading}
@@ -573,11 +574,11 @@ export default function Home() {
             </div>
             <div className="command-card">
               <div>
-                <strong>Komenda biznesowa:</strong> zacznij wiadomość od <code>oferta</code>,
-                a FOTOBOT przygotuje gotową ofertę fotograficzną.
+                <strong>Tryb redakcyjny:</strong> zacznij wiadomość od <code>projekt</code>,
+                a asystent przygotuje roboczy projekt pisma procesowego.
               </div>
               <div className="command-examples">
-                {offerExamples.map((command) => (
+                {legalDraftExamples.map((command) => (
                   <button
                     className="command-button"
                     disabled={isLoading}
@@ -665,8 +666,8 @@ export default function Home() {
               {userProfile?.display_name
                 ? `Cześć, ${userProfile.display_name}! Miło Cię znowu widzieć. `
                 : "Cześć! Nie znamy się jeszcze. Jak masz na imię? "}
-              Wybierz przykładowe pytanie albo opisz, z czym chcesz popracować
-              fotograficznie.
+              Wybierz przykładowe pytanie albo opisz problem prawny, z którym
+              chcesz pracować.
             </p>
           ) : (
             messages.map((message) => (
@@ -691,8 +692,8 @@ export default function Home() {
                       >
                         {modelBadges[assistantModels[message.id] ?? "flash"]}
                       </span>
-                      {assistantCommands[message.id] === "oferta" ? (
-                        <span className="command-badge">📄 oferta</span>
+                      {assistantCommands[message.id] === "projekt" ? (
+                        <span className="command-badge">📄 projekt</span>
                       ) : null}
                     </div>
                   ) : null}
@@ -725,8 +726,8 @@ export default function Home() {
                   <span className={`model-badge ${pendingModelRef.current}`}>
                     {modelBadges[pendingModelRef.current]}
                   </span>
-                  {pendingCommandRef.current === "oferta" ? (
-                    <span className="command-badge">📄 oferta</span>
+                  {pendingCommandRef.current === "projekt" ? (
+                    <span className="command-badge">📄 projekt</span>
                   ) : null}
                 </div>
                 Myślę...
@@ -790,7 +791,7 @@ export default function Home() {
               disabled={isLoading}
               onChange={(event) => setInput(event.target.value)}
               onPaste={(event) => void handlePaste(event)}
-              placeholder="Napisz wiadomość albo oferta opis zlecenia..."
+              placeholder="Napisz pytanie prawne albo polecenie redakcyjne..."
               value={input}
             />
             <button

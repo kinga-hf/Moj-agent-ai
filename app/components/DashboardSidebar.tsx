@@ -15,7 +15,7 @@ const navigation = [
   { href: "/react", icon: "🔄", label: "ReAct" },
   { href: "/travel", icon: "🌍", label: "Podróże" },
   { href: "/translator", icon: "🌐", label: "Tłumacz" },
-  { href: "/chat", icon: "💬", label: "Chat" },
+  { href: "/chat", icon: "💬", label: "Chat prawniczy" },
   { href: "/history", icon: "📜", label: "Historia" },
   { href: "/think", icon: "🧠", label: "Myślenie" },
   { href: "/search", icon: "🔎", label: "Szukaj" },
