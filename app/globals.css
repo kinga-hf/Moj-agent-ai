@@ -2467,6 +2467,77 @@ button {
   padding: 32px 26px 48px;
 }
 
+.legal-history {
+  display: grid;
+  gap: 12px;
+  border: 1px solid rgba(255, 224, 138, 0.24);
+  border-radius: 8px;
+  background: rgba(255, 252, 240, 0.06);
+  padding: 16px;
+}
+
+.legal-history-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.legal-history-heading h2 {
+  margin: 0;
+  color: #fffaf0;
+  font-size: 1.15rem;
+}
+
+.legal-history-heading > span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.legal-history-list {
+  display: grid;
+  gap: 8px;
+}
+
+.legal-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid rgba(255, 224, 138, 0.2);
+  border-radius: 8px;
+  background: rgba(20, 16, 6, 0.36);
+  color: var(--foreground);
+  padding: 12px;
+  text-decoration: none;
+}
+
+.legal-history-item:hover {
+  border-color: rgba(255, 224, 138, 0.52);
+  background: rgba(255, 224, 138, 0.1);
+}
+
+.legal-history-item strong,
+.legal-history-item span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.legal-history-item span {
+  color: var(--muted);
+  font-size: 0.86rem;
+  text-align: right;
+}
+
+.legal-history-empty {
+  border: 1px dashed rgba(255, 224, 138, 0.28);
+  border-radius: 8px;
+  color: var(--muted);
+  padding: 16px;
+  text-align: center;
+}
+
 .legal-hero {
   background:
     linear-gradient(135deg, rgba(255, 224, 138, 0.2), transparent 42%),
@@ -3826,6 +3897,15 @@ button {
 
   .legal-standalone-page {
     padding: 18px 14px 28px;
+  }
+
+  .legal-history-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .legal-history-item span {
+    text-align: left;
   }
 
   .dashboard-hero {

@@ -1,13 +1,21 @@
 "use client";
 
-import { ChangeEvent, FormEvent, ReactNode, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { useAuth } from "../components/AuthGate";
+import { supabase } from "../../lib/supabase";
 
 type Example = {
   label: string;
   pleadingType: string;
   caseContext: string;
   pleadingText: string;
+};
+
+type LegalBriefingSummary = {
+  id: string;
+  title: string | null;
+  updated_at: string;
 };
 
 const examples: Example[] = [
@@ -179,6 +187,7 @@ function MarkdownLegal({ text }: { text: string }) {
 }
 
 export function LegalOppositionPage({ standalone = false }: { standalone?: boolean } = {}) {
+  const { user } = useAuth();
   const [pleadingType, setPleadingType] = useState("");
   const [caseContext, setCaseContext] = useState("");
   const [pleadingText, setPleadingText] = useState("");
@@ -188,7 +197,76 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
+  const [briefings, setBriefings] = useState<LegalBriefingSummary[]>([]);
+  const [isBriefingsLoading, setIsBriefingsLoading] = useState(standalone);
+  const [historyError, setHistoryError] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  async function loadBriefings() {
+    if (!standalone || !supabase || !user) {
+      setIsBriefingsLoading(false);
+      return;
+    }
+
+    setIsBriefingsLoading(true);
+    const { data, error: queryError } = await supabase
+      .from("conversations")
+      .select("id, title, updated_at")
+      .eq("user_id", user.id)
+      .like("title", "Legal Briefing:%")
+      .order("updated_at", { ascending: false });
+
+    if (queryError) {
+      setHistoryError("Nie udało się wczytać Twojej historii briefingów.");
+    } else {
+      setBriefings((data ?? []) as LegalBriefingSummary[]);
+      setHistoryError("");
+    }
+
+    setIsBriefingsLoading(false);
+  }
+
+  useEffect(() => {
+    void loadBriefings();
+  }, [standalone, user?.id]);
+
+  async function saveBriefing(content: string) {
+    if (!supabase || !user || !content.trim()) {
+      return;
+    }
+
+    const title = `Legal Briefing: ${pleadingType.trim().slice(0, 100)}`;
+    const userMessage = [
+      `Rodzaj pisma: ${pleadingType.trim()}`,
+      caseContext.trim() ? `Kontekst sprawy: ${caseContext.trim()}` : "",
+      "",
+      "Treść pisma przeciwnika:",
+      pleadingText.trim(),
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const { data: conversation, error: conversationError } = await supabase
+      .from("conversations")
+      .insert({ title, user_id: user.id })
+      .select("id")
+      .single();
+
+    if (conversationError || !conversation) {
+      throw conversationError ?? new Error("Nie udało się utworzyć briefingu.");
+    }
+
+    const { error: messagesError } = await supabase.from("messages").insert([
+      { conversation_id: conversation.id, role: "user", content: userMessage },
+      { conversation_id: conversation.id, role: "assistant", content: content.trim() },
+    ]);
+
+    if (messagesError) {
+      throw messagesError;
+    }
+
+    await loadBriefings();
+  }
 
   function applyExample(example: Example) {
     setPleadingType(example.pleadingType);
@@ -236,13 +314,22 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
     setAnalysis("");
     setError("");
+    setHistoryError("");
     setCopyStatus("");
     setIsLoading(true);
 
     try {
+      const { data: sessionData } = supabase
+        ? await supabase.auth.getSession()
+        : { data: { session: null } };
+      const accessToken = sessionData.session?.access_token;
+
       const response = await fetch("/api/legal-opposition", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify({
           pleadingType,
           pleadingText,
@@ -257,6 +344,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let completedAnalysis = "";
 
       while (true) {
         const { done, value } = await reader.read();
@@ -264,12 +352,22 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
         if (done) {
           const tail = decoder.decode();
           if (tail) {
+            completedAnalysis += tail;
             setAnalysis((current) => current + tail);
           }
           break;
         }
 
-        setAnalysis((current) => current + decoder.decode(value, { stream: true }));
+        const chunk = decoder.decode(value, { stream: true });
+        completedAnalysis += chunk;
+        setAnalysis((current) => current + chunk);
+      }
+
+      try {
+        await saveBriefing(completedAnalysis);
+      } catch (caughtError) {
+        console.error("Legal briefing history save error:", caughtError);
+        setHistoryError("Briefing jest gotowy, ale nie udało się zapisać go w Twojej historii.");
       }
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Nie udało się przygotować briefingu pisma.");
@@ -382,6 +480,39 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
             Narzędzie pomija koszty i wyliczenia. Wynik jest roboczym briefingiem do weryfikacji w aktach i aktualnym orzecznictwie.
           </p>
         </section>
+
+        {standalone ? (
+          <section className="legal-history" aria-label="Moje briefingi">
+            <div className="legal-history-heading">
+              <div>
+                <span className="dashboard-kicker">Prywatna historia</span>
+                <h2>Moje briefingi</h2>
+              </div>
+              <span>{briefings.length} zapisanych</span>
+            </div>
+
+            {historyError ? <div className="legal-error">{historyError}</div> : null}
+            {isBriefingsLoading ? (
+              <div className="legal-history-empty">Wczytywanie Twojej historii...</div>
+            ) : briefings.length === 0 ? (
+              <div className="legal-history-empty">Nie masz jeszcze zapisanych briefingów.</div>
+            ) : (
+              <div className="legal-history-list">
+                {briefings.map((briefing) => (
+                  <a className="legal-history-item" href={`/history/${briefing.id}`} key={briefing.id}>
+                    <strong>{(briefing.title ?? "Legal Briefing").replace("Legal Briefing: ", "")}</strong>
+                    <span>
+                      {new Intl.DateTimeFormat("pl-PL", {
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                      }).format(new Date(briefing.updated_at))}
+                    </span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : null}
 
         {error ? <div className="legal-error">{error}</div> : null}
 

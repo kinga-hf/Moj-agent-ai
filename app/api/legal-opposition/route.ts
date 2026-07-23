@@ -1,5 +1,6 @@
 import { google } from "@ai-sdk/google";
 import { jsonSchema, stepCountIs, streamText, tool } from "ai";
+import { getAuthenticatedRequest } from "../../../lib/supabase-request";
 
 type ReadWebPageInput = {
   url: string;
@@ -212,6 +213,8 @@ function asCleanText(value: unknown, maxLength: number) {
 
 export async function POST(req: Request) {
   try {
+    await getAuthenticatedRequest(req);
+
     const {
       pleadingType,
       pleadingText,
@@ -268,7 +271,13 @@ ${cleanPleadingText}`,
 
     return Response.json(
       { error: "Nie udało się przygotować briefingu pisma przeciwnika." },
-      { status: 500 },
+      {
+        status:
+          error instanceof Error &&
+          (error.message.includes("zalog") || error.message.includes("wygas"))
+            ? 401
+            : 500,
+      },
     );
   }
 }
