@@ -4115,6 +4115,28 @@ body textarea::placeholder {
     #e2f1f8;
 }
 
+.legal-page {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.legal-page::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: url("/helpfind-logo-transparent.png") right 8% bottom 8% / min(34vw, 420px) auto no-repeat;
+  content: "";
+  filter: brightness(0.5) saturate(0.25);
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.legal-page > * {
+  position: relative;
+  z-index: 1;
+}
+
 .dashboard-sidebar {
   border-right-color: rgba(53, 111, 145, 0.18);
   background: rgba(244, 250, 253, 0.82);
