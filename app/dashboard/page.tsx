@@ -51,6 +51,10 @@ type DashboardData = {
 
 const quickActions = [
   { href: "/upload", icon: "KB", label: "Baza wiedzy" },
+  { href: "/email-triage", icon: "📧", label: "E-mail Triage" },
+  { href: "/report", icon: "📊", label: "Raporty" },
+  { href: "/competitor", icon: "🏢", label: "Konkurencja" },
+  { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing" },
   { href: "/travel", icon: "✈️", label: "Podróż" },
   { href: "/react?prompt=Por%C3%B3wnaj%20kursy%20EUR%2C%20USD%2C%20GBP%2C%20CHF", icon: "💶", label: "Waluty" },
   { href: "/react", icon: "🔄", label: "ReAct" },

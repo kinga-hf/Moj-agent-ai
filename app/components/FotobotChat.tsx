@@ -544,6 +544,9 @@ export default function Home() {
           <a className="nav-link" href="/extract">
             📊 Analizator
           </a>
+          <a className="nav-link" href="/legal-opposition">
+            ⚖️ Legal Briefing
+          </a>
           <AuthStatus compact />
         </nav>
 

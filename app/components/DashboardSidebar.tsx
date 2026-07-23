@@ -7,6 +7,10 @@ import { AuthStatus } from "./AuthStatus";
 const navigation = [
   { href: "/upload", icon: "KB", label: "Baza wiedzy" },
   { href: "/", icon: "🏠", label: "Dashboard" },
+  { href: "/email-triage", icon: "📧", label: "E-mail Triage" },
+  { href: "/report", icon: "📊", label: "Raporty" },
+  { href: "/competitor", icon: "🏢", label: "Konkurencja" },
+  { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing" },
   { href: "/agent", icon: "🤖", label: "Agent" },
   { href: "/react", icon: "🔄", label: "ReAct" },
   { href: "/travel", icon: "🌍", label: "Podróże" },

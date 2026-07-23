@@ -62,6 +62,7 @@ const agentModes = [
   { href: "/vision", icon: "👁️", label: "Vision", description: "analiza obrazów" },
   { href: "/extract", icon: "📊", label: "Analizator", description: "ekstrakcja danych" },
   { href: "/format", icon: "📐", label: "Formater", description: "formatowanie treści" },
+  { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing", description: "tezy i zarzuty" },
 ];
 
 const scenarios = [
@@ -242,6 +243,9 @@ export default function AgentPage() {
           </a>
           <a className="nav-link" href="/format">
             📐 Formater
+          </a>
+          <a className="nav-link" href="/legal-opposition">
+            ⚖️ Legal Briefing
           </a>
           <AuthStatus compact />
         </nav>
