@@ -4311,4 +4311,251 @@ body textarea::placeholder {
   color: #34715e !important;
 }
 
+/* Restore the original dark workspace palette. */
+body,
+body button,
+body input,
+body textarea,
+body select,
+body option,
+body a,
+body p,
+body span,
+body strong,
+body em,
+body label,
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body div {
+  color: #fffaf0 !important;
+}
+
+body input::placeholder,
+body textarea::placeholder {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.dashboard-shell,
+.legal-standalone-shell {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255, 224, 138, 0.24), transparent 30%),
+    radial-gradient(circle at 88% 18%, rgba(255, 238, 170, 0.18), transparent 28%),
+    linear-gradient(135deg, #151004 0%, #2c2108 52%, #3a2a0a 100%);
+}
+
+.dashboard-sidebar {
+  border-right-color: rgba(255, 224, 138, 0.18);
+  background: rgba(46, 35, 10, 0.48);
+  box-shadow: none;
+}
+
+.dashboard-brand,
+.dashboard-card,
+.dashboard-hero,
+.dashboard-status,
+.dashboard-grid > section,
+.quick-actions,
+.chat-app,
+.auth-card {
+  border-color: rgba(255, 224, 138, 0.28);
+  background: rgba(54, 44, 15, 0.54);
+  box-shadow: 0 24px 70px rgba(92, 64, 8, 0.28);
+}
+
+.dashboard-brand span,
+.dashboard-sidebar a:hover,
+.dashboard-sidebar a.active,
+.dashboard-card-link,
+.dashboard-card-link:hover,
+.nav-link,
+.nav-link:hover,
+.example-button,
+.command-button,
+.secondary-button,
+.auth-status,
+.memory-panel,
+.composer,
+.chat-header,
+.top-nav,
+.drop-overlay {
+  border-color: rgba(255, 224, 138, 0.28);
+  background: rgba(54, 44, 15, 0.54);
+}
+
+.dashboard-sidebar a,
+.dashboard-card-link,
+.nav-link,
+.chat-title,
+.dashboard-hero h1,
+.dashboard-card h2,
+.dashboard-card h3,
+.auth-card h1,
+.chat-header h1 {
+  color: #fffaf0 !important;
+}
+
+.chat-shell,
+.auth-shell {
+  background: transparent;
+}
+
+.chat-app::before {
+  background: linear-gradient(
+    90deg,
+    var(--film-red),
+    var(--film-orange),
+    var(--accent),
+    var(--film-blue),
+    var(--film-purple),
+    var(--rose)
+  );
+}
+
+.top-nav {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 252, 240, 0.08) 0 10px,
+      transparent 10px 20px
+    ),
+    rgba(42, 32, 8, 0.5);
+}
+
+.chat-header {
+  background:
+    linear-gradient(135deg, rgba(255, 224, 138, 0.2), transparent 34%),
+    linear-gradient(225deg, rgba(255, 238, 170, 0.18), transparent 40%),
+    rgba(46, 35, 10, 0.58);
+}
+
+.memory-panel {
+  background:
+    linear-gradient(90deg, rgba(255, 159, 28, 0.08), transparent 40%),
+    #10131d;
+}
+
+.messages {
+  background: transparent;
+}
+
+.message-row.user .message-bubble {
+  border-color: rgba(255, 238, 170, 0.42);
+  background:
+    linear-gradient(135deg, rgba(255, 238, 170, 0.22), transparent 42%),
+    var(--user-message);
+  color: var(--foreground);
+  box-shadow: 0 10px 28px rgba(255, 214, 102, 0.16);
+}
+
+.message-row.assistant .message-bubble {
+  border-color: rgba(255, 209, 102, 0.4);
+  background:
+    linear-gradient(135deg, rgba(255, 224, 138, 0.18), transparent 38%),
+    linear-gradient(225deg, rgba(255, 238, 170, 0.14), transparent 42%),
+    var(--assistant-message);
+  color: var(--foreground);
+  box-shadow: 0 10px 28px rgba(255, 209, 102, 0.14);
+}
+
+.composer-panel {
+  border-top-color: var(--border);
+  background:
+    linear-gradient(90deg, rgba(255, 224, 138, 0.12), transparent 35%),
+    linear-gradient(270deg, rgba(255, 238, 170, 0.1), transparent 36%),
+    rgba(46, 35, 10, 0.54);
+}
+
+.composer-input,
+.legal-form input,
+.legal-form textarea,
+.history-search,
+.report-form input,
+.report-form textarea,
+.competitor-form input,
+.competitor-form textarea,
+.email-triage-form textarea {
+  border-color: rgba(255, 224, 138, 0.32);
+  background: rgba(20, 16, 6, 0.72);
+  color: var(--foreground);
+}
+
+.model-button,
+.mode-button,
+.icon-button,
+.secondary-button {
+  border-color: var(--border);
+  background: rgba(255, 252, 240, 0.08);
+  color: var(--foreground) !important;
+}
+
+.model-button.active,
+.mode-button.active {
+  border-color: var(--accent);
+  background: rgba(255, 224, 138, 0.18);
+  color: #fffaf0 !important;
+}
+
+.model-button.active span,
+.model-button span {
+  color: var(--muted) !important;
+}
+
+.mode-badge,
+.model-badge,
+.command-badge {
+  border-color: #444 !important;
+  background: #3b2f10 !important;
+  color: #fde68a !important;
+}
+
+.mode-badge.expert {
+  border-color: #22d3ee !important;
+  background: #083344 !important;
+  color: #bfdbfe !important;
+}
+
+.mode-badge.creative,
+.model-badge.pro {
+  border-color: #9333ea !important;
+  background: #3b0764 !important;
+  color: #e9d5ff !important;
+}
+
+.model-badge.flash {
+  border-color: var(--green) !important;
+  background: #052e1a !important;
+  color: #bbf7d0 !important;
+}
+
+.command-card code {
+  border-color: rgba(255, 224, 138, 0.32);
+  background: rgba(255, 224, 138, 0.12);
+  color: #fffaf0 !important;
+}
+
+.send-button,
+.legal-submit {
+  border-color: transparent;
+  background: linear-gradient(135deg, rgba(255, 224, 138, 0.94), rgba(255, 238, 170, 0.88));
+  color: #3a2804 !important;
+}
+
+.send-button:hover:not(:disabled),
+.legal-submit:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.legal-page::before {
+  display: none;
+}
+
+.legal-page > * {
+  position: static;
+  z-index: auto;
+}
+
 
