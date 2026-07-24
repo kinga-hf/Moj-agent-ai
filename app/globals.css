@@ -4930,4 +4930,400 @@ body textarea::placeholder {
   }
 }
 
+/* Shared agent shell: unify every module with the Legal Briefing surface. */
+:root {
+  color-scheme: dark;
+  --background: #09090b;
+  --foreground: #f4f4f5;
+  --panel: #18181b;
+  --muted: #a1a1aa;
+  --border: #27272a;
+  --user-message: #27272a;
+  --assistant-message: #18181b;
+  --accent: #818cf8;
+  --accent-strong: #6366f1;
+  --cyan: #93c5fd;
+  --rose: #fda4af;
+  --violet: #a5b4fc;
+  --green: #86efac;
+  --film-red: #fda4af;
+  --film-orange: #fdba74;
+  --film-blue: #93c5fd;
+  --film-purple: #c4b5fd;
+}
+
+body {
+  background: #09090b !important;
+  color: #f4f4f5 !important;
+}
+
+body button,
+body input,
+body textarea,
+body select,
+body option,
+body a,
+body p,
+body span,
+body strong,
+body em,
+body label,
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body div {
+  color: #f4f4f5 !important;
+}
+
+body input::placeholder,
+body textarea::placeholder {
+  color: #71717a !important;
+  font-weight: 400;
+}
+
+.dashboard-shell,
+.legal-app-shell,
+.legal-standalone-shell,
+.chat-shell,
+.auth-shell {
+  background:
+    radial-gradient(circle at 50% -12%, rgba(99, 102, 241, 0.14), transparent 34%),
+    #09090b !important;
+}
+
+.dashboard-main {
+  background: transparent;
+}
+
+.dashboard-main,
+.chat-shell,
+.legal-page {
+  color: #f4f4f5;
+}
+
+.dashboard-sidebar {
+  border-right-color: #27272a;
+  background: rgba(9, 9, 11, 0.86);
+  box-shadow: none;
+}
+
+.dashboard-brand,
+.dashboard-card,
+.dashboard-hero,
+.dashboard-status,
+.dashboard-grid > section,
+.quick-actions,
+.chat-app,
+.auth-card,
+.email-triage-workspace,
+.email-triage-results,
+.report-workspace,
+.report-result,
+.competitor-workspace,
+.competitor-result,
+.upload-card,
+.legal-workspace,
+.legal-history,
+.legal-result {
+  border-color: #27272a;
+  background: rgba(24, 24, 27, 0.82);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+}
+
+.dashboard-brand,
+.dashboard-card,
+.dashboard-hero,
+.dashboard-status,
+.dashboard-grid > section,
+.quick-actions,
+.chat-app,
+.auth-card,
+.email-triage-workspace,
+.email-triage-results,
+.report-workspace,
+.report-result,
+.competitor-workspace,
+.competitor-result,
+.upload-card,
+.legal-workspace,
+.legal-history,
+.legal-result {
+  border-radius: 8px;
+}
+
+.dashboard-brand span,
+.dashboard-sidebar a:hover,
+.dashboard-sidebar a.active,
+.dashboard-card-link,
+.dashboard-card-link:hover,
+.nav-link,
+.nav-link:hover,
+.example-button,
+.command-button,
+.secondary-button,
+.auth-status,
+.memory-panel,
+.composer,
+.chat-header,
+.top-nav,
+.drop-overlay,
+.model-button,
+.mode-button,
+.icon-button {
+  border-color: #3f3f46;
+  background: #18181b;
+}
+
+.dashboard-sidebar a,
+.dashboard-sidebar a span,
+.dashboard-brand em,
+.dashboard-card p,
+.dashboard-card span,
+.dashboard-hero p,
+.dashboard-kicker,
+.dashboard-status,
+.agent-description,
+.chat-status,
+.empty-state,
+.memory-panel,
+.auth-card p,
+.auth-status,
+.translator-placeholder,
+.legal-disclaimer {
+  color: #a1a1aa !important;
+}
+
+.dashboard-sidebar a:hover,
+.dashboard-sidebar a.active,
+.dashboard-sidebar a:hover span,
+.dashboard-sidebar a.active span {
+  color: #f4f4f5 !important;
+}
+
+.dashboard-brand strong,
+.dashboard-hero h1,
+.dashboard-card h2,
+.dashboard-card h3,
+.dashboard-main-value,
+.chat-title,
+.chat-header h1,
+.auth-card h1 {
+  color: #f4f4f5 !important;
+}
+
+.dashboard-kicker {
+  color: #a5b4fc !important;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+}
+
+.dashboard-hero {
+  background: #18181b;
+  backdrop-filter: blur(16px);
+}
+
+.dashboard-refresh,
+.secondary-button,
+.model-button,
+.mode-button,
+.icon-button,
+.auth-status button {
+  border-color: #3f3f46;
+  background: #27272a;
+  color: #e4e4e7 !important;
+}
+
+.dashboard-refresh:hover,
+.secondary-button:hover:not(:disabled),
+.model-button:hover:not(:disabled),
+.mode-button:hover:not(:disabled),
+.icon-button:hover:not(:disabled),
+.auth-status button:hover {
+  border-color: #6366f1;
+  background: #3f3f46;
+}
+
+.dashboard-card-link:hover,
+.nav-link:hover,
+.nav-link.active,
+.example-button:hover:not(:disabled),
+.command-button:hover:not(:disabled) {
+  border-color: #6366f1;
+  background: #27272a;
+}
+
+.top-nav {
+  background: rgba(15, 15, 17, 0.92);
+}
+
+.nav-link,
+.dashboard-card-link,
+.example-button,
+.command-button {
+  color: #a1a1aa !important;
+}
+
+.nav-link.active,
+.nav-link:hover,
+.dashboard-card-link:hover,
+.example-button:hover:not(:disabled),
+.command-button:hover:not(:disabled) {
+  color: #e4e4e7 !important;
+}
+
+.chat-header {
+  background: #18181b;
+}
+
+.chat-app::before {
+  background: linear-gradient(90deg, #6366f1, #818cf8, #93c5fd);
+}
+
+.memory-panel,
+.composer-panel {
+  border-color: #27272a;
+  background: #101014;
+}
+
+.messages {
+  background: transparent;
+}
+
+.message-row.user .message-bubble,
+.message-row.assistant .message-bubble {
+  border-color: #3f3f46;
+  box-shadow: none;
+}
+
+.message-row.user .message-bubble {
+  background: #27272a;
+  color: #f4f4f5 !important;
+}
+
+.message-row.assistant .message-bubble {
+  background: #18181b;
+  color: #e4e4e7 !important;
+}
+
+.composer-input,
+.auth-form input,
+.translator-textarea,
+.translator-select,
+.upload-field input,
+.upload-field textarea,
+.report-form input,
+.competitor-form input,
+.competitor-form textarea,
+.email-triage-input textarea,
+.legal-form input,
+.legal-form textarea {
+  border-color: #3f3f46;
+  border-radius: 6px;
+  background: #09090b;
+  color: #f4f4f5 !important;
+}
+
+.composer-input:focus,
+.auth-form input:focus,
+.translator-textarea:focus,
+.translator-select:focus,
+.upload-field input:focus,
+.upload-field textarea:focus,
+.report-form input:focus,
+.competitor-form input:focus,
+.competitor-form textarea:focus,
+.email-triage-input textarea:focus,
+.legal-form input:focus,
+.legal-form textarea:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.18);
+}
+
+.send-button,
+.legal-submit,
+.email-triage-submit,
+.report-submit,
+.competitor-submit,
+.upload-submit,
+.translator-submit {
+  border-color: #6366f1;
+  border-radius: 6px;
+  background: #4f46e5;
+  color: #ffffff !important;
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.2);
+}
+
+.send-button:hover:not(:disabled),
+.legal-submit:hover:not(:disabled),
+.email-triage-submit:hover:not(:disabled),
+.report-submit:hover:not(:disabled),
+.competitor-submit:hover:not(:disabled),
+.upload-submit:hover:not(:disabled),
+.translator-submit:hover:not(:disabled) {
+  background: #6366f1;
+}
+
+.model-button.active,
+.mode-button.active {
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.2);
+  color: #e0e7ff !important;
+}
+
+.mode-badge,
+.model-badge,
+.command-badge {
+  border-color: #3f3f46 !important;
+  background: #27272a !important;
+  color: #c7d2fe !important;
+}
+
+.dashboard-error,
+.legal-error,
+.email-triage-error,
+.report-error,
+.competitor-error,
+.attachment-error {
+  border-color: rgba(244, 63, 94, 0.5);
+  background: rgba(76, 5, 25, 0.48);
+  color: #fecdd3 !important;
+}
+
+.markdown-table,
+.legal-table,
+.competitor-table {
+  border-color: #3f3f46;
+}
+
+.markdown-table th,
+.legal-table th,
+.competitor-table th {
+  background: #27272a;
+  color: #e4e4e7 !important;
+}
+
+.markdown-table td,
+.legal-table td,
+.competitor-table td {
+  border-color: #27272a;
+  color: #a1a1aa !important;
+}
+
+@media (max-width: 760px) {
+  .dashboard-main {
+    padding: 20px 14px 42px;
+  }
+
+  .dashboard-hero {
+    padding: 20px;
+  }
+
+  .dashboard-hero h1 {
+    font-size: 1.55rem;
+  }
+}
+
 
