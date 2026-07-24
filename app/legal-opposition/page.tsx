@@ -286,7 +286,41 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
     setFileName(file.name);
 
     try {
-      const text = await file.text();
+      const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+      let text = "";
+
+      if (isPdf) {
+        const { data: sessionData } = supabase
+          ? await supabase.auth.getSession()
+          : { data: { session: null } };
+        const accessToken = sessionData.session?.access_token;
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("/api/legal-opposition/parse-pdf", {
+          method: "POST",
+          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+          body: formData,
+        });
+        const data = (await response.json().catch(() => null)) as {
+          error?: string;
+          text?: string;
+          pages?: number | null;
+          truncated?: boolean;
+        } | null;
+
+        if (!response.ok || !data?.text) {
+          throw new Error(data?.error ?? "Nie udało się odczytać PDF-a.");
+        }
+
+        text = data.text;
+        setFileName(
+          `${file.name}${data.pages ? ` • ${data.pages} stron` : ""}${data.truncated ? " • skrócono tekst" : ""}`,
+        );
+      } else {
+        text = await file.text();
+      }
+
       const cleanText = text.trim();
 
       if (!cleanText) {
@@ -431,7 +465,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
             <div className="legal-file-row">
               <input
-                accept=".txt,.md,.rtf,.csv,.log"
+                accept=".pdf,.txt,.md,.rtf,.csv,.log,application/pdf,text/plain,text/markdown,application/rtf,text/csv"
                 className="hidden-file-input"
                 onChange={(event) => void handleFileChange(event)}
                 ref={fileInputRef}
@@ -443,7 +477,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 onClick={() => fileInputRef.current?.click()}
                 type="button"
               >
-                📎 Wczytaj plik tekstowy
+                📎 Wczytaj PDF lub plik tekstowy
               </button>
               <span>{fileName || "Możesz też wkleić treść pisma niżej."}</span>
             </div>
@@ -456,7 +490,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 className="legal-claims"
                 disabled={isLoading}
                 onChange={(event) => setPleadingText(event.target.value)}
-                placeholder="Wklej treść sprzeciwu, apelacji, odpowiedzi na pozew albo wczytaj plik tekstowy..."
+                placeholder="Wklej treść sprzeciwu, apelacji, odpowiedzi na pozew albo wczytaj PDF..."
                 value={pleadingText}
               />
             </label>

@@ -20,6 +20,7 @@
     "@vitalets/google-translate-api": "^9.2.1",
     "ai": "^7.0.11",
     "next": "^16.2.10",
+    "pdf-parse": "^1.1.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
   },
