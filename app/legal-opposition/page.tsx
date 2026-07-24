@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { ChangeEvent, DragEvent, FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 import { useAuth } from "../components/AuthGate";
 import { supabase } from "../../lib/supabase";
@@ -193,6 +193,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
   const [pleadingText, setPleadingText] = useState("");
   const [fileName, setFileName] = useState("");
   const [fileError, setFileError] = useState("");
+  const [isFileDragging, setIsFileDragging] = useState(false);
   const [analysis, setAnalysis] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -276,8 +277,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
     setFileError("");
   }
 
-  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
+  async function processFile(file: File) {
     if (!file) {
       return;
     }
@@ -334,8 +334,27 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
           ? caughtError.message
           : "Nie udało się wczytać pliku.",
       );
-    } finally {
-      event.target.value = "";
+    }
+  }
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (file) {
+      void processFile(file);
+    }
+  }
+
+  function handleFileDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsFileDragging(false);
+
+    if (!isLoading) {
+      const file = event.dataTransfer.files?.[0];
+      if (file) {
+        void processFile(file);
+      }
     }
   }
 
@@ -421,7 +440,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
   }
 
   return (
-    <main className={standalone ? "legal-standalone-shell" : "dashboard-shell"}>
+    <main className={`${standalone ? "legal-standalone-shell" : "dashboard-shell"} legal-app-shell`}>
       {standalone ? null : <DashboardSidebar />}
 
       <section
@@ -430,8 +449,8 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
       >
         <header className="dashboard-hero legal-hero">
           <div>
-            <span className="dashboard-kicker">Litigation briefing</span>
-            <h1>⚖️ Legal Opposition Summarizer & Briefing Tool</h1>
+            <span className="legal-tool-badge">LITIGATION BRIEFING TOOL</span>
+            <h1>Legal Opposition Summarizer &amp; Briefing Tool</h1>
             <p>Wyciąga z pism przeciwnika główną tezę, kluczowe zarzuty, wnioski procesowe i tropy do kontrargumentacji.</p>
           </div>
           <div className="dashboard-status">
@@ -463,7 +482,17 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
               </label>
             </div>
 
-            <div className="legal-file-row">
+            <div
+              className={`legal-dropzone${isFileDragging ? " is-dragging" : ""}${fileName ? " has-file" : ""}`}
+              onDragLeave={() => setIsFileDragging(false)}
+              onDragOver={(event) => {
+                event.preventDefault();
+                if (!isLoading) {
+                  setIsFileDragging(true);
+                }
+              }}
+              onDrop={handleFileDrop}
+            >
               <input
                 accept=".pdf,.txt,.md,.rtf,.csv,.log,application/pdf,text/plain,text/markdown,application/rtf,text/csv"
                 className="hidden-file-input"
@@ -471,15 +500,19 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 ref={fileInputRef}
                 type="file"
               />
+              <span aria-hidden="true" className="legal-dropzone-icon">↥</span>
+              <div className="legal-dropzone-copy">
+                <strong>{fileName || "Upuść pismo procesowe tutaj"}</strong>
+                <span>{fileName ? "Plik jest gotowy do analizy." : "PDF lub TXT · maks. 12 MB"}</span>
+              </div>
               <button
-                className="secondary-button"
+                className="legal-file-button"
                 disabled={isLoading}
                 onClick={() => fileInputRef.current?.click()}
                 type="button"
               >
-                📎 Wczytaj PDF lub plik tekstowy
+                Wybierz plik PDF/TXT
               </button>
-              <span>{fileName || "Możesz też wkleić treść pisma niżej."}</span>
             </div>
 
             {fileError ? <div className="legal-error">{fileError}</div> : null}
@@ -490,14 +523,14 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 className="legal-claims"
                 disabled={isLoading}
                 onChange={(event) => setPleadingText(event.target.value)}
-                placeholder="Wklej treść sprzeciwu, apelacji, odpowiedzi na pozew albo wczytaj PDF..."
+                placeholder="Wklej treść sprzeciwu, apelacji lub odpowiedzi na pozew..."
                 value={pleadingText}
               />
             </label>
 
             <div className="legal-actions">
               <button className="send-button legal-submit" disabled={isLoading || !pleadingType.trim() || pleadingText.trim().length < 80} type="submit">
-                ⚖️ Przygotuj briefing
+                ⚡ Przeanalizuj pismo
               </button>
             </div>
           </form>
