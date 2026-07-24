@@ -4312,6 +4312,13 @@ body textarea::placeholder {
 }
 
 /* Restore the original dark workspace palette. */
+body {
+  background:
+    radial-gradient(circle at 20% 12%, rgba(255, 224, 138, 0.24), transparent 30%),
+    radial-gradient(circle at 88% 18%, rgba(255, 238, 170, 0.18), transparent 28%),
+    linear-gradient(135deg, #151004 0%, #2c2108 52%, #3a2a0a 100%) !important;
+}
+
 body,
 body button,
 body input,
@@ -4547,6 +4554,30 @@ body textarea::placeholder {
 .send-button:hover:not(:disabled),
 .legal-submit:hover:not(:disabled) {
   background: var(--accent-strong);
+}
+
+.auth-form label {
+  color: var(--muted) !important;
+}
+
+.auth-form input {
+  border-color: rgba(255, 224, 138, 0.32);
+  background: rgba(255, 252, 240, 0.08);
+  color: #fffaf0 !important;
+}
+
+.auth-form input:focus {
+  outline-color: rgba(255, 224, 138, 0.42);
+}
+
+.auth-toggle {
+  color: var(--accent) !important;
+}
+
+.auth-notice {
+  border-color: rgba(238, 247, 189, 0.45);
+  background: rgba(42, 82, 36, 0.38);
+  color: #f4ffd8 !important;
 }
 
 .legal-page::before {
