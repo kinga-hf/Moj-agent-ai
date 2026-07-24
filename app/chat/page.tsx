@@ -1,1 +1,1 @@
-export { default } from "../components/FotobotChat";
+export { default } from "../components/LegalChat";

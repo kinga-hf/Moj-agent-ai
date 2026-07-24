@@ -27,14 +27,14 @@ const queryStopWords = new Set([
   "mog",
   "moge",
   "mozna",
-  "kosztuje",
-  "koszt",
-  "cena",
-  "ceny",
-  "pakiet",
-  "pakietu",
-  "usluga",
-  "uslugi",
+  "dokument",
+  "dokumenty",
+  "sprawa",
+  "sprawy",
+  "pismo",
+  "pisma",
+  "orzeczenie",
+  "orzeczenia",
 ]);
 
 function normalizeForSearch(text: string) {

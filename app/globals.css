@@ -4589,6 +4589,50 @@ body textarea::placeholder {
   z-index: auto;
 }
 
+.legal-file-attachment-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: #18181b;
+  padding: 10px 12px;
+}
+
+.legal-file-attachment-preview > div {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.legal-file-attachment-preview strong {
+  overflow: hidden;
+  color: #e4e4e7 !important;
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.legal-file-attachment-preview span {
+  color: #71717a !important;
+  font-size: 0.75rem;
+}
+
+.legal-file-attachment-preview button {
+  min-width: 28px;
+  min-height: 28px;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  background: #27272a;
+  color: #a1a1aa !important;
+}
+
+.legal-file-attachment-preview button:hover {
+  border-color: #6366f1;
+  color: #f4f4f5 !important;
+}
+
 /* Legal Briefing: clean slate product surface. */
 .legal-app-shell {
   background:

@@ -74,18 +74,19 @@ Tryb REDAKCJA:
 Pomagaj tworzyć robocze projekty pism, tez, pytań i checklist. Oznaczaj miejsca wymagające uzupełnienia danymi ze sprawy.${safetyPrompt}`,
 } as const;
 
-const searchPrompt = `Jesteś pomocnym agentem internetowym. Odpowiadasz po polsku, jasno i konkretnie.
+const searchPrompt = `Jesteś asystentem prawnym wspierającym analizę aktualnych przepisów i orzecznictwa. Odpowiadasz po polsku, jasno i konkretnie.
 
 Masz dostęp do prawdziwego wyszukiwania Google oraz narzędzia readWebPage do czytania stron WWW.
 
 Zasady:
-- Gdy pytanie dotyczy aktualnych informacji, cen, wydarzeń, osób publicznych, wyników sportowych albo repertuaru, użyj wyszukiwania.
+- Gdy pytanie dotyczy aktualnego przepisu, orzecznictwa, terminu lub procedury, użyj wyszukiwania.
+- Preferuj oficjalne źródła: ISAP, RCL, Sąd Najwyższy, sądy i uznane bazy orzeczeń.
 - Gdy użytkownik poda URL, użyj readWebPage i streść najważniejszą treść strony.
 - Gdy korzystasz ze źródeł, podaj linki w odpowiedzi.
 - Jeśli czegoś nie da się potwierdzić w źródłach, powiedz to wprost.
 - Jeśli pytanie nie wymaga internetu, odpowiedz normalnie bez wyszukiwania.${safetyPrompt}`;
 
-const visionPrompt = `Jesteś Agentem Vision. Analizujesz obrazy, screenshoty, zdjęcia produktów, logotypy i zrzuty błędów.
+const visionPrompt = `Jesteś asystentem analizującym materiały wizualne związane ze sprawą: skany dokumentów, schematy, zrzuty ekranu i materiały dowodowe.
 
 Odpowiadasz po polsku, konkretnie i praktycznie.
 
@@ -94,7 +95,7 @@ Zasady:
 - Jeśli użytkownik prosi o tekst ze screena, wyciągnij cały widoczny tekst możliwie dokładnie.
 - Jeśli użytkownik pyta o kolory, podaj dominujące kolory i przybliżone kody HEX.
 - Jeśli obraz pokazuje błąd techniczny, wyjaśnij prawdopodobną przyczynę i podaj kroki naprawy.
-- Jeśli użytkownik prosi o prompt do podobnego obrazu, przygotuj precyzyjny prompt do generatora grafiki.${safetyPrompt}`;
+- Jeśli materiał jest nieczytelny, wskaż, których fragmentów nie da się rzetelnie ocenić.${safetyPrompt}`;
 
 const agentPrompt = `Jesteś Agentem AI - Pełna moc. Masz dostęp do kalkulatora, daty i czasu, Google Search, czytania stron, generowania obrazów oraz analizy obrazów przesłanych przez użytkownika.
 
@@ -118,23 +119,22 @@ const chatTextTimeout = { totalMs: 30000, stepMs: 15000, toolMs: 8000 };
 const imageGenerationTimeoutMs = 25000;
 const knowledgePrompt = `
 
-## BAZA WIEDZY FIRMY:
-Masz dostep do bazy wiedzy firmy przez narzedzie searchKnowledge.
+## PRYWATNA BAZA WIEDZY PRAWNICZEJ:
+Masz dostęp do prywatnej bazy wiedzy zalogowanego użytkownika przez narzędzie searchKnowledge.
 
 ZASADY KORZYSTANIA Z BAZY WIEDZY:
-1. Gdy uzytkownik pyta o ceny, pakiety, koszty, oferty, regulamin, warunki, procedury lub FAQ - ZAWSZE najpierw uzyj searchKnowledge.
-2. Odpowiadaj tylko na podstawie znalezionych fragmentow. Nie wymyslaj cen, warunkow ani zapisow regulaminu.
-3. Jesli baza wiedzy nie zawiera odpowiedzi, powiedz wprost: "Nie mam tej informacji w bazie wiedzy."
-4. Pytania o firme/cennik/FAQ maja priorytet: searchKnowledge najpierw, dopiero potem inne narzedzia jesli nadal sa potrzebne.
-5. Gdy odpowiadasz na podstawie bazy wiedzy, na koncu odpowiedzi dodaj: "Zrodlo: [tytul dokumentu]" albo "Zrodla: [tytul 1], [tytul 2]".
-6. Gdy searchKnowledge zwroci 0 wynikow, nie odpowiadaj z wiedzy ogolnej. Powiedz: "Nie mam informacji na ten temat w mojej bazie wiedzy."`;
+1. Użyj searchKnowledge, gdy odpowiedź może zależeć od dokumentów zapisanych przez użytkownika.
+2. Oddzielaj treść znalezioną w bazie od własnej analizy i nie dopisuj faktów, których nie ma w dokumentach.
+3. Jeśli baza nie zawiera odpowiedzi, powiedz: "Nie znalazłem tego w prywatnej bazie wiedzy." Nie udawaj, że dokument istnieje.
+4. Przy analizie pisma szukaj przede wszystkim argumentów, podstaw prawnych, wniosków, dowodów, terminów i ryzyk procesowych.
+5. Gdy korzystasz z dokumentów, dodaj na końcu: "Źródła z bazy: [tytuł dokumentu]".`;
 
 if (enableSearchGrounding) {
   console.warn(
     "UWAGA: Search Grounding jest WLACZONY. " +
       "To jest najdrozsza funkcja API ($14/1000 zapytan). " +
       "Uzywaj TYLKO do testow. Wylacz po testach usuwajac ENABLE_SEARCH_GROUNDING z .env.local, " +
-      "bo inni uczestnicy kursu maja wtedy ograniczony dostep do modeli.",
+      "bo inni użytkownicy mogą wtedy mieć ograniczony dostęp do modeli.",
   );
 }
 
@@ -330,7 +330,7 @@ const searchKnowledgeInputSchema = jsonSchema<SearchKnowledgeInput>(
       query: {
         type: "string",
         description:
-          "Pytanie do bazy wiedzy firmy, np. ile kosztuje pakiet Premium albo jakie sa warunki rezygnacji.",
+          "Pytanie do prywatnej bazy wiedzy prawniczej, np. jakie stanowisko wynika z pisma albo jakie orzeczenia zapisano w sprawie.",
       },
     },
     required: ["query"],
@@ -358,7 +358,7 @@ const searchKnowledgeInputSchema = jsonSchema<SearchKnowledgeInput>(
 const knowledgeTools = {
   searchKnowledge: tool({
     description:
-      "Wyszukuje informacje w bazie wiedzy firmy: cenniki, pakiety, oferty, FAQ, regulaminy, procedury i warunki. Uzywaj ZAWSZE, gdy uzytkownik pyta o ceny, pakiety, koszty, oferte, regulamin, warunki, anulowanie, rezygnacje albo informacje firmowe.",
+      "Wyszukuje informacje w prywatnej bazie wiedzy prawniczej użytkownika: pisma, przepisy, orzeczenia, komentarze, wzory i dokumenty spraw.",
     inputSchema: searchKnowledgeInputSchema,
     execute: async ({ query }) => searchKnowledge(query),
   }),
@@ -371,7 +371,7 @@ function createKnowledgeTools(
   return {
     searchKnowledge: tool({
       description:
-        "Wyszukuje informacje w prywatnej bazie wiedzy zalogowanego uzytkownika: cenniki, pakiety, oferty, FAQ, regulaminy, procedury i warunki.",
+        "Wyszukuje informacje w prywatnej bazie wiedzy prawniczej zalogowanego użytkownika: pisma, przepisy, orzeczenia, komentarze, wzory i dokumenty spraw.",
       inputSchema: searchKnowledgeInputSchema,
       execute: async ({ query }) =>
         searchKnowledge(query, userId, database),
@@ -399,7 +399,7 @@ const localTools = {
   readWebPage: webTools.readWebPage,
   calculator: tool({
     description:
-      "Wykonuje bezpieczne obliczenia matematyczne. Używaj do VAT, procentów, kwot netto/brutto i prostych działań.",
+      "Wykonuje bezpieczne obliczenia matematyczne potrzebne do analizy sprawy, terminów, udziałów i prostych działań.",
     inputSchema: calculatorInputSchema,
     execute: async ({ expression }) => calculateExpression(expression),
   }),
@@ -586,6 +586,11 @@ type AttachedImage = {
   mediaType: string;
 };
 
+type AttachedTextFile = {
+  name: string;
+  text: string;
+};
+
 function getChatMode(mode: unknown): ChatMode {
   return mode === "expert" || mode === "creative" ? mode : "casual";
 }
@@ -658,16 +663,18 @@ function parseAttachedImage(image: unknown): AttachedImage | null {
   };
 }
 
-function addImageToLastUserMessage({
+function addAttachmentsToLastUserMessage({
   messages,
   image,
+  attachment,
   text,
 }: {
   messages: ModelMessage[];
   image: AttachedImage | null;
+  attachment?: AttachedTextFile | null;
   text: string;
 }) {
-  if (!image) {
+  if (!image && !attachment) {
     return messages;
   }
 
@@ -677,14 +684,18 @@ function addImageToLastUserMessage({
   );
 
   const content = [
-    {
-      type: "image" as const,
-      image: image.data,
-      mediaType: image.mediaType,
-    },
+    ...(image
+      ? [{
+          type: "image" as const,
+          image: image.data,
+          mediaType: image.mediaType,
+        }]
+      : []),
     {
       type: "text" as const,
-      text: text || "Przeanalizuj załączony obraz.",
+      text: attachment
+        ? `Załącznik: ${attachment.name}\n\nTreść załącznika:\n${attachment.text}\n\nPytanie użytkownika:\n${text || "Przeanalizuj załączone pismo."}`
+        : text || "Przeanalizuj załączony materiał.",
     },
   ];
 
@@ -1244,6 +1255,7 @@ function createManualToolStep({
 async function generateAgentResponse({
   messages,
   image,
+  attachment,
   text,
   userId,
   database,
@@ -1251,6 +1263,7 @@ async function generateAgentResponse({
 }: {
   messages: ModelMessage[];
   image: AttachedImage | null;
+  attachment?: AttachedTextFile | null;
   text: string;
   userId: string | null;
   database?: SupabaseClient | null;
@@ -1330,9 +1343,10 @@ Kwota brutto: ${parsed.brutto} zł`;
 WAŻNE:
 - Nie wywołuj narzędzia generowania grafiki w tej odpowiedzi. Jeśli użytkownik prosi o grafikę, przygotuj najpierw treść posta oraz krótki prompt graficzny.
 - Jeśli narzędzie graficzne nie będzie dostępne, odpowiedź tekstowa nadal ma być kompletna.`;
-  const modelMessages = addImageToLastUserMessage({
+  const modelMessages = addAttachmentsToLastUserMessage({
     messages,
     image,
+    attachment,
     text,
   });
   let result: {
@@ -1668,6 +1682,8 @@ export async function POST(req: Request) {
       model,
       purpose,
       image,
+      attachmentName,
+      attachmentText,
       userId,
       authToken,
     }: {
@@ -1676,6 +1692,8 @@ export async function POST(req: Request) {
       model?: unknown;
       purpose?: unknown;
       image?: unknown;
+      attachmentName?: unknown;
+      attachmentText?: unknown;
       userId?: unknown;
       authToken?: unknown;
     } =
@@ -1685,6 +1703,16 @@ export async function POST(req: Request) {
     const selectedModel = getAiModel(model);
     const lastMessage = getLastUserText(chatMessages);
     const attachedImage = parseAttachedImage(image);
+    const attachedTextFile =
+      typeof attachmentText === "string" && attachmentText.trim()
+        ? {
+            name:
+              typeof attachmentName === "string" && attachmentName.trim()
+                ? attachmentName.trim().slice(0, 160)
+                : "Załączony dokument",
+            text: attachmentText.trim().slice(0, 18000),
+          }
+        : null;
     let activeUserId = typeof userId === "string" ? userId : null;
     let authenticatedDatabase: SupabaseClient | null = null;
 
@@ -1716,7 +1744,7 @@ export async function POST(req: Request) {
 
       if (draftKnowledge.total_found === 0) {
         return createChatResponse(
-          "Nie mam tej informacji w bazie wiedzy, więc nie podam zmyślonej ceny. Dodaj właściwy cennik lub dokument z ofertą.",
+          "Nie znalazłem wystarczających informacji w prywatnej bazie wiedzy. Dodaj właściwe pismo, przepis, orzeczenie albo dokument sprawy.",
           chatMessages,
         );
       }
@@ -1761,6 +1789,7 @@ ${knowledgeContext}`,
       const result = await generateAgentResponse({
         messages: await convertToModelMessages(chatMessages),
         image: attachedImage,
+        attachment: attachedTextFile,
         text: lastMessage,
         userId: activeUserId,
         database: authenticatedDatabase,
@@ -1781,9 +1810,10 @@ ${knowledgeContext}`,
       userId: activeUserId,
       database: authenticatedDatabase,
       profilePrompt,
-      messages: addImageToLastUserMessage({
+      messages: addAttachmentsToLastUserMessage({
         messages: await convertToModelMessages(chatMessages),
         image: attachedImage,
+        attachment: attachedTextFile,
         text: lastMessage,
       }),
     });

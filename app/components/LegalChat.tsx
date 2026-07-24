@@ -9,12 +9,12 @@ import { useAuth } from "./AuthGate";
 import { supabase } from "../../lib/supabase";
 import { ensureUserProfile, type UserProfile } from "../../lib/user-profile";
 import {
-  AttachedImagePreview,
-  DropOverlay,
-  HiddenImageInput,
-  ImageUploadButton,
-  useImageAttachment,
-} from "./ImageAttachment";
+  AttachedLegalFilePreview,
+  HiddenLegalFileInput,
+  LegalDropOverlay,
+  LegalFileUploadButton,
+  useLegalAttachment,
+} from "./LegalAttachment";
 
 type ChatMode = "casual" | "expert" | "creative";
 type AiModel = "flash" | "pro";
@@ -142,18 +142,17 @@ export default function Home() {
   const pendingPersistMessageIdsRef = useRef(new Set<string>());
   const persistenceQueueRef = useRef(Promise.resolve());
   const {
-    attachedImage,
+    attachedFile,
+    fileError,
     fileInputRef,
-    imageError,
-    isDraggingImage,
     handleDragLeave,
     handleDragOver,
     handleDrop,
     handleFileChange,
-    handlePaste,
+    isDraggingFile,
     openFilePicker,
-    removeImage,
-  } = useImageAttachment();
+    removeFile,
+  } = useLegalAttachment();
   const { error, messages, sendMessage, setMessages, status, stop } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
@@ -426,7 +425,7 @@ export default function Home() {
 
   async function sendText(text: string) {
     const trimmedText = text.trim();
-    if ((!trimmedText && !attachedImage) || isLoading) {
+    if ((!trimmedText && !attachedFile) || isLoading) {
       return;
     }
 
@@ -440,18 +439,19 @@ export default function Home() {
     pendingCommandRef.current = /^projekt(\s|$)/i.test(trimmedText)
       ? "projekt"
       : "chat";
-    const imageToSend = attachedImage?.dataUrl;
+    const fileToSend = attachedFile;
     const { data: sessionData } = supabase
       ? await supabase.auth.getSession()
       : { data: { session: null } };
-    removeImage();
+    removeFile();
     await sendMessage(
-      { text: trimmedText || "Przeanalizuj załączony obraz." },
+      { text: trimmedText || "Przeanalizuj załączone pismo." },
       {
         body: {
           mode,
           model,
-          image: imageToSend,
+          attachmentName: fileToSend?.name,
+          attachmentText: fileToSend?.text,
           userId,
           authToken: sessionData.session?.access_token,
         },
@@ -515,8 +515,8 @@ export default function Home() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app" aria-label="Legal AI — czat prawniczy">
-        <DropOverlay visible={isDraggingImage} />
+      <section className="chat-app" aria-label="Asystent Prawny – Analiza Pism i Strategia">
+        <LegalDropOverlay visible={isDraggingFile} />
         <nav className="top-nav" aria-label="Nawigacja">
           <BackNavLink />
           <a className="nav-link active" href="/chat">
@@ -537,12 +537,6 @@ export default function Home() {
           <a className="nav-link" href="/search">
             🌐 Szukaj
           </a>
-          <a className="nav-link" href="/generate">
-            🎨 Grafiki
-          </a>
-          <a className="nav-link" href="/vision">
-            👁️ Vision
-          </a>
           <a className="nav-link" href="/extract">
             📊 Analizator
           </a>
@@ -554,7 +548,7 @@ export default function Home() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">Legal AI — czat prawniczy ⚖️</h1>
+            <h1 className="chat-title">Asystent Prawny – Analiza Pism i Strategia</h1>
             <p className="agent-description">
               Pomagam porządkować problemy prawne, analizować argumenty,
               szukać źródeł i przygotowywać robocze projekty pism.
@@ -748,8 +742,8 @@ export default function Home() {
         </div>
 
         <div className="composer-panel">
-          <AttachedImagePreview image={attachedImage} onRemove={removeImage} />
-          {imageError ? <div className="attachment-error">{imageError}</div> : null}
+          <AttachedLegalFilePreview file={attachedFile} onRemove={removeFile} />
+          {fileError ? <div className="attachment-error">{fileError}</div> : null}
           <div className="model-switcher" aria-label="Model AI">
             {models.map((item) => (
               <button
@@ -780,23 +774,22 @@ export default function Home() {
           </div>
 
           <form className="composer" onSubmit={handleSubmit}>
-            <HiddenImageInput
+            <HiddenLegalFileInput
               fileInputRef={fileInputRef}
               onChange={(event) => void handleFileChange(event)}
             />
-            <ImageUploadButton disabled={isLoading} onClick={openFilePicker} />
+            <LegalFileUploadButton disabled={isLoading} onClick={openFilePicker} />
             <input
               aria-label="Wiadomość"
               className="composer-input"
               disabled={isLoading}
               onChange={(event) => setInput(event.target.value)}
-              onPaste={(event) => void handlePaste(event)}
-              placeholder="Napisz pytanie prawne albo polecenie redakcyjne..."
+              placeholder="Wklej pismo procesowe lub zadaj pytanie dotyczące prawa..."
               value={input}
             />
             <button
               className="send-button"
-              disabled={isLoading || (!input.trim() && !attachedImage)}
+              disabled={isLoading || (!input.trim() && !attachedFile)}
             >
               Wyślij
             </button>
