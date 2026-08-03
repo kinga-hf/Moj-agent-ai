@@ -1,3 +1,4 @@
+import type { User } from "@supabase/supabase-js";
 import { supabaseAdmin } from "./supabase-admin";
 
 const REPORT_WINDOW_DAYS = 7;
@@ -100,13 +101,23 @@ export async function loadSecurityReportSnapshot(): Promise<SecurityReportSnapsh
     throw firstError;
   }
 
-  const authUsersResult = await supabaseAdmin.auth.admin.listUsers({
-    page: 1,
-    perPage: 1000,
-  });
+  const registeredUsers: User[] = [];
+  let userPage = 1;
+  while (true) {
+    const authUsersResult = await supabaseAdmin.auth.admin.listUsers({
+      page: userPage,
+      perPage: 1000,
+    });
 
-  if (authUsersResult.error) {
-    throw authUsersResult.error;
+    if (authUsersResult.error) {
+      throw authUsersResult.error;
+    }
+
+    registeredUsers.push(...(authUsersResult.data.users ?? []));
+    if ((authUsersResult.data.users ?? []).length < 1000) {
+      break;
+    }
+    userPage += 1;
   }
 
   const usageRows = (usageResult.data ?? []) as UsageRow[];
@@ -130,7 +141,6 @@ export async function loadSecurityReportSnapshot(): Promise<SecurityReportSnapsh
     usageByUser.set(row.user_id, current);
   }
 
-  const registeredUsers = authUsersResult.data.users ?? [];
   const allUserIds = new Set([
     ...registeredUsers.map((user) => user.id),
     ...usageByUser.keys(),
