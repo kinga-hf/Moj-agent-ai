@@ -3,7 +3,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { BackNavLink } from "./BackNavLink";
 import { AuthStatus } from "./AuthStatus";
 import { useAuth } from "./AuthGate";
 import { supabase } from "../../lib/supabase";
@@ -518,7 +517,6 @@ export default function Home() {
       <section className="chat-app" aria-label="Asystent Prawny – Analiza Pism i Strategia">
         <LegalDropOverlay visible={isDraggingFile} />
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link active" href="/chat">
             💬 Chat
           </a>

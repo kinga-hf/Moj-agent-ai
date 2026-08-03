@@ -11,6 +11,7 @@ import {
   useState,
 } from "react";
 import { supabase } from "../../lib/supabase";
+import { AppShell } from "./AppShell";
 
 type AuthContextValue = {
   user: User | null;
@@ -112,7 +113,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
     );
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {isPublicRoute(pathname) ? children : <AppShell>{children}</AppShell>}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

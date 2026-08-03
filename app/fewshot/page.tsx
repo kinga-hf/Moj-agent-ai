@@ -3,7 +3,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { BackNavLink } from "../components/BackNavLink";
 
 type AiModel = "flash" | "pro";
 
@@ -92,7 +91,6 @@ export default function FewShotPage() {
     <main className="chat-shell">
       <section className="chat-app" aria-label="Słownik AI">
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link" href="/chat">
             💬 Chat
           </a>

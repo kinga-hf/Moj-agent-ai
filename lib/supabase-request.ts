@@ -15,6 +15,20 @@ function getBearerToken(req: Request) {
   return match?.[1] ?? null;
 }
 
+async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init?: RequestInit,
+) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 30_000);
+
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export async function getAuthenticatedRequest(req: Request): Promise<AuthenticatedRequest> {
   const token = getBearerToken(req);
 
@@ -31,6 +45,7 @@ export async function getAuthenticatedRequest(req: Request): Promise<Authenticat
       headers: {
         Authorization: `Bearer ${token}`,
       },
+      fetch: fetchWithTimeout,
     },
   });
 

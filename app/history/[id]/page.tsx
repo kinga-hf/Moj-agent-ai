@@ -87,7 +87,6 @@ export default function HistoryConversationPage() {
       <DashboardSidebar />
       <section className="dashboard-main history-main" aria-label="Podglad rozmowy">
         <div className="history-detail-actions">
-          <a className="nav-link primary" href="/history">Wroc do listy</a>
           <a className="dashboard-card-link" href={`/chat?conversation=${conversationId}`}>Kontynuuj rozmowe</a>
         </div>
 

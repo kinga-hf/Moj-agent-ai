@@ -15,6 +15,20 @@ import {
 import { supabase } from "../../../lib/supabase";
 import { searchKnowledge } from "../../../lib/knowledge";
 import { getAuthenticatedRequest } from "../../../lib/supabase-request";
+import {
+  BLOCKED_MESSAGE,
+  BLOCKED_OUTPUT,
+  consumeMessageRateLimit,
+  filterSensitiveOutput,
+  recordBlockedMessage,
+  sanitizeUserInput,
+  validateUserInput,
+} from "../../../lib/chat-security";
+import {
+  assertDailyTokenBudget,
+  DailyTokenLimitError,
+  recordLanguageModelUsage,
+} from "../../../lib/api-usage";
 
 const professionalPersona = `# LEGAL AI — praktyczny asystent prawniczy
 
@@ -630,6 +644,30 @@ function getLastUserText(messages: unknown) {
   return "";
 }
 
+function sanitizeMessagesForModel(messages: UIMessage[]) {
+  return messages.map((message) => {
+    if (message.role !== "user") {
+      return message;
+    }
+
+    const nextMessage = { ...message } as ChatRequestMessage;
+
+    if (typeof nextMessage.content === "string") {
+      nextMessage.content = sanitizeUserInput(nextMessage.content);
+    }
+
+    if (Array.isArray(nextMessage.parts)) {
+      nextMessage.parts = nextMessage.parts.map((part) =>
+        part.type === "text"
+          ? { ...part, text: sanitizeUserInput(part.text) }
+          : part,
+      );
+    }
+
+    return nextMessage as UIMessage;
+  });
+}
+
 function isDraftCommand(text: string) {
   const normalizedText = text.trim().toLowerCase();
 
@@ -784,6 +822,10 @@ function getGenerationProblemMessage(error: unknown) {
 }
 
 function getChatApiErrorMessage(error: unknown) {
+  if (error instanceof DailyTokenLimitError) {
+    return error.message;
+  }
+
   if (isTimeoutError(error)) {
     return "Model odpowiadał zbyt długo, więc przerwałem zadanie. Spróbuj ponownie albo podziel polecenie na krótsze kroki.";
   }
@@ -1063,6 +1105,10 @@ function stringifyPreview(value: unknown) {
   } catch {
     return String(value);
   }
+}
+
+function protectGeneratedText(text: string, systemPrompt: string) {
+  return filterSensitiveOutput(text, systemPrompt.split("\n"));
 }
 
 function getToolEmoji(toolName: string) {
@@ -1351,6 +1397,10 @@ WAŻNE:
   });
   let result: {
     text: string;
+    usage: {
+      inputTokens?: number;
+      outputTokens?: number;
+    };
     sources: Array<{ sourceType?: string; title?: string; url?: string }>;
     toolCalls: Array<{
       toolCallId: string;
@@ -1395,7 +1445,14 @@ WAŻNE:
           });
 
   try {
+    await assertDailyTokenBudget(userId);
     result = await runAgentGeneration(models.flash);
+    await recordLanguageModelUsage({
+      userId,
+      usage: result.usage,
+      model: models.flash,
+      endpoint: "/api/chat",
+    });
   } catch (error) {
     if (!isRecoverableGenerationError(error)) {
       throw error;
@@ -1403,7 +1460,14 @@ WAŻNE:
 
     try {
       usedModel = flashFallbackModel;
+      await assertDailyTokenBudget(userId);
       result = await runAgentGeneration(flashFallbackModel);
+      await recordLanguageModelUsage({
+        userId,
+        usage: result.usage,
+        model: flashFallbackModel,
+        endpoint: "/api/chat",
+      });
     } catch (fallbackError) {
       if (!isRecoverableGenerationError(fallbackError)) {
         throw fallbackError;
@@ -1457,9 +1521,12 @@ Twoje zadanie zostało zatrzymane przed wykonaniem: ${text}`,
       };
     }
   }
-  let textWithSources = finalizeKnowledgeAnswer(
-    appendSources(result.text, result.sources),
-    result.toolResults,
+  let textWithSources = protectGeneratedText(
+    finalizeKnowledgeAnswer(
+      appendSources(result.text, result.sources),
+      result.toolResults,
+    ),
+    agentSystem,
   );
   let toolTimeline = buildToolTimeline(result);
   const calculatorFallback = buildCalculatorFallback(text);
@@ -1537,6 +1604,21 @@ Uwaga: tekst zadania został przygotowany, ale grafika nie została wygenerowana
     }
   }
 
+  const hasSensitiveToolOutput = toolTimeline.some((item) =>
+    [item.input, item.output, item.error].some(
+      (value) =>
+        typeof value === "string" &&
+        protectGeneratedText(value, agentSystem) === BLOCKED_OUTPUT,
+    ),
+  );
+
+  finalText = protectGeneratedText(finalText, agentSystem);
+
+  if (hasSensitiveToolOutput) {
+    finalText = BLOCKED_OUTPUT;
+    toolTimeline = [];
+  }
+
   return {
     text: finalText,
     tools: toolTimeline,
@@ -1588,6 +1670,7 @@ async function generateAnswer({
 
   try {
     if (prompt !== undefined) {
+      await assertDailyTokenBudget(userId);
       const result = await generateText({
         model: google(selectedModel),
         system: systemWithProfile,
@@ -1596,13 +1679,20 @@ async function generateAnswer({
         timeout: chatTextTimeout,
         ...toolOptions,
       });
+      await recordLanguageModelUsage({
+        userId,
+        usage: result.usage,
+        model: selectedModel,
+        endpoint: "/api/chat",
+      });
 
-      return finalizeKnowledgeAnswer(
+      return protectGeneratedText(finalizeKnowledgeAnswer(
         appendSources(result.text, result.sources),
         result.toolResults,
-      );
+      ), systemWithProfile);
     }
 
+    await assertDailyTokenBudget(userId);
     const result = await generateText({
       model: google(selectedModel),
       system: systemWithProfile,
@@ -1611,11 +1701,17 @@ async function generateAnswer({
       timeout: chatTextTimeout,
       ...toolOptions,
     });
+    await recordLanguageModelUsage({
+      userId,
+      usage: result.usage,
+      model: selectedModel,
+      endpoint: "/api/chat",
+    });
 
-    return finalizeKnowledgeAnswer(
+    return protectGeneratedText(finalizeKnowledgeAnswer(
       appendSources(result.text, result.sources),
       result.toolResults,
-    );
+    ), systemWithProfile);
   } catch (error) {
     if (model === "flash" && isQuotaError(error)) {
       console.warn(
@@ -1623,6 +1719,7 @@ async function generateAnswer({
       );
 
       if (prompt !== undefined) {
+        await assertDailyTokenBudget(userId);
         const fallbackResult = await generateText({
           model: google(flashFallbackModel),
           system: systemWithProfile,
@@ -1631,13 +1728,20 @@ async function generateAnswer({
           timeout: chatTextTimeout,
           ...toolOptions,
         });
+        await recordLanguageModelUsage({
+          userId,
+          usage: fallbackResult.usage,
+          model: flashFallbackModel,
+          endpoint: "/api/chat",
+        });
 
-        return finalizeKnowledgeAnswer(
+        return protectGeneratedText(finalizeKnowledgeAnswer(
           appendSources(fallbackResult.text, fallbackResult.sources),
           fallbackResult.toolResults,
-        );
+        ), systemWithProfile);
       }
 
+      await assertDailyTokenBudget(userId);
       const fallbackResult = await generateText({
         model: google(flashFallbackModel),
         system: systemWithProfile,
@@ -1646,11 +1750,17 @@ async function generateAnswer({
         timeout: chatTextTimeout,
         ...toolOptions,
       });
+      await recordLanguageModelUsage({
+        userId,
+        usage: fallbackResult.usage,
+        model: flashFallbackModel,
+        endpoint: "/api/chat",
+      });
 
-      return finalizeKnowledgeAnswer(
+      return protectGeneratedText(finalizeKnowledgeAnswer(
         appendSources(fallbackResult.text, fallbackResult.sources),
         fallbackResult.toolResults,
-      );
+      ), systemWithProfile);
     }
 
     throw error;
@@ -1672,6 +1782,19 @@ function createChatResponse(text: string, originalMessages: UIMessage[]) {
   });
 
   return createUIMessageStreamResponse({ stream });
+}
+
+function createSecurityResponse(
+  message: string,
+  purpose: unknown,
+  chatMessages: UIMessage[],
+  status: number,
+) {
+  if (purpose === "agent") {
+    return Response.json({ error: message }, { status });
+  }
+
+  return createChatResponse(message, chatMessages);
 }
 
 export async function POST(req: Request) {
@@ -1701,7 +1824,10 @@ export async function POST(req: Request) {
     const chatMessages = Array.isArray(messages) ? (messages as UIMessage[]) : [];
     const selectedMode = getChatMode(mode);
     const selectedModel = getAiModel(model);
-    const lastMessage = getLastUserText(chatMessages);
+    const rawLastMessage = getLastUserText(chatMessages);
+    const inputValidation = validateUserInput(rawLastMessage);
+    const lastMessage = inputValidation.value;
+    const sanitizedChatMessages = sanitizeMessagesForModel(chatMessages);
     const attachedImage = parseAttachedImage(image);
     const attachedTextFile =
       typeof attachmentText === "string" && attachmentText.trim()
@@ -1727,6 +1853,37 @@ export async function POST(req: Request) {
       activeUserId = auth.user.id;
       authenticatedDatabase = auth.database;
     }
+
+    if (!inputValidation.ok) {
+      await recordBlockedMessage({
+        userId: typeof authToken === "string" && authToken ? activeUserId : null,
+        message: rawLastMessage,
+        reason: inputValidation.reason,
+      });
+
+      return createSecurityResponse(
+        BLOCKED_MESSAGE,
+        purpose,
+        chatMessages,
+        400,
+      );
+    }
+
+    const rateLimit = await consumeMessageRateLimit({
+      request: req,
+      userId: typeof authToken === "string" && authToken ? activeUserId : null,
+      messageLength: lastMessage.length,
+    });
+
+    if (!rateLimit.allowed) {
+      return createSecurityResponse(
+        `Osiągnąłeś limit wiadomości (50/h). Spróbuj za ${rateLimit.retryAfterMinutes} minut.`,
+        purpose,
+        chatMessages,
+        429,
+      );
+    }
+
     const userProfile = await getUserProfile(activeUserId, authenticatedDatabase);
     const profilePrompt = buildProfilePrompt(userProfile);
     const isDraft = typeof lastMessage === "string" && isDraftCommand(lastMessage);
@@ -1787,7 +1944,7 @@ ${knowledgeContext}`,
 
     if (purpose === "agent") {
       const result = await generateAgentResponse({
-        messages: await convertToModelMessages(chatMessages),
+        messages: await convertToModelMessages(sanitizedChatMessages),
         image: attachedImage,
         attachment: attachedTextFile,
         text: lastMessage,
@@ -1811,7 +1968,7 @@ ${knowledgeContext}`,
       database: authenticatedDatabase,
       profilePrompt,
       messages: addAttachmentsToLastUserMessage({
-        messages: await convertToModelMessages(chatMessages),
+        messages: await convertToModelMessages(sanitizedChatMessages),
         image: attachedImage,
         attachment: attachedTextFile,
         text: lastMessage,
@@ -1826,7 +1983,7 @@ ${knowledgeContext}`,
       {
         error: getChatApiErrorMessage(error),
       },
-      { status: 500 },
+      { status: error instanceof DailyTokenLimitError ? 429 : 500 },
     );
   }
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { BackNavLink } from "../components/BackNavLink";
 
 export default function ExtractPage() {
   const [text, setText] = useState("");
@@ -14,7 +13,6 @@ export default function ExtractPage() {
     <main className="chat-shell">
       <section className="chat-app extract-app" aria-label="Analizator">
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link" href="/chat">
             💬 Chat
           </a>

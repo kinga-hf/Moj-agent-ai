@@ -4,7 +4,50 @@ import { getAuthenticatedRequest } from "../../../../lib/supabase-request";
 export const runtime = "nodejs";
 
 const maxPdfSize = 12 * 1024 * 1024;
-const maxExtractedText = 18000;
+const maxExtractedText = 40000;
+
+type PdfTextItem = {
+  str?: string;
+  transform?: number[];
+};
+
+type PdfPageData = {
+  getTextContent: (options: {
+    normalizeWhitespace: boolean;
+    disableCombineTextItems: boolean;
+  }) => Promise<{ items: PdfTextItem[] }>;
+};
+
+async function renderPageWithMarker(pageData: PdfPageData, pageNumber: number) {
+  const textContent = await pageData.getTextContent({
+    normalizeWhitespace: false,
+    disableCombineTextItems: false,
+  });
+  let lastY: number | undefined;
+  let pageText = "";
+
+  for (const item of textContent.items) {
+    const y = item.transform?.[5];
+    if (lastY === undefined || y === lastY) {
+      pageText += item.str ?? "";
+    } else {
+      pageText += `\n${item.str ?? ""}`;
+    }
+    lastY = y;
+  }
+
+  return `[--- STRONA ${pageNumber} ---]\n${pageText}`;
+}
+
+function normalizeExtractedText(text: string) {
+  return text
+    .replace(/\r\n?/g, "\n")
+    .split("\n")
+    .map((line) => line.replace(/[ \t]+/g, " ").trimEnd())
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
 
 export async function POST(req: Request) {
   try {
@@ -29,8 +72,14 @@ export async function POST(req: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const parsed = await pdf(buffer);
-    const text = parsed.text.replace(/\s+/g, " ").trim();
+    let pageNumber = 0;
+    const parsed = await pdf(buffer, {
+      pagerender: (pageData: PdfPageData) => {
+        pageNumber += 1;
+        return renderPageWithMarker(pageData, pageNumber);
+      },
+    });
+    const text = normalizeExtractedText(parsed.text);
 
     if (text.length < 20) {
       return Response.json(

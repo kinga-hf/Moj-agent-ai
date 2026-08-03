@@ -3,7 +3,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { BackNavLink } from "../components/BackNavLink";
 import {
   AttachedImagePreview,
   DropOverlay,
@@ -157,7 +156,6 @@ export default function VisionPage() {
       >
         <DropOverlay visible={isDraggingImage} />
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link" href="/chat">
             💬 Chat
           </a>

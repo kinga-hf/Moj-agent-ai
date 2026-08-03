@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
-import { BackNavLink } from "../components/BackNavLink";
 
 type TravelCard = {
   kind: "weather" | "currency" | "holiday" | "attraction" | "budget" | "translation";
@@ -231,7 +230,6 @@ export default function TravelPage() {
     <main className="chat-shell">
       <section className="chat-app travel-app" aria-label="Asystent podróży AI">
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link active" href="/travel">
             ✈️ Podróże
           </a>

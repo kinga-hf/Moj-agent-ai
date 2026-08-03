@@ -9,7 +9,6 @@ import {
   useImageAttachment,
 } from "../components/ImageAttachment";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
-import { BackNavLink } from "../components/BackNavLink";
 import { AuthStatus } from "../components/AuthStatus";
 import { useAuth } from "../components/AuthGate";
 import { supabase } from "../../lib/supabase";
@@ -219,7 +218,6 @@ export default function AgentPage() {
       >
         <DropOverlay visible={isDraggingImage} />
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link" href="/react">
             🔄 ReAct
           </a>

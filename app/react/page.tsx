@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
-import { BackNavLink } from "../components/BackNavLink";
 
 type ToolTimelineItem = {
   id: string;
@@ -300,7 +299,6 @@ export default function ReactPage() {
     <main className="chat-shell">
       <section className="chat-app react-app" aria-label="Agent ReAct">
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link active" href="/react">
             🔄 ReAct
           </a>

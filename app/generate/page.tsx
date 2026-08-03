@@ -1,7 +1,6 @@
 "use client";
 
 import { FormEvent, useState } from "react";
-import { BackNavLink } from "../components/BackNavLink";
 
 const promptExamples = [
   "Minimalistyczne logo kawiarni w stylu japońskim",
@@ -89,7 +88,6 @@ export default function GeneratePage() {
     <main className="chat-shell">
       <section className="chat-app generate-app" aria-label="Generator grafik AI">
         <nav className="top-nav" aria-label="Nawigacja">
-          <BackNavLink />
           <a className="nav-link" href="/chat">
             💬 Chat
           </a>

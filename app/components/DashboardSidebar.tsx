@@ -1,11 +1,14 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthStatus } from "./AuthStatus";
+import { GlobalSidebarContext } from "./SidebarContext";
 
 const navigation = [
   { href: "/upload", icon: "KB", label: "Baza wiedzy" },
+  { href: "/admin/security", icon: "🛡️", label: "Bezpieczeństwo" },
+  { href: "/briefings", icon: "📰", label: "Briefingi" },
   { href: "/", icon: "🏠", label: "Dashboard" },
   { href: "/email-triage", icon: "📧", label: "E-mail Triage" },
   { href: "/report", icon: "📊", label: "Raporty" },
@@ -32,9 +35,18 @@ function isActiveRoute(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ global = false }: { global?: boolean }) {
+  const insideGlobalShell = useContext(GlobalSidebarContext);
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
+
+  if (insideGlobalShell && !global) {
+    return null;
+  }
 
   return (
     <>
