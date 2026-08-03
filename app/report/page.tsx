@@ -2,8 +2,10 @@
 
 import { FormEvent, ReactNode, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { supabase } from "../../lib/supabase";
 
 const examples = [
+  "Krótki raport bezpieczeństwa wszystkich użytkowników mojego agenta",
   "Rynek AI w Polsce - trendy, firmy, prognozy na 2026",
   "Porównanie platform e-commerce: Shopify vs WooCommerce vs PrestaShop",
   "Wpływ pracy zdalnej na produktywność - badania i statystyki",
@@ -187,9 +189,14 @@ export default function ReportPage() {
     setIsLoading(true);
 
     try {
+      const session = await supabase?.auth.getSession();
+      const token = session?.data.session?.access_token;
       const response = await fetch("/api/report", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ topic: cleanTopic }),
       });
 
