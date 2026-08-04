@@ -5969,6 +5969,11 @@ body {
   gap: 7px;
 }
 
+.chat-app::before {
+  height: 4px;
+  background: linear-gradient(90deg, #ad8f4e, #d8bd7a 48%, #f0d99a) !important;
+}
+
 .sidebar-group-items {
   display: grid;
   gap: 3px;
