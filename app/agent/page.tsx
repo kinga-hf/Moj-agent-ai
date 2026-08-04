@@ -10,6 +10,7 @@ import {
 } from "../components/ImageAttachment";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
 import { AuthStatus } from "../components/AuthStatus";
+import { GoldIcon, type IconName } from "../components/GoldIcon";
 import { useAuth } from "../components/AuthGate";
 import { supabase } from "../../lib/supabase";
 import { ensureUserProfile } from "../../lib/user-profile";
@@ -42,26 +43,26 @@ type AgentMessage = {
 };
 
 const tools = [
-  ["🧮", "Kalkulator"],
-  ["🕐", "Data i czas"],
-  ["🌐", "Google Search"],
-  ["📄", "Czytanie stron"],
-  ["🎨", "Generowanie obrazów"],
-  ["👁️", "Analiza obrazów"],
+  "Kalkulator",
+  "Data i czas",
+  "Google Search",
+  "Czytanie stron",
+  "Generowanie obrazów",
+  "Analiza obrazów",
 ];
 
 const agentModes = [
-  { href: "/travel", icon: "✈️", label: "Podróże", description: "planowanie wyjazdów" },
-  { href: "/react", icon: "🔄", label: "ReAct", description: "autonomiczne zadania" },
-  { href: "/chat", icon: "💬", label: "Chat prawniczy", description: "rozmowa z Legal AI" },
-  { href: "/think", icon: "🧠", label: "Myślenie", description: "głębsza analiza" },
-  { href: "/search", icon: "🌐", label: "Szukaj", description: "internet i źródła" },
-  { href: "/translator", icon: "🌐", label: "Tłumacz", description: "tłumaczenie tekstu" },
-  { href: "/generate", icon: "🎨", label: "Grafiki", description: "generator obrazów" },
-  { href: "/vision", icon: "👁️", label: "Vision", description: "analiza obrazów" },
-  { href: "/extract", icon: "📊", label: "Analizator", description: "ekstrakcja danych" },
-  { href: "/format", icon: "📐", label: "Formater", description: "formatowanie treści" },
-  { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing", description: "tezy i zarzuty" },
+  { href: "/travel", icon: "travel", label: "Podróże", description: "planowanie wyjazdów" },
+  { href: "/react", icon: "react", label: "ReAct", description: "autonomiczne zadania" },
+  { href: "/chat", icon: "chat", label: "Chat prawniczy", description: "rozmowa z Legal AI" },
+  { href: "/think", icon: "think", label: "Myślenie", description: "głębsza analiza" },
+  { href: "/search", icon: "search", label: "Szukaj", description: "internet i źródła" },
+  { href: "/translator", icon: "translate", label: "Tłumacz", description: "tłumaczenie tekstu" },
+  { href: "/generate", icon: "graphics", label: "Grafiki", description: "generator obrazów" },
+  { href: "/vision", icon: "vision", label: "Vision", description: "analiza obrazów" },
+  { href: "/extract", icon: "analyzer", label: "Analizator", description: "ekstrakcja danych" },
+  { href: "/format", icon: "format", label: "Formater", description: "formatowanie treści" },
+  { href: "/legal-opposition", icon: "legal", label: "Legal Briefing", description: "tezy i zarzuty" },
 ];
 
 const scenarios = [
@@ -73,6 +74,31 @@ const scenarios = [
 ];
 
 const featuredModes = agentModes.slice(0, 6);
+
+const modeIconsByHref: Record<string, IconName> = {
+  "/travel": "travel",
+  "/react": "react",
+  "/chat": "chat",
+  "/think": "think",
+  "/search": "search",
+  "/translator": "translate",
+  "/generate": "graphics",
+  "/vision": "vision",
+  "/extract": "analyzer",
+  "/format": "format",
+  "/legal-opposition": "legal",
+};
+
+function toolIconForName(name: string): IconName {
+  const normalized = name.toLowerCase();
+  if (normalized.includes("kalk")) return "calculator";
+  if (normalized.includes("czas") || normalized.includes("data")) return "clock";
+  if (normalized.includes("search") || normalized.includes("google")) return "search";
+  if (normalized.includes("stron")) return "web";
+  if (normalized.includes("obraz") || normalized.includes("graf")) return "image";
+  if (normalized.includes("vision") || normalized.includes("analiz")) return "vision";
+  return "agent";
+}
 
 function createId() {
   return `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -132,7 +158,7 @@ export default function AgentPage() {
     const userMessage: AgentMessage = {
       id: createId(),
       role: "user",
-      text: attachedImage ? `${userText}\n\n📎 Załączono obraz.` : userText,
+      text: attachedImage ? `${userText}\n\nZałączono obraz.` : userText,
     };
     const nextMessages = [...messages, userMessage];
     const imageToSend = attachedImage?.dataUrl;
@@ -222,38 +248,38 @@ export default function AgentPage() {
         <DropOverlay visible={isDraggingImage} />
         <nav className="top-nav" aria-label="Nawigacja">
           <a className="nav-link" href="/react">
-            🔄 ReAct
+            <GoldIcon name="react" size={16} /> ReAct
           </a>
           <a className="nav-link" href="/chat">
-            💬 Chat
+            <GoldIcon name="chat" size={16} /> Chat
           </a>
           <a className="nav-link" href="/think">
-            🧠 Myślenie
+            <GoldIcon name="think" size={16} /> Myślenie
           </a>
           <a className="nav-link" href="/search">
-            🌐 Szukaj
+            <GoldIcon name="search" size={16} /> Szukaj
           </a>
           <a className="nav-link" href="/generate">
-            🎨 Grafiki
+            <GoldIcon name="graphics" size={16} /> Grafiki
           </a>
           <a className="nav-link" href="/vision">
-            👁️ Vision
+            <GoldIcon name="vision" size={16} /> Vision
           </a>
           <a className="nav-link" href="/extract">
-            📊 Analizator
+            <GoldIcon name="analyzer" size={16} /> Analizator
           </a>
           <a className="nav-link" href="/format">
-            📐 Formater
+            <GoldIcon name="format" size={16} /> Formater
           </a>
           <a className="nav-link" href="/legal-opposition">
-            ⚖️ Legal Briefing
+            <GoldIcon name="legal" size={16} /> Legal Briefing
           </a>
           <AuthStatus compact />
         </nav>
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">🤖 Agent AI - Pełna moc</h1>
+            <h1 className="chat-title"><GoldIcon name="agent" size={30} /> Agent AI - Pełna moc</h1>
             <p className="agent-description">
               {tools.length} narzędzi • autonomiczne decyzje
             </p>
@@ -267,7 +293,7 @@ export default function AgentPage() {
               </button>
               {(showAllModes ? agentModes : featuredModes).map((mode) => (
                 <a className="agent-mode-card" href={mode.href} key={mode.href}>
-                  <span>{mode.icon}</span>
+                  <span><GoldIcon name={modeIconsByHref[mode.href]} /></span>
                   <strong>{mode.label}</strong>
                   <em>{mode.description}</em>
                 </a>
@@ -304,19 +330,19 @@ export default function AgentPage() {
                 <div className="message-bubble">
                   {message.role === "assistant" ? (
                     <div className="badge-row">
-                      <span className="model-badge flash">🤖 agent</span>
+                      <span className="model-badge flash"><GoldIcon name="agent" size={14} /> agent</span>
                     </div>
                   ) : null}
 
                   {message.tools && message.tools.length > 0 ? (
                     <div className="tool-timeline">
-                      <strong>🤖 Agent wykonuje zadanie...</strong>
+                      <strong><GoldIcon name="agent" size={16} /> Agent wykonuje zadanie...</strong>
                       {message.tools.map((item) => (
                         <div className="tool-step" key={item.id}>
                           <div>
                             <span>{item.index}</span>
                             <strong>
-                              {item.emoji} {item.name}
+                              <GoldIcon name={toolIconForName(item.name)} size={16} /> {item.name}
                             </strong>
                           </div>
                           {item.input ? <p>→ {item.input}</p> : null}
@@ -345,7 +371,7 @@ export default function AgentPage() {
                             onClick={() => downloadImage(image.image)}
                             type="button"
                           >
-                            💾 Pobierz
+                            <GoldIcon name="download" size={16} /> Pobierz
                           </button>
                         </div>
                       ))}
@@ -368,10 +394,10 @@ export default function AgentPage() {
             <div className="message-row assistant">
               <div className="message-bubble">
                 <div className="badge-row">
-                  <span className="model-badge flash">🤖 agent</span>
+                  <span className="model-badge flash"><GoldIcon name="agent" size={14} /> agent</span>
                 </div>
                 <div className="tool-timeline loading">
-                  <strong>🤖 Agent wykonuje zadanie...</strong>
+                  <strong><GoldIcon name="agent" size={16} /> Agent wykonuje zadanie...</strong>
                   <div className="tool-step">
                     <div>
                       <span>①</span>

@@ -3,52 +3,53 @@
 import { usePathname } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { AuthStatus } from "./AuthStatus";
+import { GoldIcon } from "./GoldIcon";
 import { GlobalSidebarContext } from "./SidebarContext";
 
 const navigationGroups = [
   {
     label: "Start",
     items: [
-      { href: "/", icon: "🏠", label: "Dashboard" },
-      { href: "/agent", icon: "🤖", label: "Agent AI" },
+      { href: "/", icon: "dashboard", label: "Dashboard" },
+      { href: "/agent", icon: "agent", label: "Agent AI" },
     ],
   },
   {
     label: "Wiedza i komunikacja",
     items: [
-      { href: "/upload", icon: "📚", label: "Baza wiedzy" },
-      { href: "/briefings", icon: "📰", label: "Briefingi" },
-      { href: "/email-triage", icon: "📧", label: "E-mail Triage" },
-      { href: "/chat", icon: "💬", label: "Chat prawniczy" },
-      { href: "/history", icon: "📜", label: "Historia" },
+      { href: "/upload", icon: "knowledge", label: "Baza wiedzy" },
+      { href: "/briefings", icon: "briefings", label: "Briefingi" },
+      { href: "/email-triage", icon: "email", label: "E-mail Triage" },
+      { href: "/chat", icon: "chat", label: "Chat prawniczy" },
+      { href: "/history", icon: "history", label: "Historia" },
     ],
   },
   {
     label: "Analiza i praca",
     items: [
-      { href: "/report", icon: "📊", label: "Raporty" },
-      { href: "/extract", icon: "🔎", label: "Analizator" },
-      { href: "/competitor", icon: "🏢", label: "Konkurencja" },
-      { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing" },
-      { href: "/think", icon: "🧠", label: "Myślenie" },
+      { href: "/report", icon: "report", label: "Raporty" },
+      { href: "/extract", icon: "analyzer", label: "Analizator" },
+      { href: "/competitor", icon: "competitor", label: "Konkurencja" },
+      { href: "/legal-opposition", icon: "legal", label: "Legal Briefing" },
+      { href: "/think", icon: "think", label: "Myślenie" },
     ],
   },
   {
     label: "Narzędzia",
     items: [
-      { href: "/react", icon: "🔄", label: "ReAct" },
-      { href: "/search", icon: "🌐", label: "Szukaj" },
-      { href: "/translator", icon: "🌍", label: "Tłumacz" },
-      { href: "/format", icon: "📐", label: "Formater" },
-      { href: "/fewshot", icon: "📖", label: "Słownik AI" },
-      { href: "/travel", icon: "✈️", label: "Podróże" },
-      { href: "/generate", icon: "🎨", label: "Grafiki" },
-      { href: "/vision", icon: "👁️", label: "Vision" },
+      { href: "/react", icon: "react", label: "ReAct" },
+      { href: "/search", icon: "search", label: "Szukaj" },
+      { href: "/translator", icon: "translate", label: "Tłumacz" },
+      { href: "/format", icon: "format", label: "Formater" },
+      { href: "/fewshot", icon: "dictionary", label: "Słownik AI" },
+      { href: "/travel", icon: "travel", label: "Podróże" },
+      { href: "/generate", icon: "graphics", label: "Grafiki" },
+      { href: "/vision", icon: "vision", label: "Vision" },
     ],
   },
   {
     label: "Administracja",
-    items: [{ href: "/admin/security", icon: "🛡️", label: "Bezpieczeństwo" }],
+    items: [{ href: "/admin/security", icon: "security", label: "Bezpieczeństwo" }],
   },
 ] as const;
 
@@ -94,7 +95,7 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
 
       <aside className={`dashboard-sidebar ${menuOpen ? "open" : ""}`} aria-label="Nawigacja dashboardu">
         <div className="dashboard-brand">
-          <span>🤖</span>
+          <span><GoldIcon name="agent" size={28} /></span>
           <strong>Agent AI</strong>
           <em>centrum dowodzenia</em>
         </div>
@@ -115,7 +116,7 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
                 <div className="sidebar-group-items">
                   {group.items.map((item) => (
                     <a className={isActiveRoute(pathname, item.href) ? "active" : ""} href={item.href} key={item.href}>
-                      <span>{item.icon}</span>
+                      <span><GoldIcon name={item.icon} /></span>
                       {item.label}
                     </a>
                   ))}

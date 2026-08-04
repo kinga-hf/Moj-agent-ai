@@ -5955,6 +5955,20 @@ body {
   line-height: 1;
 }
 
+.gold-icon {
+  color: #d8bd7a !important;
+  flex: 0 0 auto;
+}
+
+.chat-title,
+.model-badge,
+.tool-timeline > strong,
+.tool-step strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .sidebar-group-items {
   display: grid;
   gap: 3px;
