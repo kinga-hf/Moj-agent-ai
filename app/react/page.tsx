@@ -1,8 +1,8 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { FormEvent, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
-import { GoldIcon } from "../components/GoldIcon";
+import { GoldIcon, type IconName } from "../components/GoldIcon";
 
 type ToolTimelineItem = {
   id: string;
@@ -46,16 +46,32 @@ const scenarios = [
 ];
 
 const tools = [
-  ["🧮", "Kalkulator"],
-  ["🕐", "Data i czas"],
-  ["🌦️", "Pogoda"],
-  ["💱", "Kursy walut"],
-  ["📅", "Święta"],
-  ["📚", "Wikipedia"],
-  ["🌐", "Google"],
-  ["📄", "Czytanie stron"],
-  ["💾", "Notatki"],
-];
+  { icon: "calculator", label: "Kalkulator" },
+  { icon: "clock", label: "Data i czas" },
+  { icon: "weather", label: "Pogoda" },
+  { icon: "currency", label: "Kursy walut" },
+  { icon: "holiday", label: "Święta" },
+  { icon: "dictionary", label: "Wikipedia" },
+  { icon: "search", label: "Google" },
+  { icon: "page", label: "Czytanie stron" },
+  { icon: "download", label: "Notatki" },
+] satisfies ReadonlyArray<{ icon: IconName; label: string }>;
+
+function getToolIcon(name: string): IconName {
+  const normalized = name.toLowerCase();
+
+  if (normalized.includes("kalk") || normalized.includes("calc")) return "calculator";
+  if (normalized.includes("czas") || normalized.includes("date")) return "clock";
+  if (normalized.includes("pogod") || normalized.includes("weather")) return "weather";
+  if (normalized.includes("kurs") || normalized.includes("currenc")) return "currency";
+  if (normalized.includes("świę") || normalized.includes("swiet") || normalized.includes("holid")) return "holiday";
+  if (normalized.includes("wikip") || normalized.includes("słownik") || normalized.includes("dictionary")) return "dictionary";
+  if (normalized.includes("google") || normalized.includes("szuk") || normalized.includes("search")) return "search";
+  if (normalized.includes("stron") || normalized.includes("page") || normalized.includes("read")) return "page";
+  if (normalized.includes("notat") || normalized.includes("note")) return "download";
+
+  return "agent";
+}
 
 function createId() {
   return `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -79,17 +95,17 @@ function getSectionKind(title: string): ReactSection["kind"] {
   return "plain";
 }
 
-function getDisplayTitle(section: ReactSection) {
+function getDisplayTitle(section: ReactSection): ReactNode {
   if (section.kind === "thought") {
-    return "🧠 Myślę...";
+    return <><GoldIcon name="think" size={18} /> Myślę...</>;
   }
 
   if (section.kind === "observation") {
-    return "👁️ Obserwuję...";
+    return <><GoldIcon name="vision" size={18} /> Obserwuję...</>;
   }
 
   if (section.kind === "final") {
-    return "✅ Wynik końcowy";
+    return <><GoldIcon name="spark" size={18} /> Wynik końcowy</>;
   }
 
   return section.title;
@@ -178,7 +194,7 @@ function ReactAnswer({
               <div>
                 <span>{item.index}</span>
                 <strong>
-                  {item.emoji} {item.name}
+                  <GoldIcon name={getToolIcon(item.name)} size={18} /> {item.name}
                 </strong>
               </div>
               {item.input ? <p>→ {item.input}</p> : null}
@@ -334,10 +350,10 @@ export default function ReactPage() {
               kończy konkretną odpowiedzią.
             </p>
             <div className="agent-tool-panel" aria-label="Narzędzia ReAct">
-              {tools.map(([emoji, name]) => (
-                <div className="agent-tool" key={name}>
-                  <span>{emoji}</span>
-                  <strong>{name}</strong>
+              {tools.map((tool) => (
+                <div className="agent-tool" key={tool.label}>
+                  <span><GoldIcon name={tool.icon} size={18} /></span>
+                  <strong>{tool.label}</strong>
                   <em>aktywny</em>
                 </div>
               ))}
