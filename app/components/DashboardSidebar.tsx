@@ -64,9 +64,17 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
   const insideGlobalShell = useContext(GlobalSidebarContext);
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ Start: true });
 
   useEffect(() => {
     setMenuOpen(false);
+    const activeGroup = navigationGroups.find((group) =>
+      group.items.some((item) => isActiveRoute(pathname, item.href)),
+    );
+
+    if (activeGroup) {
+      setOpenGroups((current) => ({ ...current, [activeGroup.label]: true }));
+    }
   }, [pathname]);
 
   if (insideGlobalShell && !global) {
@@ -94,15 +102,25 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
         <nav>
           {navigationGroups.map((group) => (
             <section className="sidebar-group" key={group.label}>
-              <span className="sidebar-group-label">{group.label}</span>
-              <div className="sidebar-group-items">
-                {group.items.map((item) => (
-                  <a className={isActiveRoute(pathname, item.href) ? "active" : ""} href={item.href} key={item.href}>
-                    <span>{item.icon}</span>
-                    {item.label}
-                  </a>
-                ))}
-              </div>
+              <button
+                aria-expanded={Boolean(openGroups[group.label])}
+                className="sidebar-group-toggle"
+                onClick={() => setOpenGroups((current) => ({ ...current, [group.label]: !current[group.label] }))}
+                type="button"
+              >
+                <span>{group.label}</span>
+                <span aria-hidden="true">{openGroups[group.label] ? "⌃" : "⌄"}</span>
+              </button>
+              {openGroups[group.label] ? (
+                <div className="sidebar-group-items">
+                  {group.items.map((item) => (
+                    <a className={isActiveRoute(pathname, item.href) ? "active" : ""} href={item.href} key={item.href}>
+                      <span>{item.icon}</span>
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+              ) : null}
             </section>
           ))}
         </nav>

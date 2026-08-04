@@ -5927,6 +5927,34 @@ body {
   text-transform: uppercase;
 }
 
+.sidebar-group-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: #d8bd7a !important;
+  cursor: pointer;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  padding: 4px 10px;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.sidebar-group-toggle:hover {
+  background: rgba(216, 189, 122, 0.08);
+  color: #fff7df !important;
+}
+
+.sidebar-group-toggle > span:last-child {
+  font-size: 1rem;
+  line-height: 1;
+}
+
 .sidebar-group-items {
   display: grid;
   gap: 3px;
