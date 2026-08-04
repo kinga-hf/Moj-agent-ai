@@ -2,9 +2,10 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { AuthStatus } from "./AuthStatus";
 import { useAuth } from "./AuthGate";
+import { GoldIcon, type IconName } from "./GoldIcon";
 import { supabase } from "../../lib/supabase";
 import { ensureUserProfile, type UserProfile } from "../../lib/user-profile";
 import {
@@ -24,9 +25,9 @@ const modes: Array<{
   label: string;
   badge: string;
 }> = [
-  { id: "casual", label: "💬 Praktyczny", badge: "💬 praktyczny" },
-  { id: "expert", label: "🎓 Ekspert", badge: "🎓 ekspert" },
-  { id: "creative", label: "✍️ Redakcja", badge: "✍️ redakcja" },
+  { id: "casual", label: "Praktyczny", badge: "praktyczny" },
+  { id: "expert", label: "Ekspert", badge: "ekspert" },
+  { id: "creative", label: "Redakcja", badge: "redakcja" },
 ];
 
 const models: Array<{
@@ -34,9 +35,34 @@ const models: Array<{
   label: string;
   badge: string;
 }> = [
-  { id: "flash", label: "⚡ Flash", badge: "⚡ flash" },
-  { id: "pro", label: "🧠 Pro", badge: "🧠 pro" },
+  { id: "flash", label: "Flash", badge: "flash" },
+  { id: "pro", label: "Pro", badge: "pro" },
 ];
+
+const modeIcons: Record<ChatMode, IconName> = {
+  casual: "chat",
+  expert: "think",
+  creative: "format",
+};
+
+const modelIcons: Record<AiModel, IconName> = {
+  flash: "spark",
+  pro: "think",
+};
+
+const messageIcons: Record<string, IconName> = {
+  "📋": "page",
+  "🔎": "search",
+  "✅": "security",
+  "💡": "spark",
+  "⚡": "spark",
+  "📎": "image",
+  "📄": "page",
+  "🧠": "think",
+  "💬": "chat",
+  "🎓": "think",
+  "✍️": "format",
+};
 
 const legalExampleQuestions = [
   "Przeanalizuj ten problem prawny i wskaż, jakich faktów brakuje.",
@@ -65,6 +91,22 @@ function getMessageText(parts: { type: string; text?: string }[]) {
     .filter((part) => part.type === "text")
     .map((part) => part.text ?? "")
     .join("");
+}
+
+function renderChatText(text: string) {
+  const emojiPattern = /(📋|🔎|✅|💡|⚡|📎|📄|🧠|💬|🎓|✍️)/gu;
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(emojiPattern)) {
+    const index = match.index ?? 0;
+    if (index > lastIndex) nodes.push(text.slice(lastIndex, index));
+    nodes.push(<GoldIcon key={`${match[0]}-${index}`} name={messageIcons[match[0]]} size={17} />);
+    lastIndex = index + match[0].length;
+  }
+
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex));
+  return nodes.length ? nodes : text;
 }
 
 function getConversationTitle(text: string) {
@@ -629,7 +671,7 @@ export default function Home() {
                   onClick={handleNewConversation}
                   type="button"
                 >
-                  🗑 Nowa rozmowa
+                  <><GoldIcon name="spark" size={16} /> Nowa rozmowa</>
                 </button>
                 <button
                   className="secondary-button"
@@ -637,7 +679,7 @@ export default function Home() {
                   onClick={handleExportConversation}
                   type="button"
                 >
-                  📋 Eksportuj rozmowę
+                  <><GoldIcon name="download" size={16} /> Eksportuj rozmowę</>
                 </button>
                 <span className="copy-status" aria-live="polite">
                   {copyStatus}
@@ -675,6 +717,7 @@ export default function Home() {
                           assistantModes[message.id] ?? "casual"
                         }`}
                       >
+                        <GoldIcon name={modeIcons[assistantModes[message.id] ?? "casual"]} size={15} />
                         {modeBadges[assistantModes[message.id] ?? "casual"]}
                       </span>
                       <span
@@ -682,10 +725,11 @@ export default function Home() {
                           assistantModels[message.id] ?? "flash"
                         }`}
                       >
+                        <GoldIcon name={modelIcons[assistantModels[message.id] ?? "flash"]} size={15} />
                         {modelBadges[assistantModels[message.id] ?? "flash"]}
                       </span>
                       {assistantCommands[message.id] === "projekt" ? (
-                        <span className="command-badge">📄 projekt</span>
+                        <span className="command-badge"><GoldIcon name="page" size={14} /> projekt</span>
                       ) : null}
                     </div>
                   ) : null}
@@ -696,9 +740,9 @@ export default function Home() {
 
                     return (
                       <>
-                        {body}
+                        {renderChatText(body)}
                         {source ? (
-                          <div className="knowledge-source">{source}</div>
+                          <div className="knowledge-source">{renderChatText(source)}</div>
                         ) : null}
                       </>
                     );
@@ -713,13 +757,15 @@ export default function Home() {
               <div className="message-bubble">
                 <div className="badge-row">
                   <span className={`mode-badge ${pendingModeRef.current}`}>
+                    <GoldIcon name={modeIcons[pendingModeRef.current]} size={15} />
                     {modeBadges[pendingModeRef.current]}
                   </span>
                   <span className={`model-badge ${pendingModelRef.current}`}>
+                    <GoldIcon name={modelIcons[pendingModelRef.current]} size={15} />
                     {modelBadges[pendingModelRef.current]}
                   </span>
                   {pendingCommandRef.current === "projekt" ? (
-                    <span className="command-badge">📄 projekt</span>
+                    <span className="command-badge"><GoldIcon name="page" size={14} /> projekt</span>
                   ) : null}
                 </div>
                 Myślę...
@@ -750,7 +796,7 @@ export default function Home() {
                 onClick={() => setModel(item.id)}
                 type="button"
               >
-                {item.label}
+                <GoldIcon name={modelIcons[item.id]} size={15} /> {item.label}
                 <span>
                   {item.id === "flash" ? "szybki" : "zaawansowany"}
                 </span>
@@ -766,7 +812,7 @@ export default function Home() {
                 onClick={() => setMode(item.id)}
                 type="button"
               >
-                {item.label}
+                <GoldIcon name={modeIcons[item.id]} size={15} /> {item.label}
               </button>
             ))}
           </div>
