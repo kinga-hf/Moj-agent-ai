@@ -72,6 +72,8 @@ const scenarios = [
   "Wyszukaj w Google 'best coffee shops Kraków' i streszcz wyniki",
 ];
 
+const featuredModes = agentModes.slice(0, 6);
+
 function createId() {
   return `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
@@ -91,6 +93,7 @@ export default function AgentPage() {
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showAllModes, setShowAllModes] = useState(false);
   const userId = user?.id ?? null;
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -255,7 +258,14 @@ export default function AgentPage() {
               {tools.length} narzędzi • autonomiczne decyzje
             </p>
             <div className="agent-mode-panel" aria-label="Tryby w zakładce Agent">
-              {agentModes.map((mode) => (
+              <button
+                className="agent-mode-toggle"
+                onClick={() => setShowAllModes((visible) => !visible)}
+                type="button"
+              >
+                {showAllModes ? "Pokaż mniej" : `Wszystkie narzędzia (${agentModes.length})`}
+              </button>
+              {(showAllModes ? agentModes : featuredModes).map((mode) => (
                 <a className="agent-mode-card" href={mode.href} key={mode.href}>
                   <span>{mode.icon}</span>
                   <strong>{mode.label}</strong>
@@ -264,7 +274,7 @@ export default function AgentPage() {
               ))}
             </div>
             <div className="example-questions" aria-label="Scenariusze">
-              {scenarios.map((scenario) => (
+              {scenarios.slice(0, 4).map((scenario) => (
                 <button
                   className="example-button"
                   disabled={isLoading}

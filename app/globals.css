@@ -5913,6 +5913,73 @@ body {
   }
 }
 
+.sidebar-group {
+  display: grid;
+  gap: 6px;
+}
+
+.sidebar-group-label {
+  padding: 0 10px;
+  color: #d8bd7a !important;
+  font-size: 0.68rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.sidebar-group-items {
+  display: grid;
+  gap: 3px;
+}
+
+.sidebar-group-items a {
+  min-height: 38px;
+  font-size: 0.9rem;
+}
+
+.agent-app .chat-header {
+  padding: 24px clamp(20px, 3vw, 34px) 20px;
+}
+
+.agent-app .agent-mode-panel {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.agent-mode-toggle {
+  grid-column: 1 / -1;
+  justify-self: start;
+  border: 1px solid rgba(216, 189, 122, 0.32) !important;
+  border-radius: 999px;
+  background: rgba(216, 189, 122, 0.1) !important;
+  color: #f5f1e8 !important;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 7px 12px;
+}
+
+.agent-mode-toggle:hover {
+  border-color: rgba(216, 189, 122, 0.7) !important;
+  background: rgba(216, 189, 122, 0.18) !important;
+}
+
+.agent-app .example-questions {
+  max-width: 980px;
+}
+
+@media (max-width: 980px) {
+  .agent-app .agent-mode-panel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .agent-app .agent-mode-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
 .security-page {
   min-height: 100vh;
   padding: clamp(28px, 4vw, 56px);
