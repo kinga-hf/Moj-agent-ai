@@ -205,9 +205,9 @@ export default function VisionPage() {
               onPaste={(event) => void handlePaste(event)}
               type="button"
             >
-              <span>📸 Ctrl+V - wklej screenshot</span>
-              <span>📁 Kliknij - wybierz plik</span>
-              <span>🖱️ Przeciągnij - upuść obraz</span>
+              <span><GoldIcon name="image" size={18} /> Ctrl+V - wklej screenshot</span>
+              <span><GoldIcon name="folder" size={18} /> Kliknij - wybierz plik</span>
+              <span><GoldIcon name="agent" size={18} /> Przeciągnij - upuść obraz</span>
             </button>
           ) : (
             <>

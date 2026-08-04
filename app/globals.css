@@ -3655,6 +3655,12 @@ button {
   text-align: center;
 }
 
+.vision-drop-zone > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
 .vision-drop-zone:hover,
 .vision-drop-zone:focus {
   border-color: var(--accent);
