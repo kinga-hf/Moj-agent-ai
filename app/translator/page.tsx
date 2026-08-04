@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { GoldIcon } from "../components/GoldIcon";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 
@@ -12,6 +12,8 @@ const languages = [
   { code: "it", label: "Włoski" },
   { code: "pl", label: "Polski" },
   { code: "uk", label: "Ukraiński" },
+  { code: "cs", label: "Czeski" },
+  { code: "pt", label: "Portugalski" },
 ];
 
 type TranslateResponse = {
@@ -25,6 +27,21 @@ export default function TranslatorPage() {
   const [translatedText, setTranslatedText] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const languageMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const selectedLanguage = languages.find((language) => language.code === targetLanguage) ?? languages[0];
+
+  useEffect(() => {
+    function closeLanguageMenu(event: MouseEvent) {
+      if (!languageMenuRef.current?.contains(event.target as Node)) {
+        setLanguageOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", closeLanguageMenu);
+    return () => document.removeEventListener("mousedown", closeLanguageMenu);
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -92,17 +109,37 @@ export default function TranslatorPage() {
               <div className="translator-output">
                 <label className="translator-field">
                   <span>Język docelowy</span>
-                  <select
-                    className="translator-select"
-                    onChange={(event) => setTargetLanguage(event.target.value)}
-                    value={targetLanguage}
-                  >
-                    {languages.map((language) => (
-                      <option key={language.code} value={language.code}>
-                        {language.label}
-                      </option>
-                    ))}
-                  </select>
+                    <div className="translator-select-wrap" ref={languageMenuRef}>
+                      <button
+                        aria-expanded={languageOpen}
+                        aria-haspopup="listbox"
+                        className="translator-select-button"
+                        onClick={() => setLanguageOpen((open) => !open)}
+                        type="button"
+                      >
+                        <span>{selectedLanguage.label}</span>
+                        <span aria-hidden="true">⌄</span>
+                      </button>
+                      {languageOpen ? (
+                        <div className="translator-options" role="listbox" aria-label="Wybierz język docelowy">
+                          {languages.map((language) => (
+                            <button
+                              aria-selected={language.code === targetLanguage}
+                              className={language.code === targetLanguage ? "selected" : ""}
+                              key={language.code}
+                              onClick={() => {
+                                setTargetLanguage(language.code);
+                                setLanguageOpen(false);
+                              }}
+                              role="option"
+                              type="button"
+                            >
+                              {language.label}
+                            </button>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                 </label>
 
                 <div className="translator-result" aria-live="polite">
