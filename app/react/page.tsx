@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
+import { GoldIcon } from "../components/GoldIcon";
 
 type ToolTimelineItem = {
   id: string;
@@ -327,7 +328,7 @@ export default function ReactPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">🔄 Agent ReAct — Autonomiczne rozumowanie</h1>
+            <h1 className="chat-title"><GoldIcon name="react" size={30} /> Agent ReAct — Autonomiczne rozumowanie</h1>
             <p className="agent-description">
               Opisz cel → agent sam planuje, używa narzędzi, obserwuje wyniki i
               kończy konkretną odpowiedzią.
@@ -372,7 +373,7 @@ export default function ReactPage() {
                 <div className="message-bubble">
                   {message.role === "assistant" ? (
                     <div className="badge-row">
-                      <span className="model-badge flash">🔄 ReAct</span>
+                      <span className="model-badge flash"><GoldIcon name="react" size={14} /> ReAct</span>
                     </div>
                   ) : null}
 
@@ -402,7 +403,7 @@ export default function ReactPage() {
             <div className="message-row assistant">
               <div className="message-bubble">
                 <div className="badge-row">
-                  <span className="model-badge flash">🔄 ReAct</span>
+                  <span className="model-badge flash"><GoldIcon name="react" size={14} /> ReAct</span>
                 </div>
                 <div className="react-progress">
                   <div>
@@ -415,7 +416,7 @@ export default function ReactPage() {
                 </div>
                 <DiagnosticsPanel isLoading />
                 <div className="tool-timeline loading">
-                  <strong>⚙️ Agent planuje i działa...</strong>
+                  <strong><GoldIcon name="agent" size={16} /> Agent planuje i działa...</strong>
                   <div className="tool-step">
                     <div>
                       <span>1</span>

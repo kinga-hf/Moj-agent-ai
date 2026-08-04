@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { GoldIcon } from "./GoldIcon";
 
 const allowedImageTypes = [
   "image/png",
@@ -200,7 +201,7 @@ export function ImageUploadButton({
       title="Dodaj obraz"
       type="button"
     >
-      📎
+      <GoldIcon name="image" size={18} />
     </button>
   );
 }
@@ -220,7 +221,7 @@ export function AttachedImagePreview({
     <div className="image-attachment-preview">
       <img alt={image.name} src={image.dataUrl} />
       <div>
-        <strong>📎 Screenshot</strong>
+        <strong><GoldIcon name="image" size={16} /> Screenshot</strong>
         <span>zadaj pytanie o ten obraz</span>
       </div>
       <button aria-label="Usuń obraz" onClick={onRemove} type="button">

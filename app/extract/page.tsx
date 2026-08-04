@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 
 export default function ExtractPage() {
   const [text, setText] = useState("");
@@ -38,7 +39,7 @@ export default function ExtractPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">📊 Analizator</h1>
+            <h1 className="chat-title"><GoldIcon name="analyzer" size={30} /> Analizator</h1>
             <p className="agent-description">
               Wklej tekst, a zobaczysz szybkie podsumowanie, linki i adresy email.
               Do OCR ze screena użyj modułu Vision.

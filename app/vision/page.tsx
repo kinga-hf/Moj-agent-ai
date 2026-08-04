@@ -9,6 +9,7 @@ import {
   HiddenImageInput,
   useImageAttachment,
 } from "../components/ImageAttachment";
+import { GoldIcon } from "../components/GoldIcon";
 
 const visionQuestions = [
   "Co widzisz na tym obrazie?",
@@ -181,7 +182,7 @@ export default function VisionPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">👁️ Agent Vision</h1>
+            <h1 className="chat-title"><GoldIcon name="vision" size={30} /> Agent Vision</h1>
             <p className="agent-description">
               Wklej screenshot, wrzuć plik lub przeciągnij obraz.
             </p>
@@ -277,7 +278,7 @@ export default function VisionPage() {
                 <div className="message-bubble">
                   {message.role === "assistant" ? (
                     <div className="badge-row">
-                      <span className="model-badge flash">👁️ vision</span>
+                      <span className="model-badge flash"><GoldIcon name="vision" size={14} /> vision</span>
                     </div>
                   ) : null}
                   {getMessageText(message.parts)}
@@ -289,7 +290,7 @@ export default function VisionPage() {
               <div className="message-row assistant">
                 <div className="message-bubble">
                   <div className="badge-row">
-                    <span className="model-badge flash">👁️ vision</span>
+                    <span className="model-badge flash"><GoldIcon name="vision" size={14} /> vision</span>
                   </div>
                   Analizuję...
                 </div>

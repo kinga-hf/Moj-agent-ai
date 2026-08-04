@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 
 type AiModel = "flash" | "pro";
 
@@ -11,8 +12,8 @@ const models: Array<{
   label: string;
   badge: string;
 }> = [
-  { id: "flash", label: "⚡ Flash", badge: "⚡ flash" },
-  { id: "pro", label: "🧠 Pro", badge: "🧠 pro" },
+  { id: "flash", label: "Flash", badge: "flash" },
+  { id: "pro", label: "Pro", badge: "pro" },
 ];
 
 const terms = [
@@ -119,7 +120,7 @@ export default function FewShotPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">📚 Słownik AI</h1>
+            <h1 className="chat-title"><GoldIcon name="dictionary" size={30} /> Słownik AI</h1>
             <p className="agent-description">
               Wyjaśniam trudne pojęcia prostym językiem, zawsze w tym samym
               formacie: definicja, analogia, przykład i powiązane terminy.

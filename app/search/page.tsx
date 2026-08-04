@@ -10,6 +10,7 @@ import {
   ImageUploadButton,
   useImageAttachment,
 } from "../components/ImageAttachment";
+import { GoldIcon } from "../components/GoldIcon";
 
 const starterQuestions = [
   "Jakie są najnowsze wiadomości o sztucznej inteligencji?",
@@ -154,7 +155,7 @@ export default function SearchPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">🌐 Agent z wyszukiwarką</h1>
+            <h1 className="chat-title"><GoldIcon name="search" size={30} /> Agent z wyszukiwarką</h1>
             <p className="agent-description">
               Przeszukuję prawdziwy internet i czytam strony.
             </p>
@@ -197,7 +198,7 @@ export default function SearchPage() {
                 <div className="message-bubble">
                   {message.role === "assistant" ? (
                     <div className="badge-row">
-                      <span className="model-badge flash">🌐 search</span>
+                      <span className="model-badge flash"><GoldIcon name="search" size={14} /> search</span>
                     </div>
                   ) : null}
                   {message.role === "assistant" ? (
@@ -214,7 +215,7 @@ export default function SearchPage() {
             <div className="message-row assistant">
               <div className="message-bubble">
                 <div className="badge-row">
-                  <span className="model-badge flash">🌐 search</span>
+                  <span className="model-badge flash"><GoldIcon name="search" size={14} /> search</span>
                 </div>
                 Szukam...
               </div>

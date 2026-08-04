@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 import { useAuth } from "../components/AuthGate";
 import { supabase } from "../../lib/supabase";
+import { GoldIcon } from "../components/GoldIcon";
 
 type KnowledgeDocument = {
   title: string;
@@ -309,7 +310,7 @@ export default function UploadPage() {
         <header className="dashboard-hero">
           <div>
             <span className="dashboard-kicker">Baza wiedzy</span>
-            <h1>Baza wiedzy</h1>
+            <h1><GoldIcon name="knowledge" size={30} /> Baza wiedzy</h1>
             <p>Wklej tekst, a aplikacja podzieli go na fragmenty, wygeneruje wektory i zapisze je w Supabase.</p>
           </div>
           <div className="dashboard-status">

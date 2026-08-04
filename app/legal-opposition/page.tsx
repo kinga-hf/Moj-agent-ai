@@ -2,6 +2,7 @@
 
 import { ChangeEvent, DragEvent, FormEvent, ReactNode, useEffect, useRef, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { GoldIcon } from "../components/GoldIcon";
 import { useAuth } from "../components/AuthGate";
 import { supabase } from "../../lib/supabase";
 
@@ -530,7 +531,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
             <div className="legal-actions">
               <button className="send-button legal-submit" disabled={isLoading || !pleadingType.trim() || pleadingText.trim().length < 80} type="submit">
-                ⚡ Przeanalizuj pismo
+                <><GoldIcon name="legal" size={16} /> Przeanalizuj pismo</>
               </button>
             </div>
           </form>
@@ -591,7 +592,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 <span>{pleadingType || "pismo procesowe"}</span>
               </div>
               <button disabled={!analysis.trim()} onClick={() => void copyAnalysis()} type="button">
-                {copyStatus || "📋 Kopiuj briefing"}
+                {copyStatus || <><GoldIcon name="copy" size={16} /> Kopiuj briefing</>}
               </button>
             </div>
 

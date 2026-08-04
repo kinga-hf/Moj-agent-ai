@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { GoldIcon, type IconName } from "../components/GoldIcon";
 
 type DashboardWeather = {
   city: string;
@@ -49,18 +50,18 @@ type DashboardData = {
   };
 };
 
-const quickActions = [
-  { href: "/upload", icon: "KB", label: "Baza wiedzy" },
-  { href: "/email-triage", icon: "📧", label: "E-mail Triage" },
-  { href: "/report", icon: "📊", label: "Raporty" },
-  { href: "/competitor", icon: "🏢", label: "Konkurencja" },
-  { href: "/legal-opposition", icon: "⚖️", label: "Legal Briefing" },
-  { href: "/travel", icon: "✈️", label: "Podróż" },
-  { href: "/react?prompt=Por%C3%B3wnaj%20kursy%20EUR%2C%20USD%2C%20GBP%2C%20CHF", icon: "💶", label: "Waluty" },
-  { href: "/react", icon: "🔄", label: "ReAct" },
-  { href: "/chat", icon: "💬", label: "Chat prawniczy" },
-  { href: "/think", icon: "🧠", label: "Myślenie" },
-  { href: "/fewshot", icon: "📖", label: "Słownik AI" },
+const quickActions: Array<{ href: string; icon: IconName; label: string }> = [
+  { href: "/upload", icon: "knowledge", label: "Baza wiedzy" },
+  { href: "/email-triage", icon: "email", label: "E-mail Triage" },
+  { href: "/report", icon: "report", label: "Raporty" },
+  { href: "/competitor", icon: "competitor", label: "Konkurencja" },
+  { href: "/legal-opposition", icon: "legal", label: "Legal Briefing" },
+  { href: "/travel", icon: "travel", label: "Podróż" },
+  { href: "/react?prompt=Por%C3%B3wnaj%20kursy%20EUR%2C%20USD%2C%20GBP%2C%20CHF", icon: "currency", label: "Waluty" },
+  { href: "/react", icon: "react", label: "ReAct" },
+  { href: "/chat", icon: "chat", label: "Chat prawniczy" },
+  { href: "/think", icon: "think", label: "Myślenie" },
+  { href: "/fewshot", icon: "dictionary", label: "Słownik AI" },
 ];
 
 function formatTime(value?: string) {
@@ -193,7 +194,7 @@ export default function DashboardPage() {
           <div className="dashboard-grid">
             <section className="dashboard-card weather-card">
               <div className="dashboard-card-top">
-                <span>🌤️ Pogoda</span>
+                <span><GoldIcon name="weather" size={18} /> Pogoda</span>
                 <em>Aktualizacja: {formatTime(data.weather.updatedAt)}</em>
               </div>
               <h2>{data.weather.city}</h2>
@@ -215,7 +216,7 @@ export default function DashboardPage() {
 
             <section className="dashboard-card currency-card">
               <div className="dashboard-card-top">
-                <span>💶 Kursy walut</span>
+                <span><GoldIcon name="currency" size={18} /> Kursy walut</span>
                 <em>Aktualizacja: {formatTime(data.currencies[0]?.updatedAt)}</em>
               </div>
               <div className="currency-list">
@@ -240,7 +241,7 @@ export default function DashboardPage() {
 
             <section className="dashboard-card holidays-card">
               <div className="dashboard-card-top">
-                <span>📅 Nadchodzące święta</span>
+                <span><GoldIcon name="holiday" size={18} /> Nadchodzące święta</span>
                 <em>Aktualizacja: {formatTime(data.holidays.updatedAt)}</em>
               </div>
               {data.holidays.error ? (
@@ -265,7 +266,7 @@ export default function DashboardPage() {
 
             <section className="dashboard-card travel-translator-card">
               <div className="dashboard-card-top">
-                <span>🌍 Tłumacz podróżny</span>
+                <span><GoldIcon name="translate" size={18} /> Tłumacz podróżny</span>
                 <em>Nowa funkcja</em>
               </div>
               <h2>Rozmówki w planie wyjazdu</h2>
@@ -285,13 +286,13 @@ export default function DashboardPage() {
 
             <section className="dashboard-card actions-card">
               <div className="dashboard-card-top">
-                <span>🤖 Szybkie akcje</span>
+                <span><GoldIcon name="agent" size={18} /> Szybkie akcje</span>
                 <em>Start pracy</em>
               </div>
               <div className="quick-actions">
                 {quickActions.map((action) => (
                   <a href={action.href} key={action.href}>
-                    <span>{action.icon}</span>
+                    <span><GoldIcon name={action.icon} size={17} /></span>
                     {action.label}
                   </a>
                 ))}

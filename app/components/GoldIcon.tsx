@@ -29,7 +29,14 @@ export type IconName =
   | "web"
   | "page"
   | "image"
-  | "download";
+  | "download"
+  | "weather"
+  | "currency"
+  | "holiday"
+  | "mail"
+  | "folder"
+  | "copy"
+  | "spark";
 
 const paths: Record<Exclude<IconName, "agent">, string> = {
   dashboard: "M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-3H4v3Z",
@@ -58,6 +65,13 @@ const paths: Record<Exclude<IconName, "agent">, string> = {
   page: "M6 3h9l3 3v15H6z M15 3v4h4M9 12h6M9 16h6",
   image: "M4 5h16v14H4z M7 16l3-4 2 2 2-3 3 5 M8 9h.01",
   download: "M12 3v11m0 0 4-4m-4 4-4-4M5 19h14",
+  weather: "M7 18a4 4 0 1 1 1.2-7.8A5 5 0 0 1 18 12h.5a3.5 3.5 0 0 1 0 7H7Zm5-15v2m-6.4.6 1.4 1.4m11.4-1.4-1.4 1.4M3 10h2",
+  currency: "M12 3v18M16 7.5c0-1.4-1.7-2.5-4-2.5S8 6.1 8 7.5s1.7 2.5 4 2.5 4 1.1 4 2.5-1.7 2.5-4 2.5-4-1.1-4-2.5",
+  holiday: "M5 4h14v16H5z M8 2v4m8-4v4M5 9h14M8 13h2m2 0h2m2 0h2M8 17h2",
+  mail: "M4 6h16v12H4z M4 7l8 6 8-6",
+  folder: "M3 6h7l2 2h9v10H3z",
+  copy: "M8 8h11v12H8z M5 16H4V4h11v1",
+  spark: "m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z",
 };
 
 export function GoldIcon({ name, size = 20, ...props }: { name: IconName; size?: number } & SVGProps<SVGSVGElement>) {

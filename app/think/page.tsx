@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 
 type AiModel = "flash" | "pro";
 
@@ -11,8 +12,8 @@ const models: Array<{
   label: string;
   badge: string;
 }> = [
-  { id: "flash", label: "⚡ Flash", badge: "⚡ flash" },
-  { id: "pro", label: "🧠 Pro", badge: "🧠 pro" },
+  { id: "flash", label: "Flash", badge: "flash" },
+  { id: "pro", label: "Pro", badge: "pro" },
 ];
 
 const modelBadges = models.reduce<Record<AiModel, string>>((acc, item) => {
@@ -107,7 +108,7 @@ export default function ThinkPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">🧠 Tryb głębokiego myślenia</h1>
+            <h1 className="chat-title"><GoldIcon name="think" size={30} /> Tryb głębokiego myślenia</h1>
             <p className="agent-description">
               Agent pokazuje tok rozumowania krok po kroku.
             </p>

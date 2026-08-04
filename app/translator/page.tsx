@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 
 const languages = [
@@ -63,7 +64,7 @@ export default function TranslatorPage() {
         <header className="dashboard-hero translator-hero">
           <div>
             <span className="dashboard-kicker">Integracja językowa</span>
-            <h1>Tłumacz</h1>
+            <h1><GoldIcon name="translate" size={30} /> Tłumacz</h1>
             <p>Tłumacz tekst przez endpoint Google Translate dostępny pod /api/translate.</p>
           </div>
           <div className="translator-status">Endpoint aktywny</div>
@@ -71,7 +72,7 @@ export default function TranslatorPage() {
 
         <section className="dashboard-card translator-card">
           <div className="dashboard-card-top">
-            <span>🌐 Google Translate</span>
+            <span><GoldIcon name="translate" size={18} /> Google Translate</span>
             <em>POST /api/translate</em>
           </div>
 

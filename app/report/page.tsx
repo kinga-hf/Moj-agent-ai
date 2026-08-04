@@ -3,6 +3,7 @@
 import { FormEvent, ReactNode, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
 import { supabase } from "../../lib/supabase";
+import { GoldIcon } from "../components/GoldIcon";
 
 const examples = [
   "Krótki raport bezpieczeństwa wszystkich użytkowników mojego agenta",
@@ -246,7 +247,7 @@ export default function ReportPage() {
         <header className="dashboard-hero report-hero">
           <div>
             <span className="dashboard-kicker">Research agent</span>
-            <h1>📊 Generator raportów</h1>
+            <h1><GoldIcon name="report" size={32} /> Generator raportów</h1>
             <p>Opisz temat - agent zbierze informacje, ułoży sekcje i przygotuje raport biznesowy z wnioskami.</p>
           </div>
           <div className="dashboard-status">
@@ -266,7 +267,7 @@ export default function ReportPage() {
               />
             </label>
             <button className="send-button report-submit" disabled={isLoading || !topic.trim()} type="submit">
-              📊 Generuj raport
+              <><GoldIcon name="report" size={16} /> Generuj raport</>
             </button>
           </form>
 
@@ -289,7 +290,7 @@ export default function ReportPage() {
                 <span>{report.trim().split(/\s+/).filter(Boolean).length} słów</span>
               </div>
               <button disabled={!report.trim()} onClick={() => void copyReport()} type="button">
-                {copyStatus || "📋 Kopiuj do schowka"}
+                {copyStatus || <><GoldIcon name="copy" size={16} /> Kopiuj do schowka</>}
               </button>
             </div>
 

@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { FormEvent, ReactNode, useEffect, useRef, useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 
 type AiModel = "flash" | "pro";
 
@@ -11,8 +12,8 @@ const models: Array<{
   label: string;
   badge: string;
 }> = [
-  { id: "flash", label: "⚡ Flash", badge: "⚡ flash" },
-  { id: "pro", label: "🧠 Pro", badge: "🧠 pro" },
+  { id: "flash", label: "Flash", badge: "flash" },
+  { id: "pro", label: "Pro", badge: "pro" },
 ];
 
 const commandExamples = [
@@ -261,7 +262,7 @@ export default function FormatPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">📐 Formatowanie</h1>
+            <h1 className="chat-title"><GoldIcon name="format" size={30} /> Formatowanie</h1>
             <p className="agent-description">
               Agent odpowiada w tabeli, liście, porównaniu, FAQ albo emailu -
               dokładnie na żądanie.

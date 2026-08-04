@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { supabase } from "../../lib/supabase";
+import { GoldIcon } from "./GoldIcon";
 
 const maxLegalFileSize = 12 * 1024 * 1024;
 const maxLegalTextLength = 18000;
@@ -177,7 +178,7 @@ export function LegalFileUploadButton({
       title="Dodaj plik PDF lub TXT"
       type="button"
     >
-      📎
+      <GoldIcon name="page" size={18} />
     </button>
   );
 }
@@ -196,7 +197,7 @@ export function AttachedLegalFilePreview({
   return (
     <div className="legal-file-attachment-preview">
       <div>
-        <strong>📄 {file.name}</strong>
+        <strong><GoldIcon name="page" size={16} /> {file.name}</strong>
         <span>Treść pliku zostanie dołączona do analizy.</span>
       </div>
       <button aria-label="Usuń załącznik" onClick={onRemove} type="button">

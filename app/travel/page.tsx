@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { DiagnosticsPanel } from "../components/DiagnosticsPanel";
+import { GoldIcon } from "../components/GoldIcon";
 
 type TravelCard = {
   kind: "weather" | "currency" | "holiday" | "attraction" | "budget" | "translation";
@@ -237,7 +238,7 @@ export default function TravelPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">✈️ Asystent podróży AI</h1>
+            <h1 className="chat-title"><GoldIcon name="travel" size={30} /> Asystent podróży AI</h1>
             <p className="agent-description">
               Powiedz dokąd jedziesz — agent sprawdzi pogodę, walutę, święta,
               atrakcje, rozmówki i przygotuje plan.
@@ -257,7 +258,7 @@ export default function TravelPage() {
             </div>
             <form className="travel-translator-inline" onSubmit={handleTranslate}>
               <div className="travel-translator-inline-top">
-                <strong>🌍 Rozmówki / tłumacz</strong>
+                <strong><GoldIcon name="translate" size={16} /> Rozmówki / tłumacz</strong>
                 <select
                   aria-label="Język rozmówek"
                   onChange={(event) => setTargetLanguage(event.target.value)}
@@ -303,7 +304,7 @@ export default function TravelPage() {
                 <div className="message-bubble">
                   {message.role === "assistant" ? (
                     <div className="badge-row">
-                      <span className="model-badge flash">✈️ podróże</span>
+                      <span className="model-badge flash"><GoldIcon name="travel" size={14} /> podróże</span>
                     </div>
                   ) : null}
 
@@ -349,7 +350,7 @@ export default function TravelPage() {
                             <div>
                               <span>{item.index}</span>
                               <strong>
-                                {item.emoji} {item.name}
+                                <GoldIcon name="agent" size={16} /> {item.name}
                               </strong>
                             </div>
                             {item.input ? <p>→ {item.input}</p> : null}
@@ -376,7 +377,7 @@ export default function TravelPage() {
             <div className="message-row assistant">
               <div className="message-bubble">
                 <div className="badge-row">
-                  <span className="model-badge flash">✈️ podróże</span>
+                  <span className="model-badge flash"><GoldIcon name="travel" size={14} /> podróże</span>
                 </div>
                 <div className="tool-timeline loading">
                   <strong>Sprawdzam dane podróży...</strong>

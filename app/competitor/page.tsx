@@ -2,6 +2,7 @@
 
 import { FormEvent, ReactNode, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { GoldIcon } from "../components/GoldIcon";
 
 type Example = {
   label: string;
@@ -266,7 +267,7 @@ export default function CompetitorPage() {
         <header className="dashboard-hero competitor-hero">
           <div>
             <span className="dashboard-kicker">Market intelligence</span>
-            <h1>🏢 Analiza konkurencji</h1>
+            <h1><GoldIcon name="competitor" size={32} /> Analiza konkurencji</h1>
             <p>Podaj firmy - agent porówna ich ofertę, mocne strony, słabości i przygotuje rekomendację.</p>
           </div>
           <div className="dashboard-status">
@@ -302,7 +303,7 @@ export default function CompetitorPage() {
 
             <div className="competitor-actions">
               <button className="send-button competitor-submit" disabled={isLoading || filledCompanies.length < 2} type="submit">
-                🔍 Porównaj
+                <><GoldIcon name="search" size={16} /> Porównaj</>
               </button>
             </div>
           </form>
@@ -326,7 +327,7 @@ export default function CompetitorPage() {
                 <span>{filledCompanies.join(" vs ")}</span>
               </div>
               <button disabled={!analysis.trim()} onClick={() => void copyAnalysis()} type="button">
-                {copyStatus || "📋 Kopiuj analizę"}
+                {copyStatus || <><GoldIcon name="copy" size={16} /> Kopiuj analizę</>}
               </button>
             </div>
 

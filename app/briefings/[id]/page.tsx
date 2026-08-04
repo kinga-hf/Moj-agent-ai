@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { DashboardSidebar } from "../../components/DashboardSidebar";
 import { BriefingMarkdown } from "../../components/BriefingMarkdown";
 import { supabase } from "../../../lib/supabase";
+import { GoldIcon } from "../../components/GoldIcon";
 
 type Briefing = { id: string; created_at: string; content: string; date: string };
 
@@ -69,7 +70,7 @@ export default function BriefingDetailPage() {
       <section className="dashboard-main briefings-main" aria-label="Pełny briefing">
         <div className="briefing-detail-actions">
           <button className="briefing-copy-button" disabled={!briefing} onClick={() => void copyBriefing()} type="button">
-            {copied ? "✅ Skopiowano" : "📋 Kopiuj"}
+            {copied ? "Skopiowano" : <><GoldIcon name="copy" size={16} /> Kopiuj</>}
           </button>
         </div>
 

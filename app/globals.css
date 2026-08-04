@@ -5969,6 +5969,25 @@ body {
   gap: 7px;
 }
 
+.dashboard-hero h1,
+.dashboard-card-top > span,
+.security-header h1,
+.security-panel h2,
+.briefing-detail-header h1,
+.briefing-status,
+.briefings-generate-button,
+.security-stat-card > span,
+.dashboard-card-link,
+.quick-actions a,
+.send-button,
+.secondary-button,
+.briefing-copy-button,
+.translator-workspace > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
 .chat-app::before {
   height: 4px;
   background: linear-gradient(90deg, #ad8f4e, #d8bd7a 48%, #f0d99a) !important;

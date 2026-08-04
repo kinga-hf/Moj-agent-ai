@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { GoldIcon } from "../components/GoldIcon";
 import { supabase } from "../../lib/supabase";
 
 type Briefing = { id: string; created_at: string; content: string; date: string };
@@ -87,11 +88,11 @@ export default function BriefingsPage() {
         <header className="dashboard-hero">
           <div>
             <span className="dashboard-kicker">Automatyczne raporty</span>
-            <h1>📰 Briefingi</h1>
+            <h1><GoldIcon name="briefings" size={34} /> Briefingi</h1>
             <p>Automatyczne podsumowania dnia od Twojego agenta</p>
           </div>
           <button className="briefings-generate-button" disabled={isGenerating} onClick={() => void generateNow()} type="button">
-            {isGenerating ? "Generuję..." : "🔄 Wygeneruj teraz"}
+            {isGenerating ? "Generuję..." : <><GoldIcon name="react" size={16} /> Wygeneruj teraz</>}
           </button>
         </header>
 
@@ -105,7 +106,7 @@ export default function BriefingsPage() {
             <strong>Brak briefingów.</strong>
             <span>Cron job wygeneruje pierwszy briefing jutro rano.</span>
             <button className="briefings-generate-button" disabled={isGenerating} onClick={() => void generateNow()} type="button">
-              🔄 Wygeneruj teraz
+              <><GoldIcon name="react" size={16} /> Wygeneruj teraz</>
             </button>
           </div>
         ) : (
@@ -116,7 +117,7 @@ export default function BriefingsPage() {
                   <div className="briefing-card-heading">
                     <div>
                       <h2>{formatBriefingDate(briefing.date)}</h2>
-                      <span className="briefing-status">✅ wygenerowany automatycznie (z cron)</span>
+                      <span className="briefing-status"><GoldIcon name="security" size={14} /> wygenerowany automatycznie (z cron)</span>
                     </div>
                     <time dateTime={briefing.created_at}>
                       {new Intl.DateTimeFormat("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" }).format(new Date(briefing.created_at))}

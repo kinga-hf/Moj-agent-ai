@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from "react";
 import { DashboardSidebar } from "../components/DashboardSidebar";
+import { GoldIcon } from "../components/GoldIcon";
 
 type Priority = "high" | "medium" | "low" | "spam" | "unknown";
 
@@ -253,7 +254,7 @@ export default function EmailTriagePage() {
         <header className="dashboard-hero email-triage-hero">
           <div>
             <span className="dashboard-kicker">Business agent</span>
-            <h1>📧 E-mail Triage</h1>
+            <h1><GoldIcon name="email" size={32} /> E-mail Triage</h1>
             <p>Wklej maile - agent posortuje je według kategorii, priorytetu i przygotuje szkice odpowiedzi.</p>
           </div>
           <div className="dashboard-status">
@@ -274,10 +275,10 @@ export default function EmailTriagePage() {
 
           <div className="email-triage-actions">
             <button className="secondary-button" disabled={isLoading} onClick={() => setInput(sampleEmails)} type="button">
-              📋 Wklej przykład
+              <><GoldIcon name="copy" size={16} /> Wklej przykład</>
             </button>
             <button className="send-button email-triage-submit" disabled={isLoading || emailCount === 0} type="submit">
-              📧 Analizuj maile
+              <><GoldIcon name="email" size={16} /> Analizuj maile</>
             </button>
           </div>
         </form>

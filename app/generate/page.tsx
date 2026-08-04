@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { GoldIcon } from "../components/GoldIcon";
 
 const promptExamples = [
   "Minimalistyczne logo kawiarni w stylu japońskim",
@@ -116,7 +117,7 @@ export default function GeneratePage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title">🎨 Generator grafik AI</h1>
+            <h1 className="chat-title"><GoldIcon name="graphics" size={30} /> Generator grafik AI</h1>
             <p className="agent-description">
               Opisz co chcesz - AI stworzy obraz w kilka sekund.
             </p>
@@ -154,7 +155,7 @@ export default function GeneratePage() {
               disabled={isLoading || !prompt.trim()}
               type="submit"
             >
-              🎨 Generuj
+              <><GoldIcon name="graphics" size={16} /> Generuj</>
             </button>
           </form>
 
@@ -180,7 +181,7 @@ export default function GeneratePage() {
                   onClick={handleDownload}
                   type="button"
                 >
-                  💾 Pobierz
+                  <><GoldIcon name="download" size={16} /> Pobierz</>
                 </button>
                 <button
                   className="secondary-button"
@@ -188,7 +189,7 @@ export default function GeneratePage() {
                   onClick={() => void generateImage(result.prompt)}
                   type="button"
                 >
-                  🔄 Ponownie
+                  <><GoldIcon name="react" size={16} /> Ponownie</>
                 </button>
               </div>
             </section>
