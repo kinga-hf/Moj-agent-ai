@@ -108,6 +108,7 @@ export default function ThinkPage() {
 
         <header className="chat-header pro-header">
           <div>
+            <span className="agent-header-badge">LEXAI • ANALIZA I WNIOSKI</span>
             <h1 className="chat-title"><GoldIcon name="think" size={30} /> Tryb głębokiego myślenia</h1>
             <p className="agent-description">
               Agent pokazuje tok rozumowania krok po kroku.

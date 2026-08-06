@@ -6,11 +6,11 @@ import { supabase } from "../../lib/supabase";
 import { GoldIcon } from "../components/GoldIcon";
 
 const examples = [
-  "Krótki raport bezpieczeństwa wszystkich użytkowników mojego agenta",
-  "Rynek AI w Polsce - trendy, firmy, prognozy na 2026",
-  "Porównanie platform e-commerce: Shopify vs WooCommerce vs PrestaShop",
-  "Wpływ pracy zdalnej na produktywność - badania i statystyki",
-  "Rynek nieruchomości w Krakowie - ceny, trendy, prognozy",
+  "Przygotuj raport z analizy wezwania do zapłaty i wskaż brakujące dowody",
+  "Podsumuj argumentację przeciwnika z pisma procesowego",
+  "Opracuj raport ryzyk przed podpisaniem umowy B2B",
+  "Zbierz najważniejsze terminy i obowiązki z dokumentów sprawy",
+  "Przygotuj listę pytań do świadka na podstawie akt sprawy",
 ];
 
 function renderInlineMarkdown(text: string): ReactNode[] {
@@ -243,12 +243,12 @@ export default function ReportPage() {
     <main className="dashboard-shell">
       <DashboardSidebar />
 
-      <section className="dashboard-main report-page" aria-label="Generator raportów">
+      <section className="dashboard-main report-page" aria-label="Raport prawny">
         <header className="dashboard-hero report-hero">
           <div>
-            <span className="dashboard-kicker">Research agent</span>
-            <h1><GoldIcon name="report" size={32} /> Generator raportów</h1>
-            <p>Opisz temat - agent zbierze informacje, ułoży sekcje i przygotuje raport biznesowy z wnioskami.</p>
+            <span className="agent-header-badge">LEXAI • RAPORT PRAWNY</span>
+            <h1><GoldIcon name="report" size={32} /> Raport prawny</h1>
+            <p>Opisz zagadnienie, a LexAI uporządkuje fakty, ryzyka i kolejne kroki w czytelnym raporcie.</p>
           </div>
           <div className="dashboard-status">
             <span>{isLoading ? "Piszę raport..." : report ? "Raport gotowy" : "Gotowy"}</span>
@@ -258,11 +258,11 @@ export default function ReportPage() {
         <section className="report-workspace">
           <form className="report-form" onSubmit={handleSubmit}>
             <label>
-              <span>O czym ma być raport?</span>
+              <span>Jaki raport prawny przygotować?</span>
               <input
                 disabled={isLoading}
                 onChange={(event) => setTopic(event.target.value)}
-                placeholder="Np. Rynek AI w Polsce w 2026 roku..."
+                placeholder="Np. analiza ryzyk w umowie i propozycja dalszych kroków..."
                 value={topic}
               />
             </label>

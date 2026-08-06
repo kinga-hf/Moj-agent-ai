@@ -17,12 +17,18 @@
     "@ai-sdk/react": "^4.0.12",
     "@google/genai": "^2.10.0",
     "@supabase/supabase-js": "^2.110.5",
+    "@types/html2pdf.js": "^0.10.0",
+    "@types/pdfmake": "^0.3.3",
     "@vitalets/google-translate-api": "^9.2.1",
     "ai": "^7.0.11",
+    "html2pdf.js": "^0.14.0",
     "next": "^16.2.10",
     "pdf-parse": "^1.1.1",
+    "pdfjs-dist": "5.4.296",
+    "pdfmake": "^0.3.11",
     "react": "^19.2.7",
-    "react-dom": "^19.2.7"
+    "react-dom": "^19.2.7",
+    "react-pdf": "^10.4.1"
   },
   "devDependencies": {
     "@types/node": "^26.1.0",

@@ -10,16 +10,15 @@ const navigationGroups = [
   {
     label: "Start",
     items: [
-      { href: "/", icon: "dashboard", label: "Dashboard" },
-      { href: "/agent", icon: "agent", label: "Agent AI" },
+      { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
+      { href: "/agent", icon: "agent", label: "LexAI" },
     ],
   },
   {
     label: "Wiedza i komunikacja",
     items: [
-      { href: "/upload", icon: "knowledge", label: "Baza wiedzy" },
+      { href: "/upload", icon: "knowledge", label: "Baza dokumentów" },
       { href: "/briefings", icon: "briefings", label: "Briefingi" },
-      { href: "/email-triage", icon: "email", label: "E-mail Triage" },
       { href: "/chat", icon: "chat", label: "Chat prawniczy" },
       { href: "/history", icon: "history", label: "Historia" },
     ],
@@ -28,7 +27,6 @@ const navigationGroups = [
     label: "Analiza i praca",
     items: [
       { href: "/report", icon: "report", label: "Raporty" },
-      { href: "/extract", icon: "analyzer", label: "Analizator" },
       { href: "/competitor", icon: "competitor", label: "Konkurencja" },
       { href: "/legal-opposition", icon: "legal", label: "Legal Briefing" },
       { href: "/think", icon: "think", label: "Myślenie" },
@@ -42,7 +40,6 @@ const navigationGroups = [
       { href: "/translator", icon: "translate", label: "Tłumacz" },
       { href: "/format", icon: "format", label: "Formater" },
       { href: "/fewshot", icon: "dictionary", label: "Słownik AI" },
-      { href: "/travel", icon: "travel", label: "Podróże" },
       { href: "/generate", icon: "graphics", label: "Grafiki" },
       { href: "/vision", icon: "vision", label: "Vision" },
     ],
@@ -54,10 +51,6 @@ const navigationGroups = [
 ] as const;
 
 function isActiveRoute(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/" || pathname === "/dashboard";
-  }
-
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -96,8 +89,8 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
       <aside className={`dashboard-sidebar ${menuOpen ? "open" : ""}`} aria-label="Nawigacja dashboardu">
         <div className="dashboard-brand">
           <span><GoldIcon name="agent" size={28} /></span>
-          <strong>Agent AI</strong>
-          <em>centrum dowodzenia</em>
+          <strong>LexAI</strong>
+          <em>centrum spraw prawnych</em>
         </div>
 
         <nav>

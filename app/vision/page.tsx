@@ -182,7 +182,8 @@ export default function VisionPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="vision" size={30} /> Agent Vision</h1>
+            <span className="agent-header-badge">LEXAI • ANALIZA OBRAZU</span>
+            <h1 className="chat-title"><GoldIcon name="vision" size={30} /> Analiza obrazu</h1>
             <p className="agent-description">
               Wklej screenshot, wrzuć plik lub przeciągnij obraz.
             </p>

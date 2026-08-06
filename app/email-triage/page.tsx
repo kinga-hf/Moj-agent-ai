@@ -253,8 +253,8 @@ export default function EmailTriagePage() {
       <section className="dashboard-main email-triage-page" aria-label="E-mail Triage">
         <header className="dashboard-hero email-triage-hero">
           <div>
-            <span className="dashboard-kicker">Business agent</span>
-            <h1><GoldIcon name="email" size={32} /> E-mail Triage</h1>
+            <span className="agent-header-badge">LEXAI • KOMUNIKACJA</span>
+            <h1><GoldIcon name="email" size={32} /> Porządkowanie wiadomości</h1>
             <p>Wklej maile - agent posortuje je według kategorii, priorytetu i przygotuje szkice odpowiedzi.</p>
           </div>
           <div className="dashboard-status">

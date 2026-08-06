@@ -79,7 +79,7 @@ export default function BriefingDetailPage() {
         {briefing ? (
           <article className="briefing-detail-card">
             <header className="briefing-detail-header">
-              <span className="dashboard-kicker">Automatyczny briefing</span>
+              <span className="agent-header-badge">LEXAI • AUTOMATYCZNY BRIEFING</span>
               <h1>{formatBriefingDate(briefing.date)}</h1>
               <p>Wygenerowany przez crona o {new Intl.DateTimeFormat("pl-PL", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Warsaw" }).format(new Date(briefing.created_at))}</p>
             </header>

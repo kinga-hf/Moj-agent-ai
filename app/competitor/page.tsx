@@ -12,24 +12,24 @@ type Example = {
 
 const examples: Example[] = [
   {
-    label: "Shopify vs WooCommerce vs PrestaShop",
-    companies: ["Shopify", "WooCommerce", "PrestaShop"],
-    context: "Szukam platformy e-commerce dla małego sklepu internetowego.",
+    label: "Helpfind vs Helphero vs Votum",
+    companies: ["Helpfind", "Helphero", "Votum"],
+    context: "Porównuję firmy pomagające klientom w dochodzeniu roszczeń i analizuję ich ofertę.",
   },
   {
-    label: "Notion vs Obsidian vs Evernote",
-    companies: ["Notion", "Obsidian", "Evernote"],
-    context: "Wybieram narzędzie do notatek i zarządzania wiedzą dla małego zespołu.",
+    label: "Votum vs EuCO vs Helpfind",
+    companies: ["Votum", "EuCO", "Helpfind"],
+    context: "Analizuję pozycjonowanie i zakres usług firm odszkodowawczych.",
   },
   {
-    label: "Vercel vs Netlify vs Railway",
-    companies: ["Vercel", "Netlify", "Railway"],
-    context: "Szukam hostingu dla aplikacji webowej budowanej w Next.js.",
+    label: "Helpfind vs Helphero vs EuCO",
+    companies: ["Helpfind", "Helphero", "EuCO"],
+    context: "Porównuję doświadczenie klienta, specjalizacje i model współpracy.",
   },
   {
-    label: "ChatGPT vs Claude vs Gemini",
-    companies: ["ChatGPT", "Claude", "Gemini"],
-    context: "Porównuję asystentów AI do pracy biznesowej i researchu.",
+    label: "Rynek dochodzenia roszczeń",
+    companies: ["Helpfind", "Helphero", "Votum"],
+    context: "Przygotuj analizę rynku dochodzenia roszczeń w Polsce: oferta, komunikacja i przewagi.",
   },
 ];
 
@@ -266,7 +266,7 @@ export default function CompetitorPage() {
       <section className="dashboard-main competitor-page" aria-label="Analiza konkurencji">
         <header className="dashboard-hero competitor-hero">
           <div>
-            <span className="dashboard-kicker">Market intelligence</span>
+            <span className="agent-header-badge">LEXAI • ANALIZA RYNKU</span>
             <h1><GoldIcon name="competitor" size={32} /> Analiza konkurencji</h1>
             <p>Podaj firmy - agent porówna ich ofertę, mocne strony, słabości i przygotuje rekomendację.</p>
           </div>

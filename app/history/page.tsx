@@ -134,7 +134,7 @@ export default function HistoryPage() {
       <section className="dashboard-main history-main" aria-label="Historia rozmow">
         <header className="dashboard-hero">
           <div>
-            <span className="dashboard-kicker">Pamiec agenta</span>
+            <span className="agent-header-badge">LEXAI • HISTORIA ROZMÓW</span>
             <h1>Historia rozmow</h1>
             <p>Wszystkie Twoje rozmowy z agentem</p>
           </div>

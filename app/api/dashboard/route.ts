@@ -9,16 +9,6 @@ type WeatherData = {
   error?: string;
 };
 
-type CurrencyData = {
-  code: string;
-  rate?: number;
-  previousRate?: number;
-  change?: number;
-  effectiveDate?: string;
-  updatedAt: string;
-  error?: string;
-};
-
 type HolidayData = {
   date: string;
   localName: string;
@@ -118,37 +108,6 @@ async function getWeather(city: string): Promise<WeatherData> {
   }
 }
 
-async function getExchangeRate(code: string): Promise<CurrencyData> {
-  const updatedAt = new Date().toISOString();
-
-  try {
-    const data = await fetchJson<{
-      code: string;
-      rates: Array<{ effectiveDate: string; mid: number }>;
-    }>(`https://api.nbp.pl/api/exchangerates/rates/a/${code}/last/2/?format=json`);
-    const previous = data.rates[0];
-    const current = data.rates[data.rates.length - 1];
-
-    return {
-      code: data.code,
-      rate: current?.mid,
-      previousRate: previous?.mid,
-      change:
-        current?.mid !== undefined && previous?.mid !== undefined
-          ? Number((current.mid - previous.mid).toFixed(4))
-          : undefined,
-      effectiveDate: current?.effectiveDate,
-      updatedAt,
-    };
-  } catch (error) {
-    return {
-      code,
-      updatedAt,
-      error: getErrorMessage(error),
-    };
-  }
-}
-
 async function getHolidays(countryCode: string, year: number) {
   const updatedAt = new Date().toISOString();
 
@@ -193,10 +152,8 @@ async function getHolidays(countryCode: string, year: number) {
 
 export async function GET() {
   const now = new Date();
-  const [weather, eur, usd, holidays] = await Promise.all([
+  const [weather, holidays] = await Promise.all([
     getWeather("Ostrów Wielkopolski"),
-    getExchangeRate("EUR"),
-    getExchangeRate("USD"),
     getHolidays("PL", 2026),
   ]);
 
@@ -215,7 +172,6 @@ export async function GET() {
       }).format(now),
     },
     weather,
-    currencies: [eur, usd],
     holidays,
   });
 }

@@ -43,50 +43,50 @@ type AgentMessage = {
 };
 
 const tools = [
-  "Kalkulator",
-  "Data i czas",
-  "Google Search",
-  "Czytanie stron",
-  "Generowanie obrazów",
-  "Analiza obrazów",
+  "Analiza dokumentów",
+  "Czytanie stron pisma",
+  "Wyszukiwanie orzeczeń",
+  "Terminy procesowe",
+  "Pamięć sprawy",
+  "Notatki procesowe",
 ];
 
 const agentModes = [
-  { href: "/travel", icon: "travel", label: "Podróże", description: "planowanie wyjazdów" },
-  { href: "/react", icon: "react", label: "ReAct", description: "autonomiczne zadania" },
-  { href: "/chat", icon: "chat", label: "Chat prawniczy", description: "rozmowa z Legal AI" },
-  { href: "/think", icon: "think", label: "Myślenie", description: "głębsza analiza" },
-  { href: "/search", icon: "search", label: "Szukaj", description: "internet i źródła" },
-  { href: "/translator", icon: "translate", label: "Tłumacz", description: "tłumaczenie tekstu" },
-  { href: "/generate", icon: "graphics", label: "Grafiki", description: "generator obrazów" },
-  { href: "/vision", icon: "vision", label: "Vision", description: "analiza obrazów" },
-  { href: "/extract", icon: "analyzer", label: "Analizator", description: "ekstrakcja danych" },
-  { href: "/format", icon: "format", label: "Formater", description: "formatowanie treści" },
-  { href: "/legal-opposition", icon: "legal", label: "Legal Briefing", description: "tezy i zarzuty" },
+  { href: "/legal-opposition", icon: "legal", label: "Analizator pism", description: "tezy, zarzuty i ryzyka" },
+  { href: "/upload", icon: "knowledge", label: "Baza dokumentów", description: "akta i materiały spraw" },
+  { href: "/report", icon: "report", label: "Raport prawny", description: "wnioski i rekomendacje" },
+  { href: "/react", icon: "react", label: "Strategia procesowa", description: "kolejne kroki w sprawie" },
+  { href: "/search", icon: "search", label: "Orzecznictwo", description: "przepisy i źródła" },
+  { href: "/fewshot", icon: "dictionary", label: "Słownik prawny", description: "pojęcia i definicje" },
+  { href: "/history", icon: "history", label: "Historia spraw", description: "zapisane rozmowy" },
+  { href: "/format", icon: "format", label: "Formater pism", description: "czytelne dokumenty" },
+  { href: "/competitor", icon: "competitor", label: "Analiza konkurencji", description: "firmy roszczeniowe" },
+  { href: "/briefings", icon: "briefings", label: "Briefingi", description: "automatyczne podsumowania" },
+  { href: "/translator", icon: "translate", label: "Tłumacz pism", description: "terminologia procesowa" },
 ];
 
 const scenarios = [
-  "Znajdź w Google co robi firma Syntelligence i wygeneruj dla nich logo",
-  "Przeczytaj stronę apple.com i opisz ich aktualną ofertę iPhone",
-  "Ile to 23% VAT z 8500 PLN? Podaj kwotę brutto i netto",
-  "Jakie są najnowsze wiadomości o AI? Wygeneruj grafikę do posta o tym",
-  "Wyszukaj w Google 'best coffee shops Kraków' i streszcz wyniki",
+  "Przeanalizuj sprzeciw od nakazu zapłaty i wskaż najważniejsze zarzuty oraz dowody.",
+  "Uporządkuj dokumenty do sprawy o odszkodowanie i wskaż, czego jeszcze brakuje.",
+  "Przygotuj strategię odpowiedzi na pozew: tezy, kontrargumenty i kolejne kroki.",
+  "Wyszukaj aktualne orzecznictwo dotyczące przedawnienia roszczenia.",
+  "Przygotuj listę pytań do świadka i wniosków dowodowych na rozprawę.",
 ];
 
 const featuredModes = agentModes.slice(0, 6);
 
 const modeIconsByHref: Record<string, IconName> = {
-  "/travel": "travel",
-  "/react": "react",
-  "/chat": "chat",
-  "/think": "think",
-  "/search": "search",
-  "/translator": "translate",
-  "/generate": "graphics",
-  "/vision": "vision",
-  "/extract": "analyzer",
-  "/format": "format",
   "/legal-opposition": "legal",
+  "/upload": "knowledge",
+  "/report": "report",
+  "/react": "react",
+  "/search": "search",
+  "/fewshot": "dictionary",
+  "/history": "history",
+  "/format": "format",
+  "/competitor": "competitor",
+  "/briefings": "briefings",
+  "/translator": "translate",
 };
 
 function toolIconForName(name: string): IconName {
@@ -239,7 +239,7 @@ export default function AgentPage() {
   return (
     <main className="chat-shell">
       <section
-        aria-label="Agent AI - Pełna moc"
+        aria-label="LexAI — Twój osobisty asystent"
         className="chat-app agent-app"
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
@@ -277,12 +277,18 @@ export default function AgentPage() {
           <AuthStatus compact />
         </nav>
 
-        <header className="chat-header pro-header">
-          <div>
-            <h1 className="chat-title"><GoldIcon name="agent" size={30} /> Agent AI - Pełna moc</h1>
-            <p className="agent-description">
-              {tools.length} narzędzi • autonomiczne decyzje
-            </p>
+        <header className="chat-header pro-header autonomous-agent-header">
+          <div className="agent-header-top">
+            <span className="agent-header-badge">LEXAI • AGENT AUTONOMICZNY</span>
+            <div className="chat-status" aria-live="polite">
+              {isLoading ? "Działam..." : "Gotowy"}
+            </div>
+          </div>
+          <h1 className="chat-title"><GoldIcon name="agent" size={30} /> LexAI — Twój osobisty asystent</h1>
+          <p className="agent-description">
+            {tools.length} narzędzi do analizy dokumentów, wyszukiwania informacji i przygotowywania kolejnych kroków.
+          </p>
+          <div className="agent-header-tools">
             <div className="agent-mode-panel" aria-label="Tryby w zakładce Agent">
               <button
                 className="agent-mode-toggle"
@@ -312,9 +318,6 @@ export default function AgentPage() {
                 </button>
               ))}
             </div>
-          </div>
-          <div className="chat-status" aria-live="polite">
-            {isLoading ? "Działam..." : "Gotowy"}
           </div>
         </header>
 

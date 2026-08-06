@@ -15,16 +15,6 @@ type DashboardWeather = {
   error?: string;
 };
 
-type DashboardCurrency = {
-  code: string;
-  rate?: number;
-  previousRate?: number;
-  change?: number;
-  effectiveDate?: string;
-  updatedAt: string;
-  error?: string;
-};
-
 type DashboardHoliday = {
   date: string;
   localName: string;
@@ -40,7 +30,6 @@ type DashboardData = {
     day: string;
   };
   weather: DashboardWeather;
-  currencies: DashboardCurrency[];
   holidays: {
     countryCode: string;
     year: number;
@@ -51,17 +40,15 @@ type DashboardData = {
 };
 
 const quickActions: Array<{ href: string; icon: IconName; label: string }> = [
-  { href: "/upload", icon: "knowledge", label: "Baza wiedzy" },
-  { href: "/email-triage", icon: "email", label: "E-mail Triage" },
-  { href: "/report", icon: "report", label: "Raporty" },
-  { href: "/competitor", icon: "competitor", label: "Konkurencja" },
-  { href: "/legal-opposition", icon: "legal", label: "Legal Briefing" },
-  { href: "/travel", icon: "travel", label: "Podróż" },
-  { href: "/react?prompt=Por%C3%B3wnaj%20kursy%20EUR%2C%20USD%2C%20GBP%2C%20CHF", icon: "currency", label: "Waluty" },
-  { href: "/react", icon: "react", label: "ReAct" },
+  { href: "/legal-briefing", icon: "legal", label: "Analiza pisma" },
+  { href: "/extract", icon: "analyzer", label: "Analizator pism" },
+  { href: "/upload", icon: "knowledge", label: "Baza dokumentów" },
+  { href: "/history", icon: "history", label: "Historia spraw" },
+  { href: "/report", icon: "report", label: "Raport prawny" },
+  { href: "/competitor", icon: "competitor", label: "Helpfind vs Helphero vs Votum" },
+  { href: "/briefings", icon: "briefings", label: "Briefingi" },
   { href: "/chat", icon: "chat", label: "Chat prawniczy" },
-  { href: "/think", icon: "think", label: "Myślenie" },
-  { href: "/fewshot", icon: "dictionary", label: "Słownik AI" },
+  { href: "/format", icon: "format", label: "Formater pism" },
 ];
 
 function formatTime(value?: string) {
@@ -132,13 +119,9 @@ export default function DashboardPage() {
     const weatherInterval = window.setInterval(() => {
       void loadDashboard({ quiet: true });
     }, 15 * 60 * 1000);
-    const currencyInterval = window.setInterval(() => {
-      void loadDashboard({ quiet: true });
-    }, 60 * 60 * 1000);
 
     return () => {
       window.clearInterval(weatherInterval);
-      window.clearInterval(currencyInterval);
     };
   }, []);
 
@@ -162,9 +145,9 @@ export default function DashboardPage() {
       <section className="dashboard-main" aria-label="Dashboard agenta">
         <header className="dashboard-hero">
           <div>
-            <span className="dashboard-kicker">Dashboard live</span>
+            <span className="agent-header-badge">LEXAI • CENTRUM DOWODZENIA</span>
             <h1>Dzień dobry! Dziś: {data?.dateTime.label ?? "ładowanie daty..."}</h1>
-            <p>Pogoda, waluty, święta i szybkie wejścia do najważniejszych trybów agenta.</p>
+            <p>Data, najważniejsze terminy i szybkie wejścia do pracy nad pismami procesowymi.</p>
           </div>
           <div className="dashboard-status">
             <span>{statusText}</span>
@@ -185,9 +168,9 @@ export default function DashboardPage() {
         {isLoading && !data ? (
           <div className="dashboard-grid">
             <SkeletonCard title="Pogoda" />
-            <SkeletonCard title="Kursy walut" />
+            <SkeletonCard title="Centrum spraw" />
             <SkeletonCard title="Święta" />
-            <SkeletonCard title="Tłumacz podróżny" />
+            <SkeletonCard title="Tłumacz Google" />
             <SkeletonCard title="Szybkie akcje" />
           </div>
         ) : data ? (
@@ -214,29 +197,29 @@ export default function DashboardPage() {
               )}
             </section>
 
-            <section className="dashboard-card currency-card">
+            <section className="dashboard-card legal-overview-card">
               <div className="dashboard-card-top">
-                <span><GoldIcon name="currency" size={18} /> Kursy walut</span>
-                <em>Aktualizacja: {formatTime(data.currencies[0]?.updatedAt)}</em>
+                <span><GoldIcon name="legal" size={18} /> Centrum spraw</span>
+                <em>LexAI</em>
               </div>
-              <div className="currency-list">
-                {data.currencies.map((currency) => (
-                  <div className="currency-row" key={currency.code}>
-                    <span>{currency.code}</span>
-                    {currency.error ? (
-                      <strong>{currency.error}</strong>
-                    ) : (
-                      <>
-                        <strong>{currency.rate?.toFixed(4)} PLN</strong>
-                        <em className={(currency.change ?? 0) >= 0 ? "up" : "down"}>
-                          {(currency.change ?? 0) >= 0 ? "^" : "↓"} {Math.abs(currency.change ?? 0).toFixed(4)}
-                        </em>
-                      </>
-                    )}
-                  </div>
-                ))}
+              <div className="legal-overview-list">
+                <a href="/legal-briefing">
+                  <span><GoldIcon name="legal" size={16} /></span>
+                  <div><strong>Analiza pisma</strong><small>Uruchom Legal Briefing</small></div>
+                  <b>↗</b>
+                </a>
+                <a href="/history">
+                  <span><GoldIcon name="history" size={16} /></span>
+                  <div><strong>Historia spraw</strong><small>Wróć do zapisanych analiz</small></div>
+                  <b>↗</b>
+                </a>
+                <a href="/upload">
+                  <span><GoldIcon name="knowledge" size={16} /></span>
+                  <div><strong>Baza dokumentów</strong><small>Dodaj pismo lub notatki</small></div>
+                  <b>↗</b>
+                </a>
               </div>
-              <p>Kurs z: {data.currencies[0]?.effectiveDate ?? "NBP"}</p>
+              <p>Wszystkie materiały do sprawy w jednym miejscu.</p>
             </section>
 
             <section className="dashboard-card holidays-card">
@@ -264,23 +247,22 @@ export default function DashboardPage() {
               )}
             </section>
 
-            <section className="dashboard-card travel-translator-card">
+            <section className="dashboard-card translator-dashboard-card">
               <div className="dashboard-card-top">
-                <span><GoldIcon name="translate" size={18} /> Tłumacz podróżny</span>
-                <em>Nowa funkcja</em>
+                <span><GoldIcon name="translate" size={18} /> Tłumacz Google</span>
+                <em>Narzędzie pomocnicze</em>
               </div>
-              <h2>Rozmówki w planie wyjazdu</h2>
+              <h2>Tłumacz dokumenty i pisma</h2>
               <p>
-                Asystent podróży potrafi teraz dodać praktyczne zwroty w języku kraju
-                docelowego: powitanie, pytanie o drogę, zamówienie jedzenia i prośbę o pomoc.
+                Przekładaj fragmenty pism i materiały ze sprawy bez wychodzenia z centrum pracy LexAI.
               </p>
-              <div className="travel-translator-preview">
-                <span>Dzień dobry</span>
-                <span>Gdzie jest dworzec?</span>
-                <span>Poproszę rachunek</span>
+              <div className="translator-dashboard-preview">
+                <span>Polski → Angielski</span>
+                <span>Polski → Niemiecki</span>
+                <span>Polski → Francuski</span>
               </div>
-              <a className="dashboard-card-link" href="/travel">
-                Otwórz asystenta podróży
+              <a className="dashboard-card-link" href="/translator">
+                Otwórz tłumacza
               </a>
             </section>
 

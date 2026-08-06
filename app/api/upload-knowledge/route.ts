@@ -9,11 +9,13 @@ import { getAuthenticatedRequest } from "../../../lib/supabase-request";
 type UploadKnowledgeRequest = {
   title?: unknown;
   content?: unknown;
+  folderId?: unknown;
 };
 
 type KnowledgeDocument = {
   title: string | null;
   created_at: string | null;
+  folder_id: string | null;
   metadata: { total_chunks?: number } | null;
 };
 
@@ -41,6 +43,7 @@ async function saveKnowledge(
   userId: string,
   title: string,
   content: string,
+  folderId: string | null,
   onProgress?: (event: Record<string, unknown>) => void,
 ) {
   const chunks = splitIntoChunks(content);
@@ -62,6 +65,7 @@ async function saveKnowledge(
     const embedding = await generateEmbedding(chunk);
     const { error } = await database.from("documents").insert({
       user_id: userId,
+      folder_id: folderId,
       title,
       content: chunk,
       embedding,
@@ -99,7 +103,7 @@ export async function GET(req: Request) {
 
   const { data, error } = await database
     .from("documents")
-    .select("title, created_at, metadata")
+    .select("title, created_at, folder_id, metadata")
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: false });
 
@@ -109,7 +113,7 @@ export async function GET(req: Request) {
 
   const documents = new Map<
     string,
-    { title: string; chunks: number; created_at: string; updated_at: string }
+    { title: string; folder_id: string | null; chunks: number; created_at: string; updated_at: string }
   >();
 
   for (const item of (data ?? []) as KnowledgeDocument[]) {
@@ -120,11 +124,13 @@ export async function GET(req: Request) {
     }
 
     const createdAt = item.created_at ?? new Date().toISOString();
-    const existing = documents.get(title);
+    const key = `${item.folder_id ?? "none"}:${title}`;
+    const existing = documents.get(key);
 
     if (!existing) {
-      documents.set(title, {
+      documents.set(key, {
         title,
+        folder_id: item.folder_id ?? null,
         chunks: 1,
         created_at: createdAt,
         updated_at: createdAt,
@@ -146,10 +152,27 @@ export async function POST(req: Request) {
   try {
     const auth = await getAuthenticatedRequest(req);
     const database = supabaseAdmin ?? auth.database;
-    const { title, content } = validateBody((await req.json()) as UploadKnowledgeRequest);
+    const requestBody = (await req.json()) as UploadKnowledgeRequest;
+    const { title, content } = validateBody(requestBody);
+    const folderId = typeof requestBody.folderId === "string" && requestBody.folderId.trim()
+      ? requestBody.folderId.trim()
+      : null;
+
+    if (folderId) {
+      const { data: folder, error: folderError } = await database
+        .from("document_folders")
+        .select("id")
+        .eq("id", folderId)
+        .eq("user_id", auth.user.id)
+        .maybeSingle();
+
+      if (folderError || !folder) {
+        throw new Error("Wybrana sprawa nie istnieje albo nie masz do niej dostępu.");
+      }
+    }
 
     if (!streamMode) {
-      return Response.json(await saveKnowledge(database, auth.user.id, title, content));
+      return Response.json(await saveKnowledge(database, auth.user.id, title, content, folderId));
     }
 
     const encoder = new TextEncoder();
@@ -160,7 +183,7 @@ export async function POST(req: Request) {
         };
 
         try {
-          const result = await saveKnowledge(database, auth.user.id, title, content, send);
+          const result = await saveKnowledge(database, auth.user.id, title, content, folderId, send);
           send({ type: "done", ...result });
         } catch (error) {
           send({ type: "error", error: getErrorMessage(error) });
@@ -198,11 +221,14 @@ export async function DELETE(req: Request) {
       title: new URL(req.url).searchParams.get("title"),
       content: "delete",
     });
-    const { error } = await database
+    const query = database
       .from("documents")
       .delete()
       .eq("title", title)
       .eq("user_id", auth.user.id);
+    const folderId = new URL(req.url).searchParams.get("folderId")?.trim();
+    const deleteQuery = folderId ? query.eq("folder_id", folderId) : query.is("folder_id", null);
+    const { error } = await deleteQuery;
 
     if (error) {
       if (error.message.toLowerCase().includes("row-level security")) {

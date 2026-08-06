@@ -95,7 +95,7 @@ export default function HistoryConversationPage() {
         {conversation ? (
           <>
             <header className="history-detail-header">
-              <span className="dashboard-kicker">Podglad read-only</span>
+              <span className="agent-header-badge">LEXAI • PODGLĄD HISTORII</span>
               <h1>{conversation.title || "Nowa rozmowa"}</h1>
               <p>Ostatnia aktywnosc: {formatDate(conversation.updated_at)}</p>
             </header>

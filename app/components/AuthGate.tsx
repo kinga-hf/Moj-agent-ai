@@ -20,7 +20,7 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-const publicRoutes = new Set(["/login"]);
+const publicRoutes = new Set(["/", "/login"]);
 
 function isPublicRoute(pathname: string) {
   return publicRoutes.has(pathname);
@@ -40,22 +40,38 @@ export function AuthGate({ children }: { children: ReactNode }) {
     }
 
     let active = true;
-
-    supabase.auth.getUser().then(({ data }) => {
+    const timeoutId = window.setTimeout(() => {
       if (!active) return;
-      setUser(data.user ?? null);
+      setUser(null);
       setIsLoading(false);
-    });
+    }, 8000);
+
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!active) return;
+        window.clearTimeout(timeoutId);
+        setUser(data.session?.user ?? null);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (!active) return;
+        window.clearTimeout(timeoutId);
+        setUser(null);
+        setIsLoading(false);
+      });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
       setUser(session?.user ?? null);
       setIsLoading(false);
     });
 
     return () => {
       active = false;
+      window.clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []);
@@ -113,9 +129,11 @@ export function AuthGate({ children }: { children: ReactNode }) {
     );
   }
 
+  const shouldUseAppShell = Boolean(user) && pathname !== "/login";
+
   return (
     <AuthContext.Provider value={value}>
-      {isPublicRoute(pathname) ? children : <AppShell>{children}</AppShell>}
+      {shouldUseAppShell ? <AppShell>{children}</AppShell> : children}
     </AuthContext.Provider>
   );
 }

@@ -238,6 +238,7 @@ export default function TravelPage() {
 
         <header className="chat-header pro-header">
           <div>
+            <span className="agent-header-badge">LEXAI • PLANOWANIE PODRÓŻY</span>
             <h1 className="chat-title"><GoldIcon name="travel" size={30} /> Asystent podróży AI</h1>
             <p className="agent-description">
               Powiedz dokąd jedziesz — agent sprawdzi pogodę, walutę, święta,

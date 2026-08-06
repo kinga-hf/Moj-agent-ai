@@ -4,8 +4,8 @@ import { AuthGate } from "./components/AuthGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AGENT AI",
-  description: "Centrum pracy agenta AI",
+  title: "LexAI — osobisty asystent prawny AI",
+  description: "LexAI pomaga analizować dokumenty, notatki i pisma procesowe.",
 };
 
 export default function RootLayout({

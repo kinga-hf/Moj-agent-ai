@@ -36,7 +36,9 @@ export type IconName =
   | "mail"
   | "folder"
   | "copy"
-  | "spark";
+  | "spark"
+  | "bookmark"
+  | "warning";
 
 const paths: Record<Exclude<IconName, "agent">, string> = {
   dashboard: "M4 13h6V4H4v9Zm10 7h6V4h-6v16ZM4 20h6v-3H4v3Z",
@@ -72,6 +74,8 @@ const paths: Record<Exclude<IconName, "agent">, string> = {
   folder: "M3 6h7l2 2h9v10H3z",
   copy: "M8 8h11v12H8z M5 16H4V4h11v1",
   spark: "m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z",
+  bookmark: "M6 4h12v17l-6-4-6 4V4Z",
+  warning: "M12 4 22 20H2L12 4Z M12 9v5m0 3h.01",
 };
 
 export function GoldIcon({ name, size = 20, ...props }: { name: IconName; size?: number } & SVGProps<SVGSVGElement>) {

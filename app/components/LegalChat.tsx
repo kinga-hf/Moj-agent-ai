@@ -586,13 +586,23 @@ export default function Home() {
           <AuthStatus compact />
         </nav>
 
-        <header className="chat-header pro-header">
-          <div>
-            <h1 className="chat-title">Asystent Prawny – Analiza Pism i Strategia</h1>
-            <p className="agent-description">
-              Pomagam porządkować problemy prawne, analizować argumenty,
-              szukać źródeł i przygotowywać robocze projekty pism.
-            </p>
+        <header className="chat-header pro-header legal-chat-header">
+          <div className="legal-chat-heading-row">
+            <span className="agent-header-badge">LEXAI • ASYSTENT PRAWNY</span>
+            <div className="chat-status" aria-live="polite">
+              {isProfileLoading || isHistoryLoading
+                ? "Wczytuję pamięć..."
+                : isLoading
+                  ? "Myślę..."
+                  : "Gotowy"}
+            </div>
+          </div>
+          <h1 className="chat-title">Asystent Prawny – Analiza Pism i Strategia</h1>
+          <p className="agent-description">
+            Pomagam porządkować problemy prawne, analizować argumenty,
+            szukać źródeł i przygotowywać robocze projekty pism.
+          </p>
+          <div className="legal-chat-prompts">
             <div className="example-questions" aria-label="Przykładowe pytania">
               {legalExampleQuestions.map((question) => (
                 <button
@@ -625,13 +635,6 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </div>
-          <div className="chat-status" aria-live="polite">
-            {isProfileLoading || isHistoryLoading
-              ? "Wczytuję pamięć..."
-              : isLoading
-                ? "Myślę..."
-                : "Gotowy"}
           </div>
         </header>
 

@@ -70,7 +70,7 @@ export default function SecurityPage() {
     <main className="security-page">
       <header className="security-header">
         <div>
-          <span className="dashboard-kicker">Monitoring produkcyjny</span>
+          <span className="agent-header-badge">LEXAI • MONITORING BEZPIECZEŃSTWA</span>
           <h1><GoldIcon name="security" size={34} /> Panel bezpieczeństwa</h1>
           <p>Kontrola blokad, kosztów i podejrzanych zachowań użytkowników.</p>
         </div>

@@ -39,22 +39,20 @@ type ReactSection = {
 };
 
 const scenarios = [
-  "Planuję weekend w Krakowie. Sprawdź pogodę, znajdź ciekawe miejsca w Wikipedii, i powiedz czy są jakieś święta w ten weekend",
-  "Mam 5000 EUR do wydania. Przelicz na PLN, sprawdź ile to w dolarach, i zapisz wszystkie kursy w notatkach",
-  "Porównaj pogodę w Warszawie, Berlinie i Paryżu. Które z tych miast ma dziś najlepszą pogodę?",
-  "Ile dni do następnego święta w Polsce? Jaka będzie wtedy pogoda?",
+  "Przygotuj checklistę dokumentów potrzebnych do dochodzenia roszczenia z tytułu szkody komunikacyjnej.",
+  "Uporządkuj strategię odpowiedzi na sprzeciw od nakazu zapłaty: zarzuty, dowody i kolejne kroki.",
+  "Sprawdź, jakie argumenty i podstawy prawne warto zweryfikować przy roszczeniu z umowy cesji wierzytelności.",
+  "Przygotuj listę pytań do świadka w sprawie o niewykonanie umowy oraz wskaż, jakie dokumenty potwierdzą jego zeznania.",
 ];
 
 const tools = [
-  { icon: "calculator", label: "Kalkulator" },
-  { icon: "clock", label: "Data i czas" },
-  { icon: "weather", label: "Pogoda" },
-  { icon: "currency", label: "Kursy walut" },
-  { icon: "holiday", label: "Święta" },
-  { icon: "dictionary", label: "Wikipedia" },
-  { icon: "search", label: "Google" },
-  { icon: "page", label: "Czytanie stron" },
-  { icon: "download", label: "Notatki" },
+  { icon: "legal", label: "Analiza pisma" },
+  { icon: "calculator", label: "Wyliczenia roszczeń" },
+  { icon: "clock", label: "Terminy procesowe" },
+  { icon: "search", label: "Wyszukiwanie orzeczeń" },
+  { icon: "dictionary", label: "Pojęcia prawne" },
+  { icon: "page", label: "Czytanie dokumentów" },
+  { icon: "download", label: "Notatki do sprawy" },
 ] satisfies ReadonlyArray<{ icon: IconName; label: string }>;
 
 function getToolIcon(name: string): IconName {
@@ -344,10 +342,11 @@ export default function ReactPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="react" size={30} /> Agent ReAct — Autonomiczne rozumowanie</h1>
+            <span className="agent-header-badge">LEXAI • STRATEGIA PROCESOWA</span>
+            <h1 className="chat-title"><GoldIcon name="react" size={30} /> LexAI ReAct — Strategia procesowa</h1>
             <p className="agent-description">
-              Opisz cel → agent sam planuje, używa narzędzi, obserwuje wyniki i
-              kończy konkretną odpowiedzią.
+              Opisz problem prawny → agent uporządkuje fakty, dobierze narzędzia,
+              wskaże braki w dokumentach i zaproponuje kolejne kroki.
             </p>
             <div className="agent-tool-panel" aria-label="Narzędzia ReAct">
               {tools.map((tool) => (
@@ -380,8 +379,8 @@ export default function ReactPage() {
         <div className="messages react-messages">
           {messages.length === 0 ? (
             <p className="empty-state">
-              Wybierz scenariusz albo wpisz złożony cel. Agent sam dobierze
-              narzędzia i pokaże przebieg pracy.
+              Wybierz scenariusz albo opisz sprawę. LexAI pokaże tok analizy,
+              wykorzystane narzędzia i rekomendowane działania.
             </p>
           ) : (
             messages.map((message) => (

@@ -17,12 +17,12 @@ const models: Array<{
 ];
 
 const terms = [
-  "Sztuczna inteligencja",
-  "Agent AI",
-  "Prompt",
-  "Halucynacja AI",
-  "RAG",
-  "API",
+  "Cesja wierzytelności",
+  "Przedawnienie roszczenia",
+  "Legitymacja czynna",
+  "Szkoda całkowita",
+  "Wniosek dowodowy",
+  "Związek przyczynowy",
 ];
 
 const modelBadges = models.reduce<Record<AiModel, string>>((acc, item) => {
@@ -90,7 +90,7 @@ export default function FewShotPage() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app" aria-label="Słownik AI">
+      <section className="chat-app" aria-label="Słownik pojęć prawnych">
         <nav className="top-nav" aria-label="Nawigacja">
           <a className="nav-link" href="/chat">
             💬 Chat
@@ -120,10 +120,11 @@ export default function FewShotPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="dictionary" size={30} /> Słownik AI</h1>
+            <span className="agent-header-badge">LEXAI • POJĘCIA PRAWNE</span>
+            <h1 className="chat-title"><GoldIcon name="dictionary" size={30} /> Słownik pojęć prawnych</h1>
             <p className="agent-description">
-              Wyjaśniam trudne pojęcia prostym językiem, zawsze w tym samym
-              formacie: definicja, analogia, przykład i powiązane terminy.
+              Wyjaśniam pojęcia z pism procesowych prostym językiem: definicja,
+              znaczenie w sprawie, przykład i powiązane terminy.
             </p>
             <div className="example-questions" aria-label="Przykładowe pojęcia">
               {terms.map((term) => (
@@ -147,8 +148,8 @@ export default function FewShotPage() {
         <div className="messages">
           {messages.length === 0 ? (
             <p className="empty-state">
-              Wybierz pojęcie albo wpisz własne. Słownik AI odpowie w spójnym
-              formacie nauczonym z przykładów.
+              Wybierz pojęcie albo wpisz własne. LexAI wyjaśni, jak rozumieć je
+              w kontekście pisma procesowego i dochodzenia roszczeń.
             </p>
           ) : (
             messages.map((message) => (
@@ -191,7 +192,7 @@ export default function FewShotPage() {
           {error ? (
             <div className="message-row assistant">
               <div className="message-bubble error-bubble">
-                Nie udało się wygenerować odpowiedzi w Słowniku AI. Spróbuj
+                Nie udało się wygenerować odpowiedzi w Słowniku prawnym. Spróbuj
                 ponownie za chwilę albo sprawdź limit klucza Gemini.
               </div>
             </div>
@@ -218,11 +219,11 @@ export default function FewShotPage() {
 
           <form className="composer" onSubmit={handleSubmit}>
             <input
-              aria-label="Pojęcie do wyjaśnienia"
+              aria-label="Pojęcie prawne do wyjaśnienia"
               className="composer-input"
               disabled={isLoading}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="Wpisz pojęcie do wyjaśnienia..."
+              placeholder="Np. czym jest cesja wierzytelności w tej sprawie?"
               value={input}
             />
             <button

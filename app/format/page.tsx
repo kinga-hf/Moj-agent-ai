@@ -17,11 +17,11 @@ const models: Array<{
 ];
 
 const commandExamples = [
-  "/tabela języki programowania 2026",
-  "/porownanie ChatGPT vs Claude",
-  "/lista 5 kroków do pierwszego agenta AI",
-  "/faq sztuczna inteligencja dla początkujących",
-  "/email podziękowanie za udaną rekrutację",
+  "/tabela zarzuty z pisma procesowego",
+  "/porownanie argumenty powoda vs argumenty pozwanego",
+  "/lista dokumenty potrzebne do wykazania szkody",
+  "/faq przedawnienie roszczenia z umowy",
+  "/email wezwanie do uzupełnienia dokumentów w sprawie",
 ];
 
 const modelBadges = models.reduce<Record<AiModel, string>>((acc, item) => {
@@ -232,7 +232,7 @@ export default function FormatPage() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app format-app" aria-label="Formatowanie">
+        <section className="chat-app format-app" aria-label="Formatowanie dokumentów prawnych">
         <nav className="top-nav" aria-label="Nawigacja">
           <a className="nav-link" href="/chat">
             💬 Chat
@@ -262,10 +262,11 @@ export default function FormatPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="format" size={30} /> Formatowanie</h1>
+            <span className="agent-header-badge">LEXAI • FORMATOWANIE PISM</span>
+            <h1 className="chat-title"><GoldIcon name="format" size={30} /> Formatowanie dokumentów prawnych</h1>
             <p className="agent-description">
-              Agent odpowiada w tabeli, liście, porównaniu, FAQ albo emailu -
-              dokładnie na żądanie.
+              Porządkuję materiał procesowy w tabele, listy zarzutów,
+              porównania argumentów, FAQ i gotową korespondencję.
             </p>
             <div className="example-questions" aria-label="Komendy formatujące">
               {commandExamples.map((command) => (
@@ -289,8 +290,8 @@ export default function FormatPage() {
         <div className="messages">
           {messages.length === 0 ? (
             <p className="empty-state">
-              Wybierz komendę, dopisz własny temat i wyślij. Tabele będą
-              wyświetlane jako normalne, czytelne tabele.
+              Wybierz format, dopisz temat sprawy i wyślij. LexAI przygotuje
+              czytelny materiał do dalszej pracy z dokumentami.
             </p>
           ) : (
             messages.map((message) => (
@@ -368,7 +369,7 @@ export default function FormatPage() {
               className="composer-input"
               disabled={isLoading}
               onChange={(event) => setInput(event.target.value)}
-              placeholder="/tabela temat, /lista temat, /email opis..."
+              placeholder="/tabela zarzuty, /lista dowody, /email wezwanie..."
               value={input}
             />
             <button

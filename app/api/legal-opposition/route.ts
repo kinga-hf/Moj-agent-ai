@@ -167,6 +167,8 @@ Twoim standardem jest szczegółowa analiza dokumentu, porównywalna z profesjon
 5. Dla każdego zarzutu wskaż: stanowisko strony, uzasadnienie faktyczne, podstawę prawną lub orzeczenie wskazane w piśmie, znaczenie dla sprawy, dowody powołane przez stronę oraz strony dokumentu, jeśli są podane.
 6. Osobno zestaw wszystkie wnioski procesowe i dowodowe. Opisz ich cel i tezę dowodową. Nie redukuj pytań do świadka ani zakresu opinii biegłego do jednego ogólnego punktu.
 6a. Jeżeli tekst zawiera znaczniki stron w formacie [--- STRONA n ---], zachowaj je jako odwołania do źródła. Nie podawaj numerów stron z pamięci ani nie twórz pozornie precyzyjnych odwołań, których nie da się potwierdzić.
+6b. Przy każdym istotnym zarzucie, twierdzeniu, dowodzie, dacie lub kwocie dodaj krótkie odwołanie "Źródło: [--- STRONA n ---]", jeżeli dana informacja wynika z oznaczonej strony. Odwołania muszą być klikalne w interfejsie i nie mogą być wymyślane dla treści bez potwierdzonej strony.
+6c. Na początku raportu dodaj sekcję "## Podstawa analizy". Wskaż, że analizujesz wyłącznie dostarczone pismo, podaj jego rodzaj oraz strony, na których opierają się najważniejsze ustalenia. Jeżeli źródło nie ma oznaczeń stron, napisz "strony nieoznaczone" zamiast tworzyć numerację.
 7. Wskaż, jakie fakty i dokumenty trzeba zweryfikować w aktach oraz czego brakuje do potwierdzenia twierdzeń każdej ze stron.
 8. Przygotuj sekcję kontrargumentacji lub punktów do dalszej analizy. Oddziel informacje wynikające z pisma od propozycji strategicznych i nie przedstawiaj propozycji jako ustalonego faktu.
 9. Orzeczenia podane w piśmie oznacz jako "orzecznictwo wskazane w źródle". Użyj Google Search, aby znaleźć 1-3 aktualne i możliwie bezpośrednio przydatne orzeczenia, jeżeli może to realnie pomóc. Dla każdego podaj link, tezę i związek z analizowanym zarzutem. Nie zastępuj orzecznictwa wskazanego w piśmie przypadkowymi wynikami wyszukiwania.
@@ -178,6 +180,10 @@ Twoim standardem jest szczegółowa analiza dokumentu, porównywalna z profesjon
 Data briefingu: [data]
 Rodzaj pisma: [rodzaj]
 Zakres źródła: [nazwy dokumentów lub opis materiału]
+
+## Podstawa analizy
+Dokument i zakres: [opis dostarczonego pisma]
+Strony wykorzystane: [--- STRONA n ---] lub "strony nieoznaczone"
 
 ## 1. Streszczenie wykonawcze
 W 5-8 zdaniach przedstaw: czego dotyczy sprawa, czego żąda strona, jakie jest stanowisko przeciwnika, jakie są trzy najważniejsze punkty sporne i jakie dowody mają największe znaczenie.
@@ -277,6 +283,59 @@ ZASADY:
 - Przed zakończeniem wykonaj kontrolę kompletności: porównaj listę zarzutów, dowodów, dat, kwot i orzeczeń wykrytych w źródle z sekcjami briefingu. Braki pokaż w sekcji 13.
 - Jeśli Google Search nie zwróci pewnego orzecznictwa, napisz to wprost i zaproponuj frazy do dalszego sprawdzenia w bazach prawniczych.`;
 
+const legalBriefingOutputOverride = `NADRZĘDNY WYMÓG UKŁADU RAPORTU:
+Odpowiedź ma wyglądać jak profesjonalny raport z załączonego wzorca PDF. Zachowaj dokładnie tę kolejność i nie dodawaj pobocznych sekcji:
+
+# Analiza pisma procesowego
+Typ dokumentu: [rodzaj pisma]
+
+## GŁÓWNE TEZY
+Jeden zwarty opis stanowiska strony, celu pisma i najważniejszych punktów spornych. Przy każdym istotnym ustaleniu dodaj wyłącznie potwierdzone odwołanie w formacie [--- STRONA n ---].
+
+## ZARZUTY
+Dla każdego zarzutu utwórz osobny podpunkt w formacie:
+### n. [nazwa zarzutu]
+Typ zarzutu: [materialny / formalny / dowodowy]
+Opis: [szczegółowe stanowisko wynikające z pisma, z faktami, kwotami, datami, przepisami i orzeczeniami podanymi w piśmie]
+Kontrargument: [proponowana odpowiedź procesowa wyraźnie oznaczona jako rekomendacja]
+Na końcu opisu lub kontrargumentu dodaj potwierdzone odwołanie do strony w formacie [--- STRONA n ---].
+
+## WNIOSKI PROCESOWE
+## CHECKLISTA DLA PRAWNIKA
+Przygotuj praktyczną checklistę rzeczy, które należy jeszcze zweryfikować przed przygotowaniem odpowiedzi procesowej. Każdy punkt zapisz jako osobny element listy w formacie:
+- [ ] [konkretna czynność do wykonania] — [dlaczego jest istotna, czego szukać i jaki dokument lub fakt potwierdzi wynik] [--- STRONA n ---]
+Uwzględnij wyłącznie kwestie wynikające z pisma lub niezbędne do sprawdzenia jego twierdzeń: dokumenty i załączniki, daty i terminy, kwoty i odsetki, umocowanie oraz legitymację, zarzuty, wnioski dowodowe, pytania do świadków, zakres opinii biegłego, podstawy prawne i orzecznictwo. Jeśli dana kwestia nie wynika z materiału, oznacz ją jako „DO WERYFIKACJI”, bez dopisywania faktów. Dodawaj odwołania do stron tylko wtedy, gdy wynikają ze źródła.
+
+Dla każdego wniosku utwórz osobny podpunkt w formacie:
+### n. [treść wniosku]
+Cel procesowy: [co ma zostać wykazane i jakie dokumenty lub dowody są potrzebne]
+Dodaj odwołanie do strony źródłowej, jeżeli wynika ono z pisma.
+
+Nie używaj tabel. Nie twórz sekcji „Dane sprawy”, „Chronologia”, „Orzecznictwo”, „Checklist” ani innych dodatkowych rozdziałów poza trzema sekcjami wskazanymi powyżej. Nie wymyślaj numerów stron. Pisz po polsku, rzeczowo i szczegółowo, ale bez przepisywania całego pisma.`;
+
+const legalBriefingStructureInstruction = `NADRZĘDNA STRUKTURA RAPORTU:
+Zachowaj poniższą kolejność sekcji i nie pomijaj żadnej z nich:
+
+# Analiza pisma procesowego
+Typ dokumentu: [rodzaj pisma]
+
+## GŁÓWNE TEZY
+Zwięźle opisz stanowisko strony, cel pisma i najważniejsze punkty sporne. Dodawaj potwierdzone odwołania w formacie [--- STRONA n ---].
+
+## ZARZUTY
+Dla każdego zarzutu utwórz osobny podpunkt z opisem stanowiska wynikającego z pisma, faktami, kwotami, datami, podstawą wskazaną w źródle, kontrargumentem oznaczonym jako rekomendacja oraz odwołaniem do potwierdzonej strony.
+
+## WNIOSKI PROCESOWE
+Wypisz każdy wniosek osobno, podając jego cel, tezę dowodową, potrzebne dokumenty lub dowody oraz źródłową stronę, jeżeli jest znana.
+
+## CHECKLISTA DLA PRAWNIKA
+Po wnioskach procesowych dodaj checklistę rzeczy do zweryfikowania przed przygotowaniem odpowiedzi procesowej. Każdy punkt zapisz jako checkbox. Nie dopisuj faktów spoza pisma.`;
+
+const legalChecklistInstruction = `OBOWIĄZKOWA DODATKOWA SEKCJA RAPORTU:
+Po sekcji WNIOSKI PROCESOWE dodaj sekcję "## CHECKLISTA DLA PRAWNIKA". Wypisz w niej praktyczne punkty do zweryfikowania przed przygotowaniem odpowiedzi procesowej, każdy w osobnym wierszu jako checkbox:
+- [ ] [konkretna czynność do wykonania] — [dlaczego jest istotna, czego szukać i jaki dokument lub fakt potwierdzi wynik] [--- STRONA n ---]
+Uwzględnij dokumenty i załączniki, daty i terminy, kwoty i odsetki, umocowanie oraz legitymację, zarzuty i wnioski dowodowe, pytania do świadków, zakres opinii biegłego, podstawy prawne i orzecznictwo. Opieraj checklistę na treści pisma. Jeśli czegoś nie można potwierdzić na podstawie źródła, oznacz to jako "DO WERYFIKACJI". Dodawaj odwołania do stron wyłącznie wtedy, gdy wynikają z materiału. Ta sekcja jest obowiązkowa i nie może zostać pominięta.`;
+
 function asCleanText(value: unknown, maxLength: number) {
   return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
@@ -289,15 +348,21 @@ export async function POST(req: Request) {
       pleadingType,
       pleadingText,
       caseContext,
+      analysisMode,
     }: {
       pleadingType?: unknown;
       pleadingText?: unknown;
       caseContext?: unknown;
+      analysisMode?: unknown;
     } = await req.json();
 
     const cleanPleadingType = asCleanText(pleadingType, 120);
     const cleanPleadingText = asCleanText(pleadingText, 40000);
     const cleanCaseContext = asCleanText(caseContext, 1500);
+    const cleanAnalysisMode = analysisMode === "fast" ? "fast" : "full";
+    const analysisModeInstruction = cleanAnalysisMode === "fast"
+      ? "Tryb szybki: przygotuj krótszy briefing, skupiając się na streszczeniu, najważniejszych zarzutach, dowodach i kolejnych krokach. Ogranicz liczbę pobocznych wątków."
+      : "Tryb pełny: zachowaj pełną strukturę briefingu, macierze zarzutów i dowodów oraz kontrolę kompletności.";
 
     if (!cleanPleadingType || cleanPleadingText.length < 80) {
       return Response.json(
@@ -322,11 +387,13 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: google(model),
-      system: `${legalBriefingPrompt}\n\nDzisiejsza data: ${getTodayLabel()}`,
+      system: `${legalBriefingPrompt}\n\n${legalBriefingStructureInstruction}\n\n${legalChecklistInstruction}\n\nDzisiejsza data: ${getTodayLabel()}`,
       prompt: `Przygotuj briefing dla prawnika.
 
 Rodzaj pisma przeciwnika: ${cleanPleadingType}
 Kontekst sprawy: ${cleanCaseContext || "brak dodatkowego kontekstu"}
+Tryb analizy: ${cleanAnalysisMode === "fast" ? "szybki" : "pełny"}
+${analysisModeInstruction}
 
 Treść pisma przeciwnika:
 ${cleanPleadingText}`,

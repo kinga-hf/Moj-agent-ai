@@ -87,7 +87,7 @@ export default function BriefingsPage() {
       <section className="dashboard-main briefings-main" aria-label="Briefingi">
         <header className="dashboard-hero">
           <div>
-            <span className="dashboard-kicker">Automatyczne raporty</span>
+            <span className="agent-header-badge">LEXAI • AUTOMATYCZNE RAPORTY</span>
             <h1><GoldIcon name="briefings" size={34} /> Briefingi</h1>
             <p>Automatyczne podsumowania dnia od Twojego agenta</p>
           </div>

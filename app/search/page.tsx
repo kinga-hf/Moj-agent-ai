@@ -13,10 +13,10 @@ import {
 import { GoldIcon } from "../components/GoldIcon";
 
 const starterQuestions = [
-  "Jakie są najnowsze wiadomości o sztucznej inteligencji?",
-  "Ile kosztuje iPhone 16 Pro w Polsce?",
-  "Kto wygrał ostatni mecz reprezentacji Polski?",
-  "Jakie filmy są teraz w kinach?",
+  "Znajdź aktualne orzecznictwo dotyczące przedawnienia roszczeń.",
+  "Wyszukaj podstawy prawne dla odpowiedzi na pozew o zapłatę.",
+  "Sprawdź orzeczenia dotyczące cesji wierzytelności i legitymacji czynnej.",
+  "Znajdź argumenty dotyczące odsetek za opóźnienie w sprawach odszkodowawczych.",
 ];
 
 function getMessageText(parts: { type: string; text?: string }[]) {
@@ -124,7 +124,7 @@ export default function SearchPage() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app search-app" aria-label="Agent z wyszukiwarką">
+      <section className="chat-app search-app" aria-label="LexAI — wyszukiwarka prawna">
         <DropOverlay visible={isDraggingImage} />
         <nav className="top-nav" aria-label="Nawigacja">
           <a className="nav-link" href="/chat">
@@ -155,9 +155,11 @@ export default function SearchPage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="search" size={30} /> Agent z wyszukiwarką</h1>
+            <span className="agent-header-badge">LEXAI • WYSZUKIWARKA PRAWNA</span>
+            <h1 className="chat-title"><GoldIcon name="search" size={30} /> LexAI — Wyszukiwarka prawna</h1>
             <p className="agent-description">
-              Przeszukuję prawdziwy internet i czytam strony.
+              Przeszukuję internet, orzecznictwo i strony źródłowe, żeby znaleźć
+              argumenty przydatne w sprawie.
             </p>
             <div className="example-questions" aria-label="Pytania startowe">
               {starterQuestions.map((question) => (
@@ -186,8 +188,8 @@ export default function SearchPage() {
         >
           {messages.length === 0 ? (
             <p className="empty-state">
-              Zapytaj o aktualne informacje albo podaj adres strony do
-              przeczytania.
+              Zapytaj o orzecznictwo, podstawę prawną, argumentację albo podaj
+              adres strony do przeczytania.
             </p>
           ) : (
             messages.map((message) => (
@@ -247,7 +249,7 @@ export default function SearchPage() {
               disabled={isLoading}
               onChange={(event) => setInput(event.target.value)}
               onPaste={(event) => void handlePaste(event)}
-              placeholder="Zapytaj o cokolwiek aktualnego..."
+              placeholder="Np. znajdź aktualne orzeczenia dotyczące cesji wierzytelności..."
               value={input}
             />
             <button

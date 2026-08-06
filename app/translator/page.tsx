@@ -22,7 +22,7 @@ type TranslateResponse = {
 };
 
 export default function TranslatorPage() {
-  const [text, setText] = useState("Dzień dobry, zaplanujmy dzisiejszą pracę.");
+  const [text, setText] = useState("Wnoszę o oddalenie powództwa w całości z uwagi na brak wykazania zasadności roszczenia.");
   const [targetLanguage, setTargetLanguage] = useState("en");
   const [translatedText, setTranslatedText] = useState("");
   const [error, setError] = useState("");
@@ -80,27 +80,27 @@ export default function TranslatorPage() {
       <section className="dashboard-main" aria-label="Tłumacz">
         <header className="dashboard-hero translator-hero">
           <div>
-            <span className="dashboard-kicker">Integracja językowa</span>
-            <h1><GoldIcon name="translate" size={30} /> Tłumacz</h1>
-            <p>Tłumacz tekst przez endpoint Google Translate dostępny pod /api/translate.</p>
+            <span className="agent-header-badge">LEXAI • DOKUMENTY I KOMUNIKACJA</span>
+            <h1><GoldIcon name="translate" size={30} /> Tłumacz dokumentów prawnych</h1>
+            <p>Tłumacz pisma, umowy i korespondencję procesową, zachowując sens oraz terminologię potrzebną w sprawie.</p>
           </div>
-          <div className="translator-status">Endpoint aktywny</div>
+          <div className="translator-status">Gotowy do tłumaczenia</div>
         </header>
 
         <section className="dashboard-card translator-card">
           <div className="dashboard-card-top">
-            <span><GoldIcon name="translate" size={18} /> Google Translate</span>
-            <em>POST /api/translate</em>
+            <span><GoldIcon name="translate" size={18} /> Tłumaczenie pisma</span>
+            <em>LexAI · dokumenty prawne</em>
           </div>
 
           <form className="translator-form" onSubmit={handleSubmit}>
             <div className="translator-grid">
               <label className="translator-field">
-                <span>Tekst do tłumaczenia</span>
+                <span>Treść pisma lub dokumentu</span>
                 <textarea
                   className="translator-textarea"
                   onChange={(event) => setText(event.target.value)}
-                  placeholder="Wpisz tekst..."
+                  placeholder="Wklej treść pozwu, umowy lub korespondencji..."
                   rows={9}
                   value={text}
                 />
@@ -143,7 +143,7 @@ export default function TranslatorPage() {
                 </label>
 
                 <div className="translator-result" aria-live="polite">
-                  {translatedText || "Tutaj pojawi się tłumaczenie."}
+                  {translatedText || "Tutaj pojawi się przetłumaczony dokument."}
                 </div>
               </div>
             </div>

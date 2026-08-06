@@ -4,12 +4,12 @@ import { FormEvent, useState } from "react";
 import { GoldIcon } from "../components/GoldIcon";
 
 const promptExamples = [
-  "Minimalistyczne logo kawiarni w stylu japońskim",
-  "Post na Instagram: kawa latte art, ciepłe światło, widok z góry",
-  "Kreacja reklamowa: wyprzedaż letnia -50%, nowoczesny design",
-  "Ikona aplikacji: robot AI, gradient fioletowo-niebieski, flat design",
-  "Infografika: 5 kroków do produktywności, pastelowe kolory",
-  "Zdjęcie produktowe: elegancki zegarek na ciemnym tle",
+  "Infografika: chronologia sprawy o odszkodowanie, elegancki styl prawniczy",
+  "Schemat: droga dochodzenia roszczenia od zgłoszenia szkody do pozwu",
+  "Wizualna mapa argumentów: stanowisko powoda i kontrargumenty pozwanego",
+  "Oś czasu: umowa, cesja wierzytelności, wezwanie do zapłaty i czynności procesowe",
+  "Infografika dla prawnika: dokumenty potrzebne do wykazania szkody",
+  "Profesjonalna grafika do prezentacji sprawy, granatowe tło i złote akcenty LexAI",
 ];
 
 type ImageResult = {
@@ -87,7 +87,7 @@ export default function GeneratePage() {
 
   return (
     <main className="chat-shell">
-      <section className="chat-app generate-app" aria-label="Generator grafik AI">
+      <section className="chat-app generate-app" aria-label="Generator wizualizacji prawnych">
         <nav className="top-nav" aria-label="Nawigacja">
           <a className="nav-link" href="/chat">
             💬 Chat
@@ -117,9 +117,11 @@ export default function GeneratePage() {
 
         <header className="chat-header pro-header">
           <div>
-            <h1 className="chat-title"><GoldIcon name="graphics" size={30} /> Generator grafik AI</h1>
+            <span className="agent-header-badge">LEXAI • WIZUALIZACJE SPRAW</span>
+            <h1 className="chat-title"><GoldIcon name="graphics" size={30} /> Generator wizualizacji prawnych</h1>
             <p className="agent-description">
-              Opisz co chcesz - AI stworzy obraz w kilka sekund.
+              Twórz osie czasu, mapy argumentów, schematy roszczeń i infografiki
+              pomocne przy analizie oraz prezentacji sprawy.
             </p>
             <div className="example-questions" aria-label="Przykłady promptów">
               {promptExamples.map((example) => (
@@ -147,7 +149,7 @@ export default function GeneratePage() {
               className="prompt-textarea"
               disabled={isLoading}
               onChange={(event) => setPrompt(event.target.value)}
-              placeholder="Opisz obraz który chcesz wygenerować..."
+              placeholder="Opisz wizualizację sprawy, osi czasu lub materiału dowodowego..."
               value={prompt}
             />
             <button
