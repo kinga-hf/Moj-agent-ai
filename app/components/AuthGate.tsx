@@ -8,6 +8,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { supabase } from "../../lib/supabase";
@@ -32,6 +33,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const searchParams = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isSigningOutRef = useRef(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -83,7 +85,16 @@ export function AuthGate({ children }: { children: ReactNode }) {
 
     const publicRoute = isPublicRoute(pathname);
 
+    if (!user && pathname === "/" && isSigningOutRef.current) {
+      isSigningOutRef.current = false;
+    }
+
     if (!user && !publicRoute) {
+      if (isSigningOutRef.current) {
+        router.replace("/");
+        return;
+      }
+
       const next = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
       router.replace(`/login?next=${encodeURIComponent(next)}`);
       return;
@@ -100,8 +111,9 @@ export function AuthGate({ children }: { children: ReactNode }) {
       isLoading,
       signOut: async () => {
         if (!supabase) return;
+        isSigningOutRef.current = true;
         await supabase.auth.signOut();
-        router.replace("/login");
+        router.replace("/");
       },
     }),
     [isLoading, router, user],

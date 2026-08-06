@@ -7383,7 +7383,7 @@ body {
 
 .section-shell { padding-top: 140px; padding-bottom: 140px; }
 .landing-features { padding-top: clamp(76px, 8vw, 104px); }
-.landing-section-heading { display: flex; justify-content: space-between; gap: 72px; align-items: center; width: 100%; min-width: 0; }
+.landing-section-heading { display: flex; justify-content: space-between; gap: 72px; align-items: center; width: min(1180px, calc(100% - 56px)); min-width: 0; margin-right: auto; margin-left: auto; }
 .landing-section-heading > div { min-width: 0; }
 .landing-section-heading h2, .landing-showcase-copy h2, .landing-final-copy h2 { margin: 17px 0 0; color: #f4eee4; font-size: clamp(2.8rem, 5vw, 4.8rem); font-weight: 570; letter-spacing: -0.065em; line-height: 1.02; }
 .landing-section-heading > p { max-width: 390px; margin: 0; color: #a2a4ad; font-size: 1rem; line-height: 1.75; }
