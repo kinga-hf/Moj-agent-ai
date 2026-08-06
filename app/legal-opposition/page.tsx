@@ -510,7 +510,7 @@ function DocumentPreview({
   return (
     <div className="legal-pdf-preview">
       <div className="legal-pdf-preview-heading">
-        <span className="legal-section-kicker">PRZEGLĄDARKA DOKUMENTU PDF</span>
+        <span className="legal-clean-kicker">PRZEGLĄDARKA DOKUMENTU PDF</span>
         {documentPages.length > 0 ? <span>{documentPages.length} {documentPages.length === 1 ? "strona" : "stron"}</span> : null}
       </div>
       {documentPages.length > 0 ? (
@@ -1250,7 +1250,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
             <div className="legal-left-column">
             <div className="legal-input-panel">
               <div className="legal-panel-heading">
-                <span className="legal-section-kicker">DOKUMENT DO ANALIZY</span>
+                <span className="legal-clean-kicker">DOKUMENT DO ANALIZY</span>
                 <h2>Wybierz dokument i przygotuj pismo do analizy.</h2>
               </div>
 
@@ -1340,11 +1340,11 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
           <section aria-label="Raport z analizy prawnej" className="legal-preview-panel legal-report-section">
             <div className="legal-preview-header">
               <div>
-                <span className="legal-report-brand">LITIGATION BRIEFING TOOL <em>— RAPORT</em></span>
+                <span className="legal-clean-kicker legal-report-brand">LITIGATION BRIEFING TOOL <em>— RAPORT</em></span>
                 <div className="legal-briefing-result-heading">
                   <span><GoldIcon name="legal" size={18} /></span>
                   <div>
-                    <span className="legal-section-kicker">BRIEFING</span>
+                    <span className="legal-clean-kicker">BRIEFING</span>
                     <strong>Wyniki analizy</strong>
                   </div>
                 </div>
@@ -1367,7 +1367,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
             <div aria-live="polite" className="legal-report-preview" id="report-content">
               <div className="legal-report-title">
-                <span className="legal-section-kicker">BRIEFING</span>
+                <span className="legal-clean-kicker">BRIEFING</span>
                 <strong>{isLoading ? "Briefing powstaje..." : analysis ? "Analiza gotowa" : "Twoje wyniki pojawią się tutaj"}</strong>
               </div>
               {isLoading && !analysis ? (
@@ -1376,7 +1376,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                 <>
                   {documentPages.length > 0 ? (
                     <section className="legal-analysis-source" aria-label="Podstawa analizy">
-                      <span className="legal-section-kicker">PODSTAWA ANALIZY</span>
+                      <span className="legal-clean-kicker">PODSTAWA ANALIZY</span>
                       <p>
                         Analiza opiera się na treści {fileName ? `dokumentu „${fileName}”` : "wgranego pisma procesowego"}.
                         Kliknij stronę, aby podświetlić ją w podglądzie PDF.
@@ -1457,7 +1457,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
           >
             <div className="legal-flashcard-header">
               <div>
-                <span className="legal-section-kicker">LEXAI · PRZYGOTOWANIE DO ROZPRAWY</span>
+                <span className="legal-clean-kicker">LEXAI · PRZYGOTOWANIE DO ROZPRAWY</span>
                 <h2>Fiszka na Rozprawę</h2>
               </div>
               <button onClick={() => setFlashcard("")} type="button">Zamknij</button>

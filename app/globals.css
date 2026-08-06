@@ -12754,6 +12754,325 @@ html[data-theme="dark"] {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/* Logged-in application shell: LexAI Premium SaaS design system             */
+/* -------------------------------------------------------------------------- */
+
+html[data-theme="dark"] .app-shell,
+html[data-theme="dark"] .app-shell-content {
+  background-color: #0f172a !important;
+}
+
+html[data-theme="dark"] .app-shell-content {
+  position: relative;
+  min-height: 100dvh;
+  background-image:
+    radial-gradient(circle at 72% 0%, rgba(37, 99, 235, 0.14), transparent 28%),
+    radial-gradient(circle at 18% 26%, rgba(59, 130, 246, 0.07), transparent 24%),
+    linear-gradient(rgba(148, 163, 184, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.026) 1px, transparent 1px) !important;
+  background-size: auto, auto, 56px 56px, 56px 56px !important;
+}
+
+html[data-theme="dark"] .dashboard-main,
+html[data-theme="dark"] .chat-shell,
+html[data-theme="dark"] .app-shell-content > .dashboard-shell,
+html[data-theme="dark"] .app-shell-content > .dashboard-shell > .dashboard-main {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="dark"] .dashboard-main,
+html[data-theme="dark"] .chat-shell {
+  padding: clamp(20px, 3vw, 36px);
+}
+
+html[data-theme="dark"] .chat-app {
+  width: min(100%, 1080px);
+  min-height: calc(100dvh - 72px);
+  border: 1px solid rgba(71, 85, 105, 0.72) !important;
+  border-radius: 20px;
+  background: rgba(15, 23, 42, 0.82) !important;
+  box-shadow: 0 24px 70px rgba(2, 6, 23, 0.46) !important;
+}
+
+html[data-theme="dark"] .chat-app::before {
+  height: 3px;
+  background: linear-gradient(90deg, #2563eb, #60a5fa, #6366f1) !important;
+  opacity: 0.95;
+}
+
+html[data-theme="dark"] .dashboard-sidebar {
+  border-right: 1px solid rgba(71, 85, 105, 0.72) !important;
+  background:
+    radial-gradient(circle at 50% -8%, rgba(37, 99, 235, 0.15), transparent 31%),
+    linear-gradient(180deg, #111827 0%, #0b1220 100%) !important;
+  box-shadow: 16px 0 46px rgba(2, 6, 23, 0.18);
+}
+
+html[data-theme="dark"] .dashboard-brand,
+html[data-theme="dark"] .dashboard-sidebar-footer-actions,
+html[data-theme="dark"] .sidebar-user {
+  border-color: rgba(71, 85, 105, 0.7) !important;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.78) !important;
+  box-shadow: 0 12px 32px rgba(2, 6, 23, 0.2);
+}
+
+html[data-theme="dark"] .dashboard-brand span {
+  border: 1px solid rgba(96, 165, 250, 0.35);
+  background: rgba(37, 99, 235, 0.16) !important;
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .dashboard-sidebar a {
+  min-height: 44px;
+  border: 1px solid transparent !important;
+  border-left: 3px solid transparent !important;
+  border-radius: 10px;
+  color: #94a3b8 !important;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+html[data-theme="dark"] .dashboard-sidebar a:hover {
+  border-color: rgba(96, 165, 250, 0.26) !important;
+  border-left-color: #60a5fa !important;
+  background: rgba(37, 99, 235, 0.1) !important;
+  color: #dbeafe !important;
+  transform: translateX(2px);
+}
+
+html[data-theme="dark"] .dashboard-sidebar a.active {
+  border-color: rgba(96, 165, 250, 0.34) !important;
+  border-left-color: #3b82f6 !important;
+  background: rgba(37, 99, 235, 0.16) !important;
+  color: #eff6ff !important;
+  box-shadow: inset 0 0 24px rgba(37, 99, 235, 0.08), 0 8px 20px rgba(2, 6, 23, 0.16) !important;
+  transform: none;
+}
+
+html[data-theme="dark"] .dashboard-sidebar a .gold-icon,
+html[data-theme="dark"] .dashboard-sidebar a.active .gold-icon {
+  color: #60a5fa !important;
+}
+
+html[data-theme="dark"] .sidebar-group-toggle {
+  color: #64748b !important;
+  letter-spacing: 0.12em;
+}
+
+html[data-theme="dark"] .sidebar-group-toggle:hover,
+html[data-theme="dark"] .sidebar-group-toggle[aria-expanded="true"] {
+  color: #cbd5e1 !important;
+}
+
+/* Shared glass surfaces across dashboard, chat and tool workspaces. */
+html[data-theme="dark"] .app-shell-content [class*="card"],
+html[data-theme="dark"] .app-shell-content [class*="panel"],
+html[data-theme="dark"] .app-shell-content [class*="workspace"],
+html[data-theme="dark"] .app-shell-content [class*="result"],
+html[data-theme="dark"] .app-shell-content [class*="tile"] {
+  border-color: rgba(71, 85, 105, 0.68) !important;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.8) !important;
+  box-shadow: 0 18px 48px rgba(2, 6, 23, 0.24) !important;
+  backdrop-filter: blur(16px);
+}
+
+html[data-theme="dark"] .app-shell-content [class*="card"]:hover,
+html[data-theme="dark"] .app-shell-content [class*="tile"]:hover,
+html[data-theme="dark"] .app-shell-content .agent-tool:hover,
+html[data-theme="dark"] .app-shell-content .agent-mode-card:hover,
+html[data-theme="dark"] .app-shell-content .quick-actions a:hover {
+  border-color: rgba(96, 165, 250, 0.7) !important;
+  background: rgba(51, 65, 85, 0.82) !important;
+  box-shadow: 0 18px 44px rgba(2, 6, 23, 0.34) !important;
+}
+
+html[data-theme="dark"] .chat-header,
+html[data-theme="dark"] .top-nav,
+html[data-theme="dark"] .conversation-context,
+html[data-theme="dark"] .memory-panel,
+html[data-theme="dark"] .composer-panel,
+html[data-theme="dark"] .model-switcher,
+html[data-theme="dark"] .agent-mode-panel,
+html[data-theme="dark"] .agent-tool-panel {
+  border-color: rgba(71, 85, 105, 0.68) !important;
+  background: rgba(15, 23, 42, 0.7) !important;
+  backdrop-filter: blur(16px);
+}
+
+html[data-theme="dark"] .chat-header {
+  padding: 26px 28px;
+}
+
+html[data-theme="dark"] .chat-title,
+html[data-theme="dark"] .dashboard-hero h1,
+html[data-theme="dark"] .app-shell-content h1,
+html[data-theme="dark"] .app-shell-content h2,
+html[data-theme="dark"] .app-shell-content h3 {
+  font-weight: 700 !important;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+
+html[data-theme="dark"] .agent-description,
+html[data-theme="dark"] .dashboard-hero p,
+html[data-theme="dark"] .app-shell-content [class*="description"],
+html[data-theme="dark"] .app-shell-content [class*="caption"] {
+  color: #94a3b8 !important;
+  line-height: 1.65;
+}
+
+html[data-theme="dark"] .agent-header-badge,
+html[data-theme="dark"] .dashboard-kicker,
+html[data-theme="dark"] .mode-badge,
+html[data-theme="dark"] .model-badge,
+html[data-theme="dark"] .command-badge,
+html[data-theme="dark"] .security-section-kicker,
+html[data-theme="dark"] .legal-section-kicker,
+html[data-theme="dark"] .legal-tool-badge {
+  border: 1px solid rgba(96, 165, 250, 0.38) !important;
+  border-radius: 999px;
+  background: rgba(30, 58, 138, 0.38) !important;
+  color: #93c5fd !important;
+  padding: 6px 10px;
+}
+
+html[data-theme="dark"] .chat-status,
+html[data-theme="dark"] .dashboard-status,
+html[data-theme="dark"] .security-count {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-width: 0;
+  border: 1px solid rgba(71, 85, 105, 0.72);
+  border-radius: 999px;
+  background: rgba(30, 41, 59, 0.72);
+  color: #cbd5e1 !important;
+  padding: 6px 10px;
+}
+
+/* Form controls read as distinct surfaces instead of disappearing into cards. */
+html[data-theme="dark"] .app-shell-content input,
+html[data-theme="dark"] .app-shell-content textarea,
+html[data-theme="dark"] .app-shell-content select,
+html[data-theme="dark"] .app-shell-content option,
+html[data-theme="dark"] .app-shell-content .composer-input {
+  border: 1px solid #475569 !important;
+  border-radius: 10px;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .app-shell-content input::placeholder,
+html[data-theme="dark"] .app-shell-content textarea::placeholder,
+html[data-theme="dark"] .app-shell-content .composer-input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1;
+}
+
+html[data-theme="dark"] .app-shell-content input:focus,
+html[data-theme="dark"] .app-shell-content textarea:focus,
+html[data-theme="dark"] .app-shell-content select:focus,
+html[data-theme="dark"] .app-shell-content .composer-input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16) !important;
+  outline: none;
+}
+
+/* Primary actions share the landing-page CTA treatment. */
+html[data-theme="dark"] .app-shell-content .send-button,
+html[data-theme="dark"] .app-shell-content .generate-button,
+html[data-theme="dark"] .app-shell-content .report-submit,
+html[data-theme="dark"] .app-shell-content .competitor-submit,
+html[data-theme="dark"] .app-shell-content .legal-submit,
+html[data-theme="dark"] .app-shell-content .upload-submit,
+html[data-theme="dark"] .app-shell-content .briefings-generate-button,
+html[data-theme="dark"] .app-shell-content .security-refresh,
+html[data-theme="dark"] .app-shell-content .usage-refresh-button,
+html[data-theme="dark"] .app-shell-content button[class*="submit"],
+html[data-theme="dark"] .app-shell-content button[class*="generate"] {
+  border: 1px solid #2563eb !important;
+  border-radius: 10px;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.24) !important;
+}
+
+html[data-theme="dark"] .app-shell-content .send-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .generate-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content button[class*="submit"]:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content button[class*="generate"]:hover:not(:disabled) {
+  border-color: #60a5fa !important;
+  background: #3b82f6 !important;
+  color: #ffffff !important;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.34) !important;
+}
+
+html[data-theme="dark"] .app-shell-content .secondary-button,
+html[data-theme="dark"] .app-shell-content .model-button,
+html[data-theme="dark"] .app-shell-content .mode-button,
+html[data-theme="dark"] .app-shell-content .example-button,
+html[data-theme="dark"] .app-shell-content .command-button,
+html[data-theme="dark"] .app-shell-content .icon-button {
+  border-color: rgba(71, 85, 105, 0.78) !important;
+  border-radius: 10px;
+  background: rgba(30, 41, 59, 0.8) !important;
+  color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .app-shell-content .secondary-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .model-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .mode-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .example-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .command-button:hover:not(:disabled),
+html[data-theme="dark"] .app-shell-content .icon-button:hover:not(:disabled) {
+  border-color: #60a5fa !important;
+  background: rgba(51, 65, 85, 0.9) !important;
+  color: #eff6ff !important;
+}
+
+html[data-theme="dark"] .app-shell-content .model-button.active,
+html[data-theme="dark"] .app-shell-content .mode-button.active,
+html[data-theme="dark"] .app-shell-content [aria-selected="true"],
+html[data-theme="dark"] .app-shell-content [aria-pressed="true"] {
+  border-color: #3b82f6 !important;
+  background: rgba(37, 99, 235, 0.16) !important;
+  color: #dbeafe !important;
+  box-shadow: inset 3px 0 0 #3b82f6 !important;
+}
+
+html[data-theme="dark"] .app-shell-content .gold-icon {
+  color: #60a5fa !important;
+}
+
+/* Light-mode cleanup for the autonomous-agent header card. */
+[data-theme="light"] .agent-app {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08) !important;
+}
+
+[data-theme="light"] .agent-app .chat-header {
+  border-bottom-color: #e2e8f0 !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+}
+
+[data-theme="light"] .agent-app .agent-header-badge {
+  border-color: #bfdbfe !important;
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .agent-app .agent-header-top .chat-status {
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #475569 !important;
+}
+
 /* Landing hero must not inherit the generic light-mode hero card treatment. */
 [data-theme="light"] .landing-page .landing-hero,
 [data-theme="light"] .landing-page .landing-hero-copy {
@@ -12780,6 +13099,176 @@ html[data-theme="dark"] {
   [data-theme="light"] .landing-page .landing-hero-copy {
     padding: 0 !important;
   }
+}
+
+/* Final cleanup: section labels stay typographic, never full-width highlight bars. */
+.legal-panel-heading,
+.legal-preview-header,
+.legal-report-title,
+.legal-briefing-result-heading,
+.legal-report-brand,
+.legal-section-kicker {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+.legal-section-kicker,
+.legal-report-brand {
+  display: block !important;
+  width: fit-content !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  color: #60a5fa !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  line-height: 1.35 !important;
+  text-transform: uppercase;
+}
+
+.legal-report-brand em {
+  color: #94a3b8 !important;
+  font-style: normal;
+}
+
+/* The product badge is intentionally a compact pill; it is not a section bar. */
+.legal-tool-badge {
+  display: inline-flex !important;
+  width: fit-content !important;
+  min-height: 24px !important;
+  margin: 0 0 12px !important;
+  border: 1px solid rgba(96, 165, 250, 0.38) !important;
+  border-radius: 999px !important;
+  background: rgba(30, 58, 138, 0.38) !important;
+  padding: 0 10px !important;
+  color: #93c5fd !important;
+}
+
+/* Keep the single module tab compact and visually separate from the workspace. */
+.legal-module-tabs {
+  display: flex !important;
+  align-items: flex-end !important;
+  min-height: 48px !important;
+  border: 1px solid rgba(71, 85, 105, 0.68) !important;
+  border-bottom: 0 !important;
+  border-radius: 12px 12px 0 0 !important;
+  background: rgba(15, 23, 42, 0.72) !important;
+  overflow: hidden !important;
+}
+
+.legal-module-tab,
+.legal-module-tab:hover,
+.legal-module-tab.is-active {
+  min-height: 46px !important;
+  border: 0 !important;
+  border-top: 2px solid transparent !important;
+  border-right: 1px solid rgba(71, 85, 105, 0.5) !important;
+  border-radius: 10px 10px 0 0 !important;
+  background: transparent !important;
+  color: #94a3b8 !important;
+  padding: 0 18px !important;
+  box-shadow: none !important;
+}
+
+.legal-module-tab.is-active {
+  border-top-color: #3b82f6 !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.legal-module-tab:hover:not(.is-active) {
+  background: rgba(30, 41, 59, 0.72) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .legal-section-kicker,
+[data-theme="light"] .legal-report-brand {
+  background: transparent !important;
+  border: 0 !important;
+  color: #1d4ed8 !important;
+}
+
+[data-theme="light"] .legal-report-brand em {
+  color: #64748b !important;
+}
+
+[data-theme="light"] .legal-tool-badge {
+  border-color: #bfdbfe !important;
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .legal-module-tabs {
+  border-color: #cbd5e1 !important;
+  background: #f8fafc !important;
+}
+
+[data-theme="light"] .legal-module-tab,
+[data-theme="light"] .legal-module-tab:hover:not(.is-active) {
+  border-right-color: #e2e8f0 !important;
+  background: transparent !important;
+  color: #64748b !important;
+}
+
+[data-theme="light"] .legal-module-tab.is-active {
+  border-top-color: #1e293b !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Dark-mode overrides must win over the global badge system: these are labels, not bars. */
+html[data-theme="dark"] .legal-section-kicker,
+html[data-theme="dark"] .legal-report-brand,
+html[data-theme="dark"] .legal-panel-heading .legal-section-kicker,
+html[data-theme="dark"] .legal-report-title .legal-section-kicker,
+html[data-theme="dark"] .legal-briefing-result-heading .legal-section-kicker {
+  display: inline-block !important;
+  width: fit-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  color: #60a5fa !important;
+}
+
+/* Dedicated class prevents legacy theme rules from turning labels into full-width bars. */
+.legal-clean-kicker {
+  display: inline-block !important;
+  width: fit-content !important;
+  height: auto !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  color: #60a5fa !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.14em !important;
+  line-height: 1.35 !important;
+  text-transform: uppercase;
+}
+
+[data-theme="light"] .legal-clean-kicker {
+  color: #1d4ed8 !important;
+}
+
+[data-theme="dark"] .legal-clean-kicker {
+  color: #60a5fa !important;
 }
 
 
