@@ -1,0 +1,18 @@
+{
+  "name": "LexAI — osobisty asystent prawny",
+  "short_name": "LexAI",
+  "description": "Analizuj pisma, porządkuj dokumenty i przygotowuj kolejne kroki.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0c10",
+  "theme_color": "#0F172A",
+  "lang": "pl",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

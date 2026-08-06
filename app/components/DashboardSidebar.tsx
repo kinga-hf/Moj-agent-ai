@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthStatus } from "./AuthStatus";
 import { GoldIcon } from "./GoldIcon";
 import { GlobalSidebarContext } from "./SidebarContext";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navigationGroups = [
   {
@@ -46,7 +47,10 @@ const navigationGroups = [
   },
   {
     label: "Administracja",
-    items: [{ href: "/admin/security", icon: "security", label: "Bezpieczeństwo" }],
+    items: [
+      { href: "/admin/dashboard", icon: "dashboard", label: "Dashboard użycia" },
+      { href: "/admin/security", icon: "security", label: "Bezpieczeństwo" },
+    ],
   },
 ] as const;
 
@@ -118,7 +122,7 @@ export function DashboardSidebar({ global = false }: { global?: boolean }) {
             </section>
           ))}
         </nav>
-        <AuthStatus />
+        <div className="dashboard-sidebar-footer-actions"><ThemeToggle /><AuthStatus /></div>
       </aside>
     </>
   );

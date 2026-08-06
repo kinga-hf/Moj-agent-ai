@@ -1169,7 +1169,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
             bold: true,
             alignment: "center",
             margin: [0, 12, 0, 20],
-            color: "#000000",
+            color: "#0f172a",
           },
           documentMeta: {
             fontSize: 9,
@@ -1179,19 +1179,19 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
           sectionTitle: {
             fontSize: 12,
             bold: true,
-            color: "#000000",
+            color: "#0f172a",
             margin: [0, 16, 0, 6],
             decoration: "underline",
           },
           itemTitle: {
             fontSize: 11,
             bold: true,
-            color: "#000000",
+            color: "#0f172a",
             margin: [0, 8, 0, 3],
           },
           bodyText: {
             fontSize: 10.5,
-            color: "#111111",
+            color: "#1e293b",
             alignment: "justify",
             margin: [0, 0, 0, 7],
           },

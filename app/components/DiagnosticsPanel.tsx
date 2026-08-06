@@ -78,7 +78,7 @@ function getProgressClass(steps: number) {
   }
 
   if (steps === 4) {
-    return "yellow";
+    return "neutral";
   }
 
   return "green";

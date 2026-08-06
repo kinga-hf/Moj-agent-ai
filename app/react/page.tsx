@@ -343,7 +343,7 @@ export default function ReactPage() {
         <header className="chat-header pro-header">
           <div>
             <span className="agent-header-badge">LEXAI • STRATEGIA PROCESOWA</span>
-            <h1 className="chat-title"><GoldIcon name="react" size={30} /> LexAI ReAct — Strategia procesowa</h1>
+            <h1 className="chat-title"><GoldIcon name="react" size={30} /> Strategia procesowa</h1>
             <p className="agent-description">
               Opisz problem prawny → agent uporządkuje fakty, dobierze narzędzia,
               wskaże braki w dokumentach i zaproponuje kolejne kroki.

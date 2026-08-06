@@ -156,7 +156,7 @@ export default function SearchPage() {
         <header className="chat-header pro-header">
           <div>
             <span className="agent-header-badge">LEXAI • WYSZUKIWARKA PRAWNA</span>
-            <h1 className="chat-title"><GoldIcon name="search" size={30} /> LexAI — Wyszukiwarka prawna</h1>
+            <h1 className="chat-title"><GoldIcon name="search" size={30} /> Wyszukiwarka prawna</h1>
             <p className="agent-description">
               Przeszukuję internet, orzecznictwo i strony źródłowe, żeby znaleźć
               argumenty przydatne w sprawie.

@@ -1,6 +1,7 @@
 "use client";
 
 import { GoldIcon, type IconName } from "./GoldIcon";
+import { ThemeToggle } from "./ThemeToggle";
 
 const features: Array<{
   icon: IconName;
@@ -96,10 +97,47 @@ function KnowledgeMockup() {
     <div className="landing-knowledge-card">
       <div className="landing-knowledge-top"><span className="landing-overline">TWOJA BAZA SPRAW</span><span className="landing-knowledge-count">24 dokumenty</span></div>
       <div className="landing-knowledge-title"><span className="landing-folder-icon">▱</span><div><strong>Akta i notatki</strong><small>Zaktualizowano przed chwilą</small></div><b>•••</b></div>
-      <div className="landing-file-row"><span className="landing-file-icon pdf">PDF</span><div><strong>Wezwanie do zapłaty</strong><small>2,4 MB · dzisiaj</small></div><span className="landing-file-check">✓</span></div>
+      <div className="landing-file-row landing-file-row-scan"><span className="landing-file-icon pdf">PDF</span><div><strong>Wezwanie do zapłaty</strong><small>2,4 MB · dzisiaj</small></div><span className="landing-file-check">✓</span><span className="landing-file-scan-marker" aria-hidden="true"><GoldIcon name="search" size={12} /></span></div>
       <div className="landing-file-row"><span className="landing-file-icon doc">DOC</span><div><strong>Notatki do sprawy</strong><small>840 KB · wczoraj</small></div><span className="landing-file-check">✓</span></div>
       <div className="landing-file-row"><span className="landing-file-icon xls">XLS</span><div><strong>Historia płatności</strong><small>1,1 MB · 2 dni temu</small></div><span className="landing-file-check">✓</span></div>
       <div className="landing-knowledge-progress"><span /><em>LexAI może już odpowiadać na pytania z tych dokumentów</em></div>
+    </div>
+  );
+}
+
+function LegalTechNetwork() {
+  return (
+    <div className="landing-legal-network" aria-hidden="true">
+      <svg viewBox="0 0 620 360" role="presentation">
+        <path d="M84 230C174 176 220 172 306 194S446 246 536 116" />
+        <path d="M170 70C214 134 246 158 306 194S420 280 486 286" />
+        <path d="M84 230L170 70M306 194L536 116M306 194L486 286" />
+        <circle cx="84" cy="230" r="7" />
+        <circle cx="170" cy="70" r="7" />
+        <circle cx="306" cy="194" r="9" />
+        <circle cx="536" cy="116" r="7" />
+        <circle cx="486" cy="286" r="7" />
+        <g className="landing-network-document">
+          <rect x="52" y="196" width="42" height="52" rx="7" />
+          <path d="M64 211h18M64 220h18M64 229h12" />
+        </g>
+        <text className="landing-network-law" x="150" y="57">§</text>
+        <path className="landing-network-spark" d="M306 176l5 13 13 5-13 5-5 13-5-13-13-5 13-5z" />
+        <path className="landing-network-ai" d="M520 92l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" />
+      </svg>
+    </div>
+  );
+}
+
+function KnowledgeVisual() {
+  return (
+    <div className="landing-knowledge-visual">
+      <LegalTechNetwork />
+      <KnowledgeMockup />
+      <div className="landing-legal-float-card">
+        <span><GoldIcon name="security" size={15} /></span>
+        <div><strong>Weryfikacja ryzyk procesowych</strong><small>3 obszary wymagają uwagi</small></div>
+      </div>
     </div>
   );
 }
@@ -149,7 +187,7 @@ export default function LandingPage() {
       <nav className="landing-nav">
         <a className="landing-logo" href="/" aria-label="LexAI — strona główna"><BrandMark /><span>LexAI</span></a>
         <div className="landing-nav-links"><a href="#mozliwosci">Możliwości</a><a href="#jak-dziala">Jak działa</a><a href="#dla-kogo">Dla kogo</a></div>
-        <div className="landing-nav-actions"><a className="landing-login-link" href="/login">Zaloguj się</a><a className="landing-nav-cta" href="/login">Zacznij za darmo <span>↗</span></a></div>
+        <div className="landing-nav-actions"><ThemeToggle /><a className="landing-login-link" href="/login">Zaloguj się</a><a className="landing-nav-cta" href="/login">Zacznij za darmo <span>↗</span></a></div>
       </nav>
 
       <section className="landing-hero">
@@ -171,8 +209,8 @@ export default function LandingPage() {
       </section>
 
       <section className="landing-showcase section-shell" id="jak-dziala">
-        <div className="landing-showcase-copy"><span className="landing-overline">AKTA, KTÓRE PRACUJĄ</span><h2>Nie czytaj akt godzinami.<br /><em>Zapytaj LexAI.</em></h2><p>Dodaj wezwania, pisma i notatki. LexAI znajdzie w nich odpowiedź, pokaże źródło i zachowa kontekst Twojej sprawy.</p><a className="landing-inline-link" href="/login">Dodaj pierwszy dokument <span>↗</span></a></div>
-        <KnowledgeMockup />
+        <div className="landing-showcase-copy"><span className="landing-showcase-overline"><GoldIcon name="spark" size={14} /><span className="landing-overline">AKTA, KTÓRE PRACUJĄ</span></span><h2>Nie czytaj akt godzinami.<br /><em>Zapytaj LexAI.</em></h2><p>Dodaj wezwania, pisma i notatki. LexAI znajdzie w nich odpowiedź, pokaże źródło i zachowa kontekst Twojej sprawy.</p><a className="landing-inline-link" href="/login"><GoldIcon name="folder" size={15} /> Dodaj pierwszy dokument <span>↗</span></a></div>
+        <KnowledgeVisual />
       </section>
 
       <AudienceSection />
