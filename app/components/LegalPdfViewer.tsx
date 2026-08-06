@@ -55,12 +55,25 @@ export default function LegalPdfViewer({ file, fileName, citation, onPageChange 
   const [pageCount, setPageCount] = useState(0);
   const [pageWidth, setPageWidth] = useState(560);
   const [loadError, setLoadError] = useState("");
+  const [devicePixelRatio, setDevicePixelRatio] = useState(1.5);
+  const [zoom, setZoom] = useState(1);
+
+  useEffect(() => {
+    const updatePixelRatio = () => {
+      // Render at least 1.5x so PDF text stays crisp even on a standard-DPI display.
+      setDevicePixelRatio(Math.min(2, Math.max(1.5, window.devicePixelRatio || 1)));
+    };
+
+    updatePixelRatio();
+    window.addEventListener("resize", updatePixelRatio);
+    return () => window.removeEventListener("resize", updatePixelRatio);
+  }, []);
 
   useEffect(() => {
     const viewer = viewerRef.current;
     if (!viewer) return;
 
-    const updateWidth = () => setPageWidth(Math.max(260, viewer.clientWidth - 32));
+    const updateWidth = () => setPageWidth(Math.max(220, viewer.clientWidth - 32));
     updateWidth();
     const observer = new ResizeObserver(updateWidth);
     observer.observe(viewer);
@@ -72,6 +85,7 @@ export default function LegalPdfViewer({ file, fileName, citation, onPageChange 
       setPageNumber(1);
       setPageCount(0);
       setLoadError("");
+      setZoom(1);
     }, 0);
 
     return () => window.clearTimeout(resetId);
@@ -101,7 +115,7 @@ export default function LegalPdfViewer({ file, fileName, citation, onPageChange 
   };
 
   return (
-    <div className="legal-pdf-document-viewer">
+    <div className={`legal-pdf-document-viewer${zoom > 1 ? " is-zoomed" : ""}`}>
       <div className="legal-pdf-viewer-toolbar">
         <span className="legal-pdf-viewer-file" title={fileName || "Oryginalny plik PDF"}>
           {fileName || "Oryginalny plik PDF"}
@@ -109,6 +123,33 @@ export default function LegalPdfViewer({ file, fileName, citation, onPageChange 
         <span className="legal-pdf-viewer-page-count">
           {pageCount > 0 ? `Strona ${pageNumber} / ${pageCount}` : "Ładowanie..."}
         </span>
+        <div className="legal-pdf-viewer-zoom" aria-label="Sterowanie powiększeniem dokumentu">
+          <button
+            aria-label="Pomniejsz dokument"
+            disabled={zoom <= 0.8}
+            onClick={() => setZoom((current) => Math.max(0.8, Number((current - 0.1).toFixed(1))))}
+            type="button"
+          >
+            −
+          </button>
+          <button
+            aria-label="Dopasuj PDF do szerokości"
+            className={zoom === 1 ? "is-active" : ""}
+            onClick={() => setZoom(1)}
+            type="button"
+          >
+            Dopasuj do szerokości
+          </button>
+          <span aria-live="polite">{Math.round(zoom * 100)}%</span>
+          <button
+            aria-label="Powiększ dokument"
+            disabled={zoom >= 1.4}
+            onClick={() => setZoom((current) => Math.min(1.4, Number((current + 0.1).toFixed(1))))}
+            type="button"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       <div ref={viewerRef} className="legal-pdf-document-scroll">
@@ -126,7 +167,8 @@ export default function LegalPdfViewer({ file, fileName, citation, onPageChange 
           {pageCount > 0 ? (
             <Page
               pageNumber={pageNumber}
-              width={pageWidth}
+              width={Math.round(pageWidth * zoom)}
+              devicePixelRatio={devicePixelRatio}
               renderTextLayer
               renderAnnotationLayer
               customTextRenderer={({ str }) =>

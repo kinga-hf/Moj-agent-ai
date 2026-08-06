@@ -13271,4 +13271,405 @@ html[data-theme="dark"] .legal-briefing-result-heading .legal-section-kicker {
   color: #60a5fa !important;
 }
 
+/* Reports are vertically scrollable only: tables must fit and wrap inside the panel. */
+.legal-report-section,
+.legal-report-section .legal-report-preview,
+.legal-report-section .legal-document,
+.legal-report-section .markdown-table-wrap,
+.legal-report-section .legal-table-wrap,
+.markdown-table-wrap.legal-table-wrap {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.legal-report-section table,
+.legal-report-section .markdown-table,
+.legal-report-section .legal-table {
+  display: table !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  table-layout: fixed !important;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.legal-report-section table th,
+.legal-report-section table td,
+.legal-report-section .markdown-table th,
+.legal-report-section .markdown-table td,
+.legal-report-section .legal-table th,
+.legal-report-section .legal-table td {
+  width: auto;
+  max-width: 0;
+  min-width: 0;
+  padding: 8px 9px !important;
+  vertical-align: top;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  line-height: 1.45;
+}
+
+.legal-report-section table th:first-child,
+.legal-report-section table td:first-child {
+  width: 17%;
+}
+
+.legal-report-section table th:last-child,
+.legal-report-section table td:last-child {
+  width: 13%;
+}
+
+.legal-report-section table p,
+.legal-report-section table button,
+.legal-report-section table a {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* Legal Briefing parity: optional case context and interactive verification checklist. */
+.legal-case-context-field {
+  display: grid;
+  gap: 8px;
+}
+
+.legal-case-context-field > span {
+  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.legal-case-context-field textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.legal-checklist-item {
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.legal-check-box {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  accent-color: #3b82f6;
+}
+
+.legal-checklist-item > span.is-checked {
+  color: #93c5fd;
+  text-decoration: line-through;
+  text-decoration-color: rgba(147, 197, 253, 0.7);
+}
+
+[data-theme="light"] .legal-case-context-field > span {
+  color: #334155;
+}
+
+[data-theme="light"] .legal-checklist-item > span.is-checked {
+  color: #1d4ed8;
+}
+
+/* Crisp PDF preview: the canvas owns the visible glyphs, while the text layer
+   remains transparent and is used only for selection/citation highlighting. */
+.legal-pdf-document-viewer,
+.legal-pdf-document-scroll,
+.legal-pdf-document-scroll .react-pdf__Document,
+.legal-pdf-document-scroll .react-pdf__Page {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  filter: none !important;
+  text-shadow: none !important;
+}
+
+.legal-pdf-document-viewer {
+  background: #0f172a !important;
+}
+
+.legal-pdf-document-scroll {
+  background: #0f172a !important;
+}
+
+.legal-pdf-document-scroll .react-pdf__Page {
+  background: #ffffff !important;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.3);
+  isolation: isolate;
+}
+
+.legal-pdf-document-scroll .react-pdf__Page__canvas {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  image-rendering: auto;
+}
+
+.legal-pdf-document-scroll .react-pdf__Page__textContent,
+.legal-pdf-document-scroll .textLayer {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: none !important;
+}
+
+.legal-pdf-document-scroll .textLayer :is(span, br) {
+  color: transparent !important;
+  text-shadow: none !important;
+}
+
+.legal-pdf-document-scroll .legal-pdf-citation-highlight {
+  display: inline;
+  border: 1px solid rgba(59, 130, 246, 0.55);
+  border-radius: 2px;
+  background: rgba(59, 130, 246, 0.25) !important;
+  box-shadow: none !important;
+  color: transparent !important;
+  padding: 0 1px;
+}
+
+.legal-pdf-document-scroll .textLayer ::selection {
+  background: rgba(59, 130, 246, 0.35) !important;
+  color: transparent !important;
+}
+
+/* Fit-to-width is the default. Manual zoom may enlarge the page, but the
+   normal reading view never creates a horizontal scrollbar. */
+.legal-pdf-document-scroll {
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  min-width: 0 !important;
+}
+
+.legal-pdf-document-scroll .react-pdf__Document {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
+.legal-pdf-document-scroll .react-pdf__Page {
+  width: min(100%, var(--legal-pdf-page-width, 100%)) !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden;
+}
+
+.legal-pdf-document-scroll .react-pdf__Page__canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.legal-pdf-viewer-toolbar {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legal-pdf-viewer-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.legal-pdf-viewer-zoom button {
+  min-height: 26px;
+  border: 1px solid rgba(148, 163, 184, 0.34);
+  border-radius: 5px;
+  background: rgba(30, 41, 59, 0.78);
+  color: #e2e8f0;
+  cursor: pointer;
+  font-size: 0.72rem;
+  line-height: 1;
+  padding: 4px 7px;
+}
+
+.legal-pdf-viewer-zoom button:hover:not(:disabled),
+.legal-pdf-viewer-zoom button.is-active {
+  border-color: #60a5fa;
+  background: rgba(37, 99, 235, 0.2);
+  color: #bfdbfe;
+}
+
+.legal-pdf-viewer-zoom button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.legal-pdf-viewer-zoom > span {
+  min-width: 34px;
+  text-align: center;
+}
+
+/* Keep an intentional manual zoom usable without changing the default fit. */
+.legal-pdf-document-viewer.is-zoomed .legal-pdf-document-scroll {
+  overflow-x: auto !important;
+}
+
+.legal-pdf-document-viewer.is-zoomed .react-pdf__Document {
+  width: max-content !important;
+  max-width: none !important;
+}
+
+.legal-pdf-document-viewer.is-zoomed .react-pdf__Page {
+  width: auto !important;
+  max-width: none !important;
+  overflow: visible;
+}
+
+.legal-pdf-document-viewer.is-zoomed .react-pdf__Page__canvas {
+  max-width: none !important;
+}
+
+@media (max-width: 720px) {
+  .legal-pdf-viewer-zoom {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .legal-pdf-viewer-zoom button[aria-label="Dopasuj PDF do szerokości"] {
+    flex: 1;
+  }
+}
+
+/* Keep the complete left workspace inside one closed card. */
+.legal-left-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 18px;
+  border: 1px solid rgba(51, 65, 85, 0.72);
+  border-radius: 16px;
+  background: rgba(15, 23, 42, 0.46);
+  padding: 24px 24px 28px;
+  box-shadow: 0 18px 48px rgba(2, 6, 23, 0.18);
+}
+
+.legal-left-card .legal-examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0;
+  border-top: 0 !important;
+  padding-top: 0;
+}
+
+.legal-left-card .legal-examples > span {
+  width: 100%;
+  margin: 0 0 2px;
+}
+
+.legal-left-card .legal-examples button {
+  min-height: 0;
+  border: 1px solid rgba(51, 65, 85, 0.9) !important;
+  border-radius: 8px;
+  background: rgba(30, 41, 59, 0.5) !important;
+  color: #cbd5e1 !important;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.legal-left-card .legal-examples button:hover:not(:disabled) {
+  border-color: #60a5fa !important;
+  background: rgba(30, 41, 59, 0.88) !important;
+  color: #dbeafe !important;
+}
+
+.legal-left-card .legal-disclaimer {
+  margin: 0;
+  padding: 0;
+  color: #94a3b8 !important;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+[data-theme="light"] .legal-left-card {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+[data-theme="light"] .legal-left-card .legal-examples button {
+  border-color: #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .legal-left-card .legal-examples button:hover:not(:disabled) {
+  border-color: #2563eb !important;
+  background: #eff6ff !important;
+  color: #1e3a8a !important;
+}
+
+[data-theme="light"] .legal-left-card .legal-disclaimer {
+  color: #64748b !important;
+}
+
+/* Light-mode Legal Briefing report: keep every inner surface crisp and
+   readable instead of inheriting the dark-mode translucent blocks. */
+[data-theme="light"] .legal-report-section,
+[data-theme="light"] .legal-report-section .legal-report-preview {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-preview-header,
+[data-theme="light"] .legal-report-section .legal-report-title {
+  background: transparent !important;
+  background-image: none !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-briefing-result-heading > span {
+  border-color: #cbd5e1 !important;
+  background: #f8fafc !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-briefing-result-heading > span svg {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-briefing-result-heading strong,
+[data-theme="light"] .legal-report-section .legal-report-title strong {
+  color: #0f172a !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-report-title {
+  border-bottom-color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-report-placeholder {
+  background: #ffffff !important;
+  color: #334155 !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-report-placeholder p {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-report-step {
+  color: #1e293b !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-report-step span {
+  color: #475569 !important;
+}
+
+[data-theme="light"] .legal-report-section .legal-analysis-actions button:disabled {
+  border-color: #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #64748b !important;
+  opacity: 1;
+}
+
 

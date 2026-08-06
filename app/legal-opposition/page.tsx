@@ -24,7 +24,7 @@ type LegalBriefingSummary = {
   updated_at: string;
 };
 
-type AnalysisMode = "full" | "fast";
+type AnalysisMode = "full" | "quick";
 
 type DocumentPage = {
   number: number;
@@ -37,6 +37,7 @@ const pleadingTypeOptions = [
   "Pismo przygotowawcze",
   "Apelacja",
   "Zażalenie",
+  "Uzasadnienie wyroku",
   "Inne pismo procesowe",
 ];
 
@@ -245,10 +246,21 @@ function getAnalysisSectionIcon(title: string): IconName | null {
   return null;
 }
 
-function MarkdownLegal({ text, onPageReference }: { text: string; onPageReference?: (page: number) => void }) {
+function MarkdownLegal({
+  text,
+  onPageReference,
+  checkedChecklist,
+  onChecklistToggle,
+}: {
+  text: string;
+  onPageReference?: (page: number) => void;
+  checkedChecklist?: Record<number, boolean>;
+  onChecklistToggle?: (index: number, checked: boolean) => void;
+}) {
   const lines = text.split("\n");
   const blocks: ReactNode[] = [];
   let index = 0;
+  let checklistIndex = 0;
 
   while (index < lines.length) {
     const line = lines[index];
@@ -348,15 +360,22 @@ function MarkdownLegal({ text, onPageReference }: { text: string; onPageReferenc
           {items.map((item, itemIndex) => {
             const checklistMatch = item.match(/^\[([ xX])\]\s+(.*)$/);
             const itemText = checklistMatch?.[2] ?? item;
+            const currentChecklistIndex = checklistMatch ? checklistIndex++ : -1;
 
             return (
               <li className={checklistMatch ? "legal-checklist-item" : undefined} key={`${item}-${itemIndex}`}>
                 {checklistMatch ? (
-                  <span aria-hidden="true" className="legal-check-box">
-                    {checklistMatch[1].trim() ? "✓" : ""}
-                  </span>
+                  <input
+                    aria-label={`Oznacz punkt checklisty ${currentChecklistIndex + 1} jako zweryfikowany`}
+                    checked={Boolean(checkedChecklist?.[currentChecklistIndex])}
+                    className="legal-check-box"
+                    onChange={(event) => onChecklistToggle?.(currentChecklistIndex, event.target.checked)}
+                    type="checkbox"
+                  />
                 ) : null}
-                <span>{renderLegalInline(itemText, onPageReference)}</span>
+                <span className={checkedChecklist?.[currentChecklistIndex] ? "is-checked" : undefined}>
+                  {renderLegalInline(itemText, onPageReference)}
+                </span>
               </li>
             );
           })}
@@ -629,14 +648,37 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
   const [isLoading, setIsLoading] = useState(false);
   const [isPdfLoading, setIsPdfLoading] = useState(false);
   const [copyStatus, setCopyStatus] = useState("");
+  const [checkedChecklist, setCheckedChecklist] = useState<Record<number, boolean>>({});
   const [flashcard, setFlashcard] = useState("");
   const [isFlashcardLoading, setIsFlashcardLoading] = useState(false);
   const [flashcardError, setFlashcardError] = useState("");
   const [briefings, setBriefings] = useState<LegalBriefingSummary[]>([]);
   const [isBriefingsLoading, setIsBriefingsLoading] = useState(standalone);
   const [historyError, setHistoryError] = useState("");
+  const [leftPanelWidth, setLeftPanelWidth] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const documentPageRefs = useRef<Record<number, HTMLElement | null>>({});
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      const splitView = document.getElementById("analysis-split-view");
+      if (!splitView) return;
+      const bounds = splitView.getBoundingClientRect();
+      const nextWidth = ((event.clientX - bounds.left) / bounds.width) * 100;
+      setLeftPanelWidth(Math.min(68, Math.max(32, nextWidth)));
+    };
+    const stopResizing = () => setIsResizing(false);
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", stopResizing);
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", stopResizing);
+    };
+  }, [isResizing]);
 
   useEffect(() => {
     return () => {
@@ -737,10 +779,6 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
     try {
       const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
 
-      if (!isPdf) {
-        throw new Error("Wgraj plik PDF, aby uruchomić analizę dokumentu.");
-      }
-
       setDocumentPreviewUrl((current) => {
         if (current) URL.revokeObjectURL(current);
         return isPdf ? URL.createObjectURL(file) : "";
@@ -775,6 +813,10 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
         setFileName(
           `${file.name}${data.pages ? ` • ${data.pages} stron` : ""}${data.truncated ? " • skrócono tekst" : ""}`,
         );
+      } else if (/\.(txt|md|json)$/i.test(file.name)) {
+        text = await file.text();
+      } else {
+        throw new Error("Wybierz plik PDF, TXT, MD lub JSON.");
       }
 
       const cleanText = text.trim();
@@ -828,6 +870,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
     setError("");
     setHistoryError("");
     setCopyStatus("");
+    setCheckedChecklist({});
     setFlashcard("");
     setFlashcardError("");
     setIsLoading(true);
@@ -844,12 +887,12 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
           "Content-Type": "application/json",
           ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         },
-        body: JSON.stringify({
-          pleadingType,
-          pleadingText,
-          caseContext,
-          analysisMode,
-        }),
+          body: JSON.stringify({
+            pleadingType,
+            pleadingText,
+            caseContext,
+            analysisMode: analysisMode === "quick" ? "fast" : "full",
+          }),
       });
 
       if (!response.ok || !response.body) {
@@ -1246,8 +1289,9 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
         </nav>
 
         <section className="legal-workspace" id="analiza-pisma">
-          <div className="legal-split-screen">
+            <div className="legal-split-screen">
             <div className="legal-left-column">
+            <div className="legal-left-card">
             <div className="legal-input-panel">
               <div className="legal-panel-heading">
                 <span className="legal-clean-kicker">DOKUMENT DO ANALIZY</span>
@@ -1274,7 +1318,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                   onDrop={handleFileDrop}
                 >
                   <input
-                  accept=".pdf,application/pdf"
+                  accept=".pdf,.txt,.md,.json,application/pdf,text/plain,text/markdown,application/json"
                     className="hidden-file-input"
                     onChange={(event) => void handleFileChange(event)}
                     ref={fileInputRef}
@@ -1292,12 +1336,23 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
 
                 {fileError ? <div className="legal-error">{fileError}</div> : null}
 
+                <label className="legal-case-context-field">
+                  <span>Kontekst sprawy (opcjonalnie)</span>
+                  <textarea
+                    disabled={isLoading}
+                    onChange={(event) => setCaseContext(event.target.value)}
+                    placeholder="Np. sprawa o zapłatę, cesja wierzytelności, szkoda komunikacyjna"
+                    rows={3}
+                    value={caseContext}
+                  />
+                </label>
+
                 <div className="legal-analysis-mode">
                   <label>
                     <span>Tryb analizy</span>
                     <select disabled={isLoading} onChange={(event) => setAnalysisMode(event.target.value as AnalysisMode)} value={analysisMode}>
                       <option value="full">Pełna analiza procesowa — dokładniejsza</option>
-                      <option value="fast">Szybka analiza — krótsza odpowiedź</option>
+                      <option value="quick">Szybka analiza — krótsza odpowiedź</option>
                     </select>
                   </label>
                   <p>Tryb szybki ogranicza rozumowanie i liczbę elementów, aby skrócić czas oczekiwania.</p>
@@ -1335,6 +1390,7 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
             <p className="legal-disclaimer">
               Wynik jest roboczym briefingiem do weryfikacji w aktach i aktualnym orzecznictwie.
             </p>
+            </div>
             </div>
 
           <section aria-label="Raport z analizy prawnej" className="legal-preview-panel legal-report-section">
@@ -1395,7 +1451,14 @@ export function LegalOppositionPage({ standalone = false }: { standalone?: boole
                       </div>
                     </section>
                   ) : null}
-                  <MarkdownLegal onPageReference={focusDocumentPage} text={analysis} />
+                  <MarkdownLegal
+                    checkedChecklist={checkedChecklist}
+                    onChecklistToggle={(index, checked) =>
+                      setCheckedChecklist((current) => ({ ...current, [index]: checked }))
+                    }
+                    onPageReference={focusDocumentPage}
+                    text={analysis}
+                  />
                 </>
               ) : (
                 <div className="legal-report-placeholder">
